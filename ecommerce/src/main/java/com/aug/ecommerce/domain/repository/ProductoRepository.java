@@ -3,13 +3,14 @@ package com.aug.ecommerce.domain.repository;
 import com.aug.ecommerce.domain.model.producto.Producto;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 public interface ProductoRepository {
     void save(Producto producto);
-    Optional<Producto> findById(String id);
+    Optional<Producto> findById(UUID id);
     List<Producto> findAll();
-    void deleteById(String id);
+    void deleteById(UUID id);
 
-    List<Producto> findByCategoriaId(String categoriaId);
+    List<Producto> findByCategoriaId(UUID categoriaId);
     List<Producto> findByNombreContaining(String nombre);
 }

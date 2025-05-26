@@ -38,12 +38,13 @@ public class Cliente {
         return direccion;
     }
 
-    public void actualizarDireccion(
+    public Direccion actualizarDireccion(
             UUID direccionId, String nuevaCalle, String nuevaCiudad, String nuevoPais, String nuevoCodigoPostal) {
 
         Direccion direccion = buscarDireccionPorId(direccionId)
                 .orElseThrow(() -> new NoSuchElementException("Dirección no encontrada"));
         direccion.actualizar(nuevaCalle, nuevaCiudad, nuevoPais, nuevoCodigoPostal);
+        return direccion;
     }
 
     public boolean eliminarDireccion(UUID direccionId) {
