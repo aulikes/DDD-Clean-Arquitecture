@@ -11,6 +11,6 @@ public interface ProductoRepository {
     List<Producto> findAll();
     void deleteById(UUID id);
 
-    List<Producto> findByCategoriaId(UUID categoriaId);
-    List<Producto> findByNombreContaining(String nombre);
+//    List<Producto> findByCategoriaId(UUID categoriaId);
+//    List<Producto> findByNombreContaining(String nombre);
 }

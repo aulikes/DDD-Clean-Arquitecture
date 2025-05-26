@@ -10,11 +10,13 @@ import java.util.stream.Collectors;
 
 public class OrdenMapper {
 
+    private OrdenMapper() {}
+
     public static OrdenEntity toEntity(Orden orden) {
         OrdenEntity entity = new OrdenEntity();
         entity.setId(orden.getId());
         entity.setClienteId(orden.getClienteId());
-        entity.setEstado(orden.getEstado());
+        entity.setEstado(orden.getEstado().getValor());
 
         List<ItemOrdenEntity> items = orden.getItems().stream().map(item -> {
             ItemOrdenEntity e = new ItemOrdenEntity();

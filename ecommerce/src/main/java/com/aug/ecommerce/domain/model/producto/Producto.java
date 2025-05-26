@@ -3,7 +3,7 @@ package com.aug.ecommerce.domain.model.producto;
 import com.aug.ecommerce.domain.util.ValidadorDominio;
 import java.util.*;
 
-public abstract class Producto {
+public class Producto {
     private final UUID id;
     private String nombre;
     private String descripcion;

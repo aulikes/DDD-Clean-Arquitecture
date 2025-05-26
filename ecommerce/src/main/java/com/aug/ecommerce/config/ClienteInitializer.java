@@ -1,11 +1,13 @@
 package com.aug.ecommerce.config;
 
-import com.aug.ecommerce.domain.model.cliente.Cliente;
-import com.aug.ecommerce.domain.repository.ClienteRepository;
+import com.aug.ecommerce.adapters.rest.dto.CrearClienteRequestDTO;
+import com.aug.ecommerce.adapters.rest.mapper.ClienteMapper;
+import com.aug.ecommerce.application.service.ClienteService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,22 +15,21 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ClienteInitializer {
 
-    private final ClienteRepository clienteRepository;
+    private final ClienteService clienteService;
+    private final ClienteMapper clienteMapper;
 
     @PostConstruct
     public void init() {
-        if (clienteRepository.findAll().isEmpty()) {
-            Cliente juan = new Cliente(UUID.randomUUID(), "Juan Pérez", "juan@ecommerce.com");
-            juan.agregarDireccion("Calle 123", "Bogotá", "Colombia", "110111");
+        CrearClienteRequestDTO juan = new CrearClienteRequestDTO("Juan Pérez", "juan@ecommerce.com", new ArrayList<>());
+        juan.getDirecciones().add(new CrearClienteRequestDTO.Direccion("Calle 123", "Bogotá", "Colombia", "110111"));
 
-            Cliente laura = new Cliente(UUID.randomUUID(), "Laura Gómez", "laura@ecommerce.com");
-            laura.agregarDireccion("Av. Siempre Viva 742", "Medellín", "Colombia", "050001");
+        CrearClienteRequestDTO laura = new CrearClienteRequestDTO("Laura Gómez", "laura@ecommerce.com", new ArrayList<>());
+        laura.getDirecciones().add(new CrearClienteRequestDTO.Direccion("Av. Siempre Viva 742", "Medellín", "Colombia", "050001"));
 
-            Cliente carlos = new Cliente(UUID.randomUUID(), "Carlos Ruiz", "carlos@ecommerce.com");
-            carlos.agregarDireccion("Carrera 7", "Cali", "Colombia", "760001");
+        CrearClienteRequestDTO carlos = new CrearClienteRequestDTO("Carlos Ruiz", "carlos@ecommerce.com", new ArrayList<>());
+        carlos.getDirecciones().add(new CrearClienteRequestDTO.Direccion("Carrera 7", "Cali", "Colombia", "760001"));
 
-            List<Cliente> clientes = List.of(juan, laura, carlos);
-            clientes.forEach(clienteRepository::save);
-        }
+        List<CrearClienteRequestDTO> clientes = List.of(juan, laura, carlos);
+        clientes.forEach(c -> clienteService.crearCliente(clienteMapper.toCommand(c)));
     }
 }

@@ -16,25 +16,24 @@ import java.util.UUID;
 public class ClienteRepositoryImp implements ClienteRepository {
 
     private final JpaClienteCrudRepository jpa;
-    private final ClienteMapper mapper;
 
     @Override
     public void save(Cliente cliente) {
-        jpa.save(mapper.toEntity(cliente));
+        jpa.save(ClienteMapper.toEntity(cliente));
     }
 
     @Override
     public Optional<Cliente> findById(UUID id) {
-        return jpa.findById(id).map(mapper::toDomain);
+        return jpa.findById(id).map(ClienteMapper::toDomain);
     }
 
     @Override
     public List<Cliente> findAll() {
-        return jpa.findAll().stream().map(mapper::toDomain).toList();
+        return jpa.findAll().stream().map(ClienteMapper::toDomain).toList();
     }
 
     @Override
     public Optional<Cliente> findByEmail(String email) {
-        return jpa.findByEmail(email).map(mapper::toDomain);
+        return jpa.findByEmail(email).map(ClienteMapper::toDomain);
     }
 }

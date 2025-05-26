@@ -17,8 +17,8 @@ public class OrdenEntity {
 
     private UUID clienteId;
 
-    @Enumerated(EnumType.STRING)
-    private EstadoOrden estado;
+//    @Enumerated(EnumType.STRING)
+    private String estado;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "orden_id")

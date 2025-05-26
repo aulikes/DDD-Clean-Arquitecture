@@ -7,9 +7,9 @@ import java.util.UUID;
 
 public interface InventarioRepository {
     void save(Inventario inventario);
-    Optional<Inventario> findById(String id);
+    Optional<Inventario> findById(UUID id);
     List<Inventario> findAll();
-    void deleteById(String id);
+    void deleteById(UUID id);
 
     Optional<Inventario> findByProductoId(UUID productoId);
 }
