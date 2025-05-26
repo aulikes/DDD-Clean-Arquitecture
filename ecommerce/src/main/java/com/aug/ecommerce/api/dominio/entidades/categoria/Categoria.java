@@ -1,4 +1,4 @@
-package com.aug.ecommerce.api.dominio.categoria;
+package com.aug.ecommerce.api.dominio.entidades.categoria;
 
 import com.aug.ecommerce.api.dominio.utils.ValidadorDominio;
 import java.util.*;

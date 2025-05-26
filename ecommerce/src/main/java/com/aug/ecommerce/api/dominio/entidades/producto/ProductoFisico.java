@@ -1,4 +1,4 @@
-package com.aug.ecommerce.api.dominio.producto;
+package com.aug.ecommerce.api.dominio.entidades.producto;
 
 import java.util.UUID;
 

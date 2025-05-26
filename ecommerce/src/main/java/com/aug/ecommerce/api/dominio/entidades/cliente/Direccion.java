@@ -1,4 +1,4 @@
-package com.aug.ecommerce.api.dominio.cliente;
+package com.aug.ecommerce.api.dominio.entidades.cliente;
 
 import com.aug.ecommerce.api.dominio.utils.ValidadorDominio;
 
