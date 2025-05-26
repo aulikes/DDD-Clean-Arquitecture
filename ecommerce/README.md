@@ -1,61 +1,83 @@
-# Modelado DDD - E-commerce: Proceso completo de compra y recepción
 
-## Contexto del Problema
+# Ecommerce - Arquitectura de Dominio y Aplicación (DDD)
 
-Una tienda online desea modelar el proceso completo que sigue un cliente desde que selecciona productos hasta que los recibe en su domicilio. Este proceso debe contemplar la gestión de catálogos, carritos, cupones de descuento, validación de stock, pagos, logística de envío y atención postventa (como devoluciones o reclamos).
+Este proyecto modela un sistema e-commerce completo bajo los principios de Domain-Driven Design (DDD). Se ha implementado de forma estructurada la capa de dominio y la capa de aplicación, cada una con sus respectivas responsabilidades bien separadas.
 
-El sistema debe ser capaz de:
-- Representar adecuadamente cada actor y objeto del proceso (cliente, producto, orden, pago, etc.)
-- Manejar reglas de negocio como disponibilidad de stock, cálculo de precios finales, seguimiento de estados de orden y envío
-- Mantener independencia y consistencia en los diferentes módulos del dominio (por ejemplo, pagos, inventario, envío, etc.)
-- Soportar la trazabilidad de todo el ciclo de vida de una compra, desde el carrito hasta la entrega final
+---
 
-## Requisitos Funcionales
+## 1. Capa de Dominio
+Contiene toda la lógica del negocio expresada a través de aggregates, entidades, objetos de valor, eventos de dominio y servicios de dominio.
 
-### Navegación y selección de productos
+### Aggregates Root modelados:
+- `Orden`: ciclo de vida de la compra (creación, pago, envío, entrega, cancelación)
+- `Pago`: estado del pago (pendiente, confirmado, fallido)
+- `Envio`: proceso logístico (preparando, despachado, entregado)
+- `Inventario`: stock disponible de productos
+- `Notificacion`: mensajes generados hacia el cliente
+- `Cliente`: datos del usuario y sus direcciones
+- `Producto` y `Categoria`: referencia a catálogo de productos
 
-1. Un **cliente** puede navegar el catálogo y ver productos disponibles.
-2. Puede **agregar productos al carrito de compras**.
-3. Puede **modificar cantidades o eliminar ítems del carrito**.
+### Objetos de valor:
+- `EstadoOrden`: controla transiciones válidas de estado en una orden
+- `Direccion`: entidad embebida dentro de cliente, controlada solo desde el agregado
 
-### Promociones y descuentos
+### Servicios de dominio:
+- `ProcesadorDePago`
+- `ProcesadorDeEnvio`
+- `ProcesadorDeEntrega`
+- `ProcesadorDeCancelacion`
 
-4. El cliente puede **aplicar un cupón** de descuento válido al carrito o a la orden.
-5. El sistema debe validar que el cupón **no esté vencido**, **no haya sido usado previamente** por ese cliente y **cumpla condiciones mínimas de compra**.
+### Eventos de dominio:
+- `OrdenPagada`
+- `OrdenEnviada`
+- `OrdenEntregada`
+- `OrdenCancelada`
 
-### Proceso de compra
+---
 
-6. Al confirmar la compra:
-   - Se **verifica la disponibilidad en inventario** de los productos.
-   - Se **crea una orden de compra** con ítems, totales y descuentos aplicados.
-   - Se **reserva temporalmente el stock** de los productos.
+## 2. Capa de Aplicación
+Contiene servicios que orquestan los casos de uso del sistema. No contiene lógica de negocio propia, solo delega a la capa de dominio y coordina la ejecución de los procesos.
 
-7. El cliente procede al **pago de la orden**.
-   - El sistema debe registrar el **pago realizado**, su método (tarjeta, PSE, etc.) y estado (`PENDIENTE`, `CONFIRMADO`, `FALLIDO`).
-   - Al confirmarse el pago, se **confirma la orden** y el stock reservado se descuenta definitivamente.
+### Servicios de aplicación:
 
-### Logística de envío
+#### `ServicioAplicacionPago`
+- Ejecuta confirmación de pagos
+- Llama a `ProcesadorDePago`
+- Devuelve `OrdenPagada`
 
-8. Se genera un **registro de envío**, incluyendo:
-   - Dirección de entrega (puede ser objeto de valor)
-   - Estado del envío (`PREPARANDO`, `ENVIADO`, `ENTREGADO`)
-   - Información de rastreo si aplica
+#### `ServicioAplicacionOrden`
+- Crear orden
+- Agregar/remover/cambiar ítems
+- Calcular total
+- Cancelar orden (devuelve `OrdenCancelada`)
 
-9. El cliente puede **consultar el estado de su envío** en cualquier momento.
+#### `ServicioAplicacionEnvio`
+- Despachar orden (tracking) y devolver `OrdenEnviada`
+- Entregar orden y devolver `OrdenEntregada`
 
-### Postventa
+#### `ServicioAplicacionInventario`
+- Reservar stock
+- Liberar stock
+- Consultar disponibilidad
 
-10. El cliente puede **realizar un reclamo** o **solicitar una devolución** si el producto:
-    - No llegó
-    - Llegó dañado
-    - No corresponde a lo comprado
+#### `ServicioAplicacionNotificacion`
+- Crear notificación pendiente
+- Marcar como enviada
 
-11. El sistema debe **registrar reclamos y devoluciones**, y vincularlos a la orden original.
+#### `ServicioAplicacionCliente`
+- Crear cliente
+- Actualizar nombre y email
+- Agregar/actualizar/eliminar direcciones
 
-### Notificaciones
+---
 
-12. El sistema debe enviar **notificaciones** al cliente en puntos clave del proceso:
-    - Orden confirmada
-    - Pago recibido
-    - Producto enviado
-    - Producto entregado
+## 3. Principios aplicados
+- Separación de responsabilidades clara entre dominio y aplicación
+- Eventos de dominio generados **solo como resultado de una acción del negocio**
+- No hay lógica de infraestructura en ninguna de las capas modeladas hasta ahora
+- Los servicios de dominio **no publican eventos**, solo modifican el estado del modelo
+- La aplicación genera los eventos cuando corresponde
+
+---
+
+> Este sistema está diseñado para crecer hacia infraestructura, APIs REST, mensajería o persistencia sin afectar la lógica del negocio. Todo se basa en un modelo rico, autocontenido y coherente con las reglas del negocio.
