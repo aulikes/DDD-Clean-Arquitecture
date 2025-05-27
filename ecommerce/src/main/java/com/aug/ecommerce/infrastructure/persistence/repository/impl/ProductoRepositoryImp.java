@@ -4,20 +4,17 @@ import com.aug.ecommerce.domain.model.producto.Producto;
 import com.aug.ecommerce.domain.repository.ProductoRepository;
 import com.aug.ecommerce.infrastructure.persistence.mapper.ProductoMapper;
 import com.aug.ecommerce.infrastructure.persistence.repository.contract.JpaProductoCrudRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
+@RequiredArgsConstructor
 @Repository
-public class ProductoRepositoryJpa implements ProductoRepository {
+public class ProductoRepositoryImp implements ProductoRepository {
 
     private final JpaProductoCrudRepository jpa;
-
-    public ProductoRepositoryJpa(JpaProductoCrudRepository jpa) {
-        this.jpa = jpa;
-    }
 
     @Override
     public void save(Producto producto) {

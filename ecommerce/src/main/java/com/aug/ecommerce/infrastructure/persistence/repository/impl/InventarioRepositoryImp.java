@@ -4,19 +4,17 @@ import com.aug.ecommerce.domain.model.inventario.Inventario;
 import com.aug.ecommerce.domain.repository.InventarioRepository;
 import com.aug.ecommerce.infrastructure.persistence.mapper.InventarioMapper;
 import com.aug.ecommerce.infrastructure.persistence.repository.contract.JpaInventarioCrudRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
 
+@RequiredArgsConstructor
 @Repository
-public class InventarioRepositoryJpa implements InventarioRepository {
+public class InventarioRepositoryImp implements InventarioRepository {
 
     private final JpaInventarioCrudRepository jpa;
-
-    public InventarioRepositoryJpa(JpaInventarioCrudRepository jpa) {
-        this.jpa = jpa;
-    }
 
     @Override
     public void save(Inventario inventario) {

@@ -9,15 +9,16 @@ public class Producto {
     private String descripcion;
     private Double precio;
     private String imagenUrl;
-    private final Set<UUID> categoriasIds;
 
-    public Producto(Long id, String nombre, String descripcion, Double precio, String imagenUrl) {
+    private Long categoriaId;
+
+    public Producto(Long id, String nombre, String descripcion, Double precio, String imagenUrl, Long categoriaId) {
         this.id = id;
         this.setNombre(nombre);
         this.setDescripcion(descripcion);
         this.setPrecio(precio);
         this.setImagenUrl(imagenUrl);
-        this.categoriasIds = new HashSet<>();
+        this.setCategoriaId(categoriaId);
     }
 
     public Long getId() { return id; }
@@ -25,9 +26,7 @@ public class Producto {
     public String getDescripcion() { return descripcion; }
     public Double getPrecio() { return precio; }
     public String getImagenUrl() { return imagenUrl; }
-    public Set<UUID> getCategoriasIds() {
-        return Collections.unmodifiableSet(categoriasIds);
-    }
+    public Long getCategoriaId() { return categoriaId; }
 
     public void setNombre(String nuevoNombre) {
         this.nombre = ValidadorDominio.validarCampoObligatorio(nuevoNombre);
@@ -47,12 +46,7 @@ public class Producto {
         this.imagenUrl = ValidadorDominio.validarCampoObligatorio(nuevaImagenUrl);
     }
 
-    // Gestión de categorías
-    public void agregarCategoria(UUID categoriaId) {
-        categoriasIds.add(Objects.requireNonNull(categoriaId));
-    }
-
-    public void removerCategoria(UUID categoriaId) {
-        categoriasIds.remove(Objects.requireNonNull(categoriaId));
+    public void setCategoriaId(Long categoriaId) {
+        this.categoriaId = categoriaId;
     }
 }

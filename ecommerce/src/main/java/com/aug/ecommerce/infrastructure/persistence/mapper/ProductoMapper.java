@@ -14,6 +14,7 @@ public class ProductoMapper {
         e.setDescripcion(producto.getDescripcion());
         e.setPrecio(producto.getPrecio());
         e.setImagenUrl(producto.getImagenUrl());
+        e.setCategoriaId(producto.getCategoriaId());
         return e;
     }
 
@@ -21,6 +22,6 @@ public class ProductoMapper {
 
         return new Producto(
                 entity.getId(), entity.getNombre(), entity.getDescripcion(),
-                entity.getPrecio(), entity.getImagenUrl());
+                entity.getPrecio(), entity.getImagenUrl(), entity.getCategoriaId());
     }
 }

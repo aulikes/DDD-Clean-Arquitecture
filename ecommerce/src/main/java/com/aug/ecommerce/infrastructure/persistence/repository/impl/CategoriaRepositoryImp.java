@@ -2,23 +2,19 @@ package com.aug.ecommerce.infrastructure.persistence.repository.impl;
 
 import com.aug.ecommerce.domain.model.categoria.Categoria;
 import com.aug.ecommerce.domain.repository.CategoriaRepository;
-import com.aug.ecommerce.infrastructure.persistence.entity.CategoriaEntity;
 import com.aug.ecommerce.infrastructure.persistence.mapper.CategoriaMapper;
 import com.aug.ecommerce.infrastructure.persistence.repository.contract.JpaCategoriaCrudRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
+@RequiredArgsConstructor
 @Repository
-public class CategoriaRepositoryJpa implements CategoriaRepository {
+public class CategoriaRepositoryImp implements CategoriaRepository {
 
     private final JpaCategoriaCrudRepository jpa;
-
-    public CategoriaRepositoryJpa(JpaCategoriaCrudRepository jpa) {
-        this.jpa = jpa;
-    }
 
     @Override
     public void save(Categoria categoria) {
