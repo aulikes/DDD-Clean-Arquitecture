@@ -25,7 +25,7 @@ public class ProductoRepositoryJpa implements ProductoRepository {
     }
 
     @Override
-    public Optional<Producto> findById(UUID id) {
+    public Optional<Producto> findById(Long id) {
         return jpa.findById(id).map(ProductoMapper::toDomain);
     }
 
@@ -35,7 +35,7 @@ public class ProductoRepositoryJpa implements ProductoRepository {
     }
 
     @Override
-    public void deleteById(UUID id) {
+    public void deleteById(Long id) {
         jpa.deleteById(id);
     }
 }

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
 public class InventarioRepositoryJpa implements InventarioRepository {
@@ -25,12 +24,12 @@ public class InventarioRepositoryJpa implements InventarioRepository {
     }
 
     @Override
-    public Optional<Inventario> findById(UUID id) {
+    public Optional<Inventario> findById(Long id) {
         return jpa.findById(id).map(InventarioMapper::toDomain);
     }
 
     @Override
-    public Optional<Inventario> findByProductoId(UUID productoId) {
+    public Optional<Inventario> findByProductoId(Long productoId) {
         return jpa.findByProductoId(productoId).map(InventarioMapper::toDomain);
     }
 
@@ -40,7 +39,7 @@ public class InventarioRepositoryJpa implements InventarioRepository {
     }
 
     @Override
-    public void deleteById(UUID id) {
+    public void deleteById(Long id) {
         jpa.deleteById(id);
     }
 }

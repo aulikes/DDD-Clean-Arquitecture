@@ -16,7 +16,7 @@ public class ClienteService {
     private final ClienteRepository clienteRepository;
 
     public Cliente crearCliente(CrearClienteCommand cliente) {
-        Cliente newClient = new Cliente(UUID.randomUUID(), cliente.getNombre(), cliente.getEmail());
+        Cliente newClient = new Cliente(null, cliente.getNombre(), cliente.getEmail());
         for (CrearClienteCommand.Direccion dir : cliente.getDirecciones()) {
             newClient.agregarDireccion(dir.getCalle(), dir.getCiudad(), dir.getPais(), dir.getCodigoPostal());
         }
@@ -43,7 +43,7 @@ public class ClienteService {
     }
 
     public Direccion agregarDireccion(
-            UUID clienteId, String calle, String ciudad, String pais, String codigoPostal) {
+            Long clienteId, String calle, String ciudad, String pais, String codigoPostal) {
         Cliente clienteDom = clienteRepository.findById(clienteId).orElseThrow(() ->
                 new IllegalArgumentException("Cliente no encontrado")
         );
@@ -51,7 +51,7 @@ public class ClienteService {
     }
 
     public void actualizarDireccion(
-            UUID clienteId, UUID direccionId, String nuevaCalle, String nuevaCiudad,  String nuevoPais,
+            Long clienteId, UUID direccionId, String nuevaCalle, String nuevaCiudad,  String nuevoPais,
             String nuevoCodigoPostal
     ) {
         Cliente clienteDom = clienteRepository.findById(clienteId).orElseThrow(() ->

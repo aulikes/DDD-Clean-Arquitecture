@@ -6,10 +6,10 @@ import java.util.Optional;
 
 public interface PagoRepository {
     void save(Pago pago);
-    Optional<Pago> findById(String id);
+    Optional<Pago> findById(Long id);
     List<Pago> findAll();
-    void deleteById(String id);
+    void deleteById(Long id);
 
-    List<Pago> findByOrdenId(String ordenId);
-    List<Pago> findByEstado(String estado);
+    List<Pago> findByOrdenId(Long ordenId);
+    List<Pago> findByEstado(Long estado);
 }

@@ -1,21 +1,20 @@
 package com.aug.ecommerce.domain.model.pago;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class Pago {
     public enum Estado {
         PENDIENTE, CONFIRMADO, FALLIDO
     }
 
-    private final UUID id;
-    private final UUID ordenId;
+    private final Long id;
+    private final Long ordenId;
     private final double monto;
     private final String metodo; // Ej: "tarjeta", "paypal", etc.
     private Estado estado;
 
-    public Pago(UUID id, UUID ordenId, double monto, String metodo) {
-        this.id = Objects.requireNonNull(id, "El id no puede ser nulo");
+    public Pago(Long id, Long ordenId, double monto, String metodo) {
+        this.id = id;
         this.ordenId = Objects.requireNonNull(ordenId, "El ordenId no puede ser nulo");
 
         if (monto <= 0)
@@ -26,8 +25,8 @@ public class Pago {
         this.estado = Estado.PENDIENTE;
     }
 
-    public UUID getId() { return id; }
-    public UUID getOrdenId() { return ordenId; }
+    public Long getId() { return id; }
+    public Long getOrdenId() { return ordenId; }
     public double getMonto() { return monto; }
     public String getMetodo() { return metodo; }
     public Estado getEstado() { return estado; }

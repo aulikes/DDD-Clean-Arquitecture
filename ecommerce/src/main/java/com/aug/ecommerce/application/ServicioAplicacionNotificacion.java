@@ -9,8 +9,8 @@ public class ServicioAplicacionNotificacion {
     }
 
     public Notificacion crearNotificacionPendiente(
-            java.util.UUID id,
-            java.util.UUID destinatarioId,
+            Long id,
+            Long destinatarioId,
             String tipo,
             String mensaje
     ) {

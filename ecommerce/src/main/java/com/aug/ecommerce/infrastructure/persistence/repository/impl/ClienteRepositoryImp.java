@@ -23,7 +23,7 @@ public class ClienteRepositoryImp implements ClienteRepository {
     }
 
     @Override
-    public Optional<Cliente> findById(UUID id) {
+    public Optional<Cliente> findById(Long id) {
         return jpa.findById(id).map(ClienteMapper::toDomain);
     }
 

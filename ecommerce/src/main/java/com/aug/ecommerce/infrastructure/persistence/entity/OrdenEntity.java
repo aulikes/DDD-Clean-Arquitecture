@@ -13,9 +13,10 @@ import java.util.UUID;
 public class OrdenEntity {
 
     @Id
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private UUID clienteId;
+    private Long clienteId;
 
 //    @Enumerated(EnumType.STRING)
     private String estado;

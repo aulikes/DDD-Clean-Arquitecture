@@ -9,7 +9,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @Repository
@@ -23,7 +22,7 @@ public class OrdenRepositoryImp implements OrdenRepository {
     }
 
     @Override
-    public Optional<Orden> findById(UUID id) {
+    public Optional<Orden> findById(Long id) {
         return jpa.findById(id).map(OrdenMapper::toDomain);
     }
 
@@ -38,12 +37,12 @@ public class OrdenRepositoryImp implements OrdenRepository {
     }
 
     @Override
-    public void deleteById(UUID id) {
+    public void deleteById(Long id) {
         jpa.deleteById(id);
     }
 
     @Override
-    public List<Orden> findByClienteId(UUID clienteId) {
+    public List<Orden> findByClienteId(Long clienteId) {
         return jpa.findByClienteId(clienteId).stream().map(OrdenMapper::toDomain).toList();
     }
 }

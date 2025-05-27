@@ -1,15 +1,14 @@
 package com.aug.ecommerce.domain.model.orden;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public final class ItemOrden {
-    private final UUID id;
-    private final UUID productoId;
+    private final Long id;
+    private final Long productoId;
     private int cantidad;
     private double precioUnitario;
 
-    ItemOrden(UUID id, UUID productoId, int cantidad, double precioUnitario) {
+    ItemOrden(Long id, Long productoId, int cantidad, double precioUnitario) {
         this.id = Objects.requireNonNull(id, "El id no puede ser nulo");
         this.productoId = Objects.requireNonNull(productoId, "El productoId no puede ser nulo");
         if (cantidad <= 0) throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
@@ -18,8 +17,8 @@ public final class ItemOrden {
         this.precioUnitario = precioUnitario;
     }
 
-    public UUID getId() { return id; }
-    public UUID getProductoId() { return productoId; }
+    public Long getId() { return id; }
+    public Long getProductoId() { return productoId; }
     public int getCantidad() { return cantidad; }
     public double getPrecioUnitario() { return precioUnitario; }
     public double getSubtotal() { return cantidad * precioUnitario; }

@@ -8,21 +8,21 @@ public class Envio {
         PREPARANDO, DESPACHADO, ENTREGADO
     }
 
-    private final UUID id;
-    private final UUID ordenId;
+    private final Long id;
+    private final Long ordenId;
     private final String direccionEnvio;
     private Estado estado;
     private String trackingNumber;
 
-    public Envio(UUID id, UUID ordenId, String direccionEnvio) {
-        this.id = Objects.requireNonNull(id, "El id no puede ser nulo");
+    public Envio(Long id, Long ordenId, String direccionEnvio) {
+        this.id = id;
         this.ordenId = Objects.requireNonNull(ordenId, "La orden no puede ser nula");
         this.direccionEnvio = Objects.requireNonNull(direccionEnvio, "La dirección no puede ser nula");
         this.estado = Estado.PREPARANDO;
     }
 
-    public UUID getId() { return id; }
-    public UUID getOrdenId() { return ordenId; }
+    public Long getId() { return id; }
+    public Long getOrdenId() { return ordenId; }
     public String getDireccionEnvio() { return direccionEnvio; }
     public Estado getEstado() { return estado; }
     public String getTrackingNumber() { return trackingNumber; }

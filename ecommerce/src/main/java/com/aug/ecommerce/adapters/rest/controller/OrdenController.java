@@ -20,7 +20,7 @@ public class OrdenController {
     private final OrdenMapper mapper;
 
     @PostMapping
-    public ResponseEntity<UUID> crearOrden(@Valid @RequestBody RealizarOrdenRequestDTO request) {
+    public ResponseEntity<Long> crearOrden(@Valid @RequestBody RealizarOrdenRequestDTO request) {
         return new ResponseEntity<>(ordenService.crearOrden(mapper.toCommand(request)), HttpStatus.CREATED);
     }
 }

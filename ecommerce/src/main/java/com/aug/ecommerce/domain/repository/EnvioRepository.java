@@ -6,9 +6,9 @@ import java.util.Optional;
 
 public interface EnvioRepository {
     void save(Envio envio);
-    Optional<Envio> findById(String id);
+    Optional<Envio> findById(Long id);
     List<Envio> findAll();
-    void deleteById(String id);
+    void deleteById(Long id);
 
-    List<Envio> findByOrdenId(String ordenId);
+    List<Envio> findByOrdenId(Long ordenId);
 }

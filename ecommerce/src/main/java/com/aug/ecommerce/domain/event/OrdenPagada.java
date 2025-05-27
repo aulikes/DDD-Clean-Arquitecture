@@ -1,13 +1,11 @@
 package com.aug.ecommerce.domain.event;
 
-import java.util.UUID;
-
 public final class OrdenPagada {
-    private final UUID ordenId;
+    private final Long ordenId;
 
-    public OrdenPagada(UUID ordenId) {
+    public OrdenPagada(Long ordenId) {
         this.ordenId = ordenId;
     }
 
-    public UUID getOrdenId() { return ordenId; }
+    public Long getOrdenId() { return ordenId; }
 }

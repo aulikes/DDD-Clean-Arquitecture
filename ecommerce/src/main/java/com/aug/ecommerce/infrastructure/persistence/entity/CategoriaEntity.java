@@ -7,15 +7,13 @@ import java.util.UUID;
 
 @Entity
 @Data
-@Table(name = "DIRECCION")
-public class DireccionEntity {
+@Table(name = "CATEGORIA")
+public class CategoriaEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String calle;
-    private String ciudad;
-    private String pais;
-    private String codigoPostal;
+    private String nombre;
+    private String descripcion;
 }

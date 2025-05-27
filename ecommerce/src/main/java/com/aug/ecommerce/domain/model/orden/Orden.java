@@ -3,34 +3,34 @@ package com.aug.ecommerce.domain.model.orden;
 import java.util.*;
 
 public class Orden {
-    private final UUID id;
-    private final UUID clienteId;
+    private final Long id;
+    private final Long clienteId;
     private final List<ItemOrden> items;
     private EstadoOrden estado;
 
-    public Orden(UUID id, UUID clienteId) {
-        this.id = Objects.requireNonNull(id, "El id no puede ser nulo");
+    public Orden(Long id, Long clienteId) {
+        this.id = id;
         this.clienteId = Objects.requireNonNull(clienteId, "El clienteId no puede ser nulo");
         this.items = new ArrayList<>();
         this.estado = EstadoOrden.NUEVA;
     }
 
-    public UUID getId() { return id; }
-    public UUID getClienteId() { return clienteId; }
+    public Long getId() { return id; }
+    public Long getClienteId() { return clienteId; }
     public List<ItemOrden> getItems() { return Collections.unmodifiableList(items); }
     public EstadoOrden getEstado() { return estado; }
 
-    public void agregarItem(UUID productoId, int cantidad, double precioUnitario) {
+    public void agregarItem(Long productoId, int cantidad, double precioUnitario) {
         validarEstadoEditable();
-        items.add(new ItemOrden(UUID.randomUUID(), productoId, cantidad, precioUnitario));
+        items.add(new ItemOrden(null, productoId, cantidad, precioUnitario));
     }
 
-    public void removerItem(UUID itemOrdenId) {
+    public void removerItem(Long itemOrdenId) {
         validarEstadoEditable();
         items.removeIf(item -> item.getId().equals(itemOrdenId));
     }
 
-    public void cambiarCantidadItem(UUID itemOrdenId, int nuevaCantidad) {
+    public void cambiarCantidadItem(Long itemOrdenId, int nuevaCantidad) {
         validarEstadoEditable();
         items.stream()
                 .filter(item -> item.getId().equals(itemOrdenId))

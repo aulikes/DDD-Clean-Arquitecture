@@ -8,22 +8,22 @@ public class Notificacion {
         PENDIENTE, ENVIADA
     }
 
-    private final UUID id;
-    private final UUID destinatarioId;
+    private final Long id;
+    private final Long destinatarioId;
     private final String tipo;
     private final String mensaje;
     private Estado estado;
 
-    public Notificacion(UUID id, UUID destinatarioId, String tipo, String mensaje) {
-        this.id = Objects.requireNonNull(id, "El id no puede ser nulo");
+    public Notificacion(Long id, Long destinatarioId, String tipo, String mensaje) {
+        this.id = id;
         this.destinatarioId = Objects.requireNonNull(destinatarioId, "El destinatario no puede ser nulo");
         this.tipo = Objects.requireNonNull(tipo, "El tipo no puede ser nulo");
         this.mensaje = Objects.requireNonNull(mensaje, "El mensaje no puede ser nulo");
         this.estado = Estado.PENDIENTE;
     }
 
-    public UUID getId() { return id; }
-    public UUID getDestinatarioId() { return destinatarioId; }
+    public Long getId() { return id; }
+    public Long getDestinatarioId() { return destinatarioId; }
     public String getTipo() { return tipo; }
     public String getMensaje() { return mensaje; }
     public Estado getEstado() { return estado; }

@@ -12,7 +12,9 @@ import java.util.UUID;
 public class ProductoEntity {
 
     @Id
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String nombre;
     private String descripcion;
     private Double precio;

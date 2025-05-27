@@ -19,13 +19,13 @@ public class OrdenService {
     private final ProductoRepository productoRepository;
     private final InventarioRepository inventarioRepository;
 
-    public UUID crearOrden(RealizarOrdenCommand command) {
+    public Long crearOrden(RealizarOrdenCommand command) {
         // Validar cliente
         if (!clienteRepository.findById(command.getClienteId()).isPresent()) {
             throw new IllegalArgumentException("Cliente no encontrado");
         }
 
-        Orden orden = new Orden(UUID.randomUUID(), command.getClienteId());
+        Orden orden = new Orden(null, command.getClienteId());
 
         for (RealizarOrdenCommand.Item item : command.getItems()) {
             Producto producto = productoRepository.findById(item.getProductoId())

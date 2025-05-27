@@ -4,12 +4,11 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
 
 import java.util.List;
-import java.util.UUID;
 
 @Data
 public class RealizarOrdenRequestDTO {
     @NotNull
-    private UUID clienteId;
+    private Long clienteId;
 
     @NotEmpty
     private List<ItemOrdenDTO> items;
@@ -17,7 +16,7 @@ public class RealizarOrdenRequestDTO {
     @Data
     public static class ItemOrdenDTO {
         @NotNull
-        private UUID productoId;
+        private Long productoId;
 
         @Min(1)
         private int cantidad;

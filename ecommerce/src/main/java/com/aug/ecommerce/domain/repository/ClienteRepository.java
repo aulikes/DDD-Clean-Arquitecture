@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public interface ClienteRepository {
     void save(Cliente cliente);
-    Optional<Cliente> findById(UUID id);
+    Optional<Cliente> findById(Long id);
     List<Cliente> findAll();
 
     Optional<Cliente> findByEmail(String email);

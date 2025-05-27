@@ -4,15 +4,15 @@ import com.aug.ecommerce.domain.util.ValidadorDominio;
 import java.util.*;
 
 public class Producto {
-    private final UUID id;
+    private final Long id;
     private String nombre;
     private String descripcion;
     private Double precio;
     private String imagenUrl;
     private final Set<UUID> categoriasIds;
 
-    public Producto(UUID id, String nombre, String descripcion, Double precio, String imagenUrl) {
-        this.id = Objects.requireNonNull(id, "El id no puede ser nulo");
+    public Producto(Long id, String nombre, String descripcion, Double precio, String imagenUrl) {
+        this.id = id;
         this.setNombre(nombre);
         this.setDescripcion(descripcion);
         this.setPrecio(precio);
@@ -20,7 +20,7 @@ public class Producto {
         this.categoriasIds = new HashSet<>();
     }
 
-    public UUID getId() { return id; }
+    public Long getId() { return id; }
     public String getNombre() { return nombre; }
     public String getDescripcion() { return descripcion; }
     public Double getPrecio() { return precio; }

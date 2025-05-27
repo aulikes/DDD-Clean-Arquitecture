@@ -8,16 +8,17 @@ import java.util.UUID;
 public class InventarioEntity {
 
     @Id
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    private UUID productoId;
+    private Long productoId;
     private int cantidadDisponible;
 
-    public UUID getId() { return id; }
-    public void setId(UUID id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public UUID getProductoId() { return productoId; }
-    public void setProductoId(UUID productoId) { this.productoId = productoId; }
+    public Long getProductoId() { return productoId; }
+    public void setProductoId(Long productoId) { this.productoId = productoId; }
 
     public int getCantidadDisponible() { return cantidadDisponible; }
     public void setCantidadDisponible(int cantidadDisponible) { this.cantidadDisponible = cantidadDisponible; }

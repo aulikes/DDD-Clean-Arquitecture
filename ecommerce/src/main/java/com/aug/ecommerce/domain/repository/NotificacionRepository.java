@@ -6,9 +6,9 @@ import java.util.Optional;
 
 public interface NotificacionRepository {
     void save(Notificacion notificacion);
-    Optional<Notificacion> findById(String id);
+    Optional<Notificacion> findById(Long id);
     List<Notificacion> findAll();
-    void deleteById(String id);
+    void deleteById(Long id);
 
-    List<Notificacion> findByClienteId(String clienteId);
+    List<Notificacion> findByClienteId(Long clienteId);
 }

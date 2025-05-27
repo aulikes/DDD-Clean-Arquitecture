@@ -4,25 +4,25 @@ import com.aug.ecommerce.domain.util.ValidadorDominio;
 import java.util.*;
 
 public class Categoria {
-    private final UUID id;
+    private final Long id;
     private String nombre;
     private String descripcion;
     private boolean activa;
-    private final Set<UUID> productosIds;
+    private final Set<Long> productosIds;
 
-    public Categoria(UUID id, String nombre, String descripcion) {
-        this.id = Objects.requireNonNull(id, "El id no puede ser nulo");
+    public Categoria(Long id, String nombre, String descripcion) {
+        this.id = id;
         this.setNombre(nombre);
         this.setDescripcion(descripcion);
         this.activa = true;
         this.productosIds = new HashSet<>();
     }
 
-    public UUID getId() { return id; }
+    public Long getId() { return id; }
     public String getNombre() { return nombre; }
     public String getDescripcion() { return descripcion; }
     public boolean isActiva() { return activa; }
-    public Set<UUID> getProductosIds() {
+    public Set<Long> getProductosIds() {
         return Collections.unmodifiableSet(productosIds);
     }
 
@@ -37,11 +37,11 @@ public class Categoria {
     public void inactivar() { this.activa = false; }
     public void activar() { this.activa = true; }
 
-    public void agregarProducto(UUID productoId) {
+    public void agregarProducto(Long productoId) {
         productosIds.add(Objects.requireNonNull(productoId));
     }
 
-    public void removerProducto(UUID productoId) {
+    public void removerProducto(Long productoId) {
         productosIds.remove(Objects.requireNonNull(productoId));
     }
 }

@@ -7,19 +7,19 @@ import java.util.UUID;
 
 public class ServicioAplicacionOrden {
 
-    public Orden crearOrden(UUID id, UUID clienteId) {
+    public Orden crearOrden(Long id, Long clienteId) {
         return new Orden(id, clienteId);
     }
 
-    public void agregarItem(Orden orden, UUID productoId, int cantidad, double precioUnitario) {
+    public void agregarItem(Orden orden, Long productoId, int cantidad, double precioUnitario) {
         orden.agregarItem(productoId, cantidad, precioUnitario);
     }
 
-    public void removerItem(Orden orden, UUID itemOrdenId) {
+    public void removerItem(Orden orden, Long itemOrdenId) {
         orden.removerItem(itemOrdenId);
     }
 
-    public void cambiarCantidadItem(Orden orden, UUID itemOrdenId, int nuevaCantidad) {
+    public void cambiarCantidadItem(Orden orden, Long itemOrdenId, int nuevaCantidad) {
         orden.cambiarCantidadItem(itemOrdenId, nuevaCantidad);
     }
 

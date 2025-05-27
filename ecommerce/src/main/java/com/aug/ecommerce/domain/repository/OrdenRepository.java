@@ -3,14 +3,13 @@ package com.aug.ecommerce.domain.repository;
 import com.aug.ecommerce.domain.model.orden.Orden;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface OrdenRepository {
     void save(Orden orden);
-    Optional<Orden> findById(UUID id);
+    Optional<Orden> findById(Long id);
     List<Orden> findAll();
-    void deleteById(UUID id);
+    void deleteById(Long id);
 
-    List<Orden> findByClienteId(UUID clienteId);
+    List<Orden> findByClienteId(Long clienteId);
     List<Orden> findByEstado(String estado);
 }

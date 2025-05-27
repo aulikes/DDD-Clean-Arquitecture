@@ -5,19 +5,19 @@ import com.aug.ecommerce.domain.util.ValidadorDominio;
 import java.util.*;
 
 public class Cliente {
-    private final UUID id;
+    private final Long id;
     private String nombre;
     private String email;
     private final List<Direccion> direcciones;
 
-    public Cliente(UUID id, String nombre, String email) {
-        this.id = Objects.requireNonNull(id, "El id no puede ser nulo");
+    public Cliente(Long id, String nombre, String email) {
+        this.id = id;
         this.setNombre(nombre);
         this.setEmail(email);
         this.direcciones = new ArrayList<>();
     }
 
-    public UUID getId() { return id; }
+    public Long getId() { return id; }
     public String getNombre() { return nombre; }
     public String getEmail() { return email; }
     public List<Direccion> getDirecciones() {
@@ -33,7 +33,7 @@ public class Cliente {
     }
 
     public Direccion agregarDireccion(String calle, String ciudad, String pais, String codigoPostal) {
-        Direccion direccion = new Direccion(UUID.randomUUID(), calle, ciudad, pais, codigoPostal);
+        Direccion direccion = new Direccion(calle, ciudad, pais, codigoPostal);
         direcciones.add(direccion);
         return direccion;
     }
