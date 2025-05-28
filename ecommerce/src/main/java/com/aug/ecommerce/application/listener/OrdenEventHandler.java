@@ -15,10 +15,10 @@ public class OrdenEventHandler {
 
     private final OrdenService ordenService;
 
-    @Transactional
-    @EventListener
-    public void orderPagoConfirmadoEvent(PagoConfirmadoEvent evento) {
-        log.info("Evento recibido: PagoConfirmadoEvent para orden {}", evento.ordenId());
-        ordenService.pagarOrden(evento.ordenId());
-    }
+//    @Transactional
+//    @EventListener
+//    public void orderPagoConfirmadoEvent(PagoConfirmadoEvent evento) {
+//        log.info("Evento recibido: PagoConfirmadoEvent para orden {}", evento.ordenId());
+//        ordenService.promesaPagoOrden(evento.ordenId());
+//    }
 }

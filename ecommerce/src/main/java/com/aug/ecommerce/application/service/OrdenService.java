@@ -1,7 +1,8 @@
 package com.aug.ecommerce.application.service;
 
 import com.aug.ecommerce.application.command.RealizarOrdenCommand;
-import com.aug.ecommerce.domain.model.orden.EstadoOrden;
+import com.aug.ecommerce.application.event.OrderPaymentRequestedEvent;
+import com.aug.ecommerce.application.publisher.OrderEventPublisher;
 import com.aug.ecommerce.domain.model.orden.Orden;
 import com.aug.ecommerce.domain.model.producto.Producto;
 import com.aug.ecommerce.domain.model.inventario.Inventario;
@@ -19,15 +20,14 @@ public class OrdenService {
     private final ClienteRepository clienteRepository;
     private final ProductoRepository productoRepository;
     private final InventarioRepository inventarioRepository;
+    private final OrderEventPublisher publisher;
 
     public Long crearOrden(RealizarOrdenCommand command) {
         // Validar cliente
         if (clienteRepository.findById(command.getClienteId()).isEmpty()) {
             throw new IllegalArgumentException("Cliente no encontrado");
         }
-
         Orden orden = Orden.create(command.getClienteId(), command.getDireccionEnviar());
-
         for (RealizarOrdenCommand.Item item : command.getItems()) {
             Producto producto = productoRepository.findById(item.getProductoId())
                     .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado: " + item.getProductoId()));
@@ -38,25 +38,33 @@ public class OrdenService {
             if (inventario.getStockDisponible() < item.getCantidad()) {
                 throw new IllegalStateException("Stock insuficiente para producto: " + producto.getNombre());
             }
-
             orden.agregarItem(producto.getId(), item.getCantidad(), producto.getPrecio());
         }
-
         ordenRepository.save(orden);
         return orden.getId();
     }
 
-    public void pagarOrden(Long idOrden){
+    /**
+     * Solicita el inicio del proceso de pago para una orden.
+     * Publica un evento al exterior con la intención de realizar el pago.
+     */
+    public void solicitarPago(Long idOrden, String medioPago){
         ordenRepository.findById(idOrden).ifPresentOrElse(orden -> {
-            if (orden.getEstado() == EstadoOrden.NUEVA) {
-                orden.pagar();
-                ordenRepository.save(orden);
-                log.info("Orden {} actualizada a estado PAGADA", orden.getId());
-            } else {
-                log.error("La orden {} no está en estado NUEVA. No se puede marcar como PAGADA.", orden.getId());
-            }
-        }, () -> log.error("Orden con ID {} no encontrada", idOrden));
+            orden.reservar();
+            ordenRepository.save(orden);
+            log.info("Orden {} actualizada a estado PENDIENTE", orden.getId());
 
+            // Publicar evento
+            OrderPaymentRequestedEvent event = new OrderPaymentRequestedEvent(
+                    orden.getId(),
+                    orden.getDireccionEnviar(),
+                    orden.calcularTotal(),
+                    medioPago
+            );
+
+            publisher.publishOrderPaymentRequested(event);
+            log.info("Evento OrderPaymentRequestEvent publicado para orden {}", orden.getId());
+        }, () -> log.error("Orden con ID {} no encontrada", idOrden));
     }
 
     //FALTARÍA IMPLEMENTAR

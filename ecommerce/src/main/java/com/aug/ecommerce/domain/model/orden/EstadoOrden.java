@@ -7,7 +7,8 @@ import java.util.*;
  * Encapsula las transiciones permitidas y evita que el aggregate viole el flujo de negocio.
  */
 public final class EstadoOrden {
-    public static final EstadoOrden NUEVA     = new EstadoOrden("NUEVA", List.of("PAGADA", "CANCELADA"));
+    public static final EstadoOrden NUEVA     = new EstadoOrden("NUEVA", List.of("PENDIENTE", "CANCELADA"));
+    public static final EstadoOrden PENDIENTE = new EstadoOrden("PENDIENTE", List.of("PAGADA", "CANCELADA"));
     public static final EstadoOrden PAGADA    = new EstadoOrden("PAGADA", List.of("ENVIADA", "CANCELADA"));
     public static final EstadoOrden ENVIADA   = new EstadoOrden("ENVIADA", List.of("ENTREGADA"));
     public static final EstadoOrden ENTREGADA = new EstadoOrden("ENTREGADA", List.of());
@@ -15,6 +16,7 @@ public final class EstadoOrden {
 
     private static final Map<String, EstadoOrden> estados = Map.of(
             "NUEVA", NUEVA,
+            "PENDIENTE", PENDIENTE,
             "PAGADA", PAGADA,
             "ENVIADA", ENVIADA,
             "ENTREGADA", ENTREGADA,

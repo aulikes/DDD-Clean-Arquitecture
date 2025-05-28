@@ -1,7 +1,5 @@
 package com.aug.ecommerce.adapters.rest.controller;
 
-import com.aug.ecommerce.adapters.rest.dto.RealizarPagoRequestDTO;
-import com.aug.ecommerce.application.command.RealizarPagoCommand;
 import com.aug.ecommerce.application.service.PagoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

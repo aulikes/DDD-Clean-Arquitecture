@@ -76,6 +76,10 @@ public class Orden {
         return total;
     }
 
+    public void reservar() {
+        cambiarEstado(EstadoOrden.PENDIENTE);
+    }
+
     public void pagar() {
         cambiarEstado(EstadoOrden.PAGADA);
     }
