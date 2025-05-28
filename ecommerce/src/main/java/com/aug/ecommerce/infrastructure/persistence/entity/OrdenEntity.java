@@ -17,9 +17,8 @@ public class OrdenEntity {
     private Long id;
 
     private Long clienteId;
-
-//    @Enumerated(EnumType.STRING)
     private String estado;
+    private String direccionEnviar;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "orden_id")

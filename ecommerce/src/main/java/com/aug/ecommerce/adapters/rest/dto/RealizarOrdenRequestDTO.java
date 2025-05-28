@@ -13,6 +13,9 @@ public class RealizarOrdenRequestDTO {
     @NotEmpty
     private List<ItemOrdenDTO> items;
 
+    @NotNull
+    private String direccionEnviar;
+
     @Data
     public static class ItemOrdenDTO {
         @NotNull

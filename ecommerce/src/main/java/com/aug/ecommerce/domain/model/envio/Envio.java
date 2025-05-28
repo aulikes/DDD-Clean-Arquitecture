@@ -1,42 +1,52 @@
 package com.aug.ecommerce.domain.model.envio;
 
 import java.util.Objects;
-import java.util.UUID;
 
 public class Envio {
-    public enum Estado {
-        PREPARANDO, DESPACHADO, ENTREGADO
-    }
 
     private final Long id;
     private final Long ordenId;
     private final String direccionEnvio;
-    private Estado estado;
+    private EstadoEnvio estado;
     private String trackingNumber;
 
-    public Envio(Long id, Long ordenId, String direccionEnvio) {
+    public static Envio create(Long ordenId, String direccionEnvio) {
+        return new Envio(null, ordenId, direccionEnvio, EstadoEnvio.PENDIENTE, null);
+    }
+
+    public static Envio fromPersistence(Long id, Long ordenId, String direccionEnvio,
+                                        EstadoEnvio estado, String trackingNumber) {
+        if (id == null) throw new IllegalArgumentException("El id no puede ser nulo");
+        return new Envio(id, ordenId, direccionEnvio, estado, trackingNumber);
+    }
+
+    private Envio(Long id, Long ordenId, String direccionEnvio, EstadoEnvio estado, String trackingNumber) {
         this.id = id;
         this.ordenId = Objects.requireNonNull(ordenId, "La orden no puede ser nula");
         this.direccionEnvio = Objects.requireNonNull(direccionEnvio, "La dirección no puede ser nula");
-        this.estado = Estado.PREPARANDO;
+        this.estado = estado;
+        this.trackingNumber = trackingNumber;
     }
 
     public Long getId() { return id; }
     public Long getOrdenId() { return ordenId; }
     public String getDireccionEnvio() { return direccionEnvio; }
-    public Estado getEstado() { return estado; }
+    public EstadoEnvio getEstado() { return estado; }
     public String getTrackingNumber() { return trackingNumber; }
 
-    public void despachar(String trackingNumber) {
-        if (estado != Estado.PREPARANDO)
-            throw new IllegalStateException("Solo puede despacharse un envío que está preparando");
+    //Se cambia el estado cuando el proveeddor de envíos recibió la petición
+    public void prepararEnvio(String trackingNumber) {
+        if (estado != EstadoEnvio.PENDIENTE)
+            throw new IllegalStateException("Solo puede preparar un envío que está pendiente");
         this.trackingNumber = Objects.requireNonNull(trackingNumber, "El número de seguimiento no puede ser nulo");
-        this.estado = Estado.DESPACHADO;
+        this.estado = EstadoEnvio.PREPARANDO;
     }
 
-    public void entregar() {
-        if (estado != Estado.DESPACHADO)
+    //Solo se pueden cambiar los estados desde el proveedor de envios si es Preparando o Despachando
+    public void actualizarEstadoFromSupplier(EstadoEnvio estadoEnvio) {
+        if (estado == EstadoEnvio.PREPARANDO || estado == EstadoEnvio.DESPACHADO)
             throw new IllegalStateException("Solo se puede entregar un envío despachado");
-        this.estado = Estado.ENTREGADO;
+        this.estado = estadoEnvio;
     }
+
 }

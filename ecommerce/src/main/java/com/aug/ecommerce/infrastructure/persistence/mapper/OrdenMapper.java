@@ -1,10 +1,11 @@
 package com.aug.ecommerce.infrastructure.persistence.mapper;
 
+import com.aug.ecommerce.domain.model.orden.EstadoOrden;
 import com.aug.ecommerce.domain.model.orden.Orden;
-import com.aug.ecommerce.domain.model.orden.ItemOrden;
 import com.aug.ecommerce.infrastructure.persistence.entity.ItemOrdenEntity;
 import com.aug.ecommerce.infrastructure.persistence.entity.OrdenEntity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,10 +33,14 @@ public class OrdenMapper {
     }
 
     public static Orden toDomain(OrdenEntity entity) {
-        Orden orden = new Orden(entity.getId(), entity.getClienteId());
-        entity.getItems().forEach(item -> {
-            orden.agregarItem(item.getProductoId(), item.getCantidad(), item.getPrecioUnitario());
-        });
+        Orden orden = Orden.fromPersistence(entity.getId(), entity.getClienteId(),
+                entity.getDireccionEnviar(), new ArrayList<>(), EstadoOrden.desde(entity.getEstado())
+                );
+        entity.getItems().forEach(item -> orden.restoreItem(
+                item.getId(),
+                item.getProductoId(),
+                item.getCantidad(),
+                item.getPrecioUnitario()));
         return orden;
     }
 }

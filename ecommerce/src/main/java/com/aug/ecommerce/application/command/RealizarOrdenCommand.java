@@ -8,10 +8,13 @@ import java.util.List;
 public class RealizarOrdenCommand {
     private final Long clienteId;
     private final List<Item> items;
+    private String direccionEnviar;
 
-    public RealizarOrdenCommand(Long clienteId, List<Item> items) {
+    public RealizarOrdenCommand(Long clienteId, List<Item> items, String direccionEnviar) {
         this.clienteId = clienteId;
         this.items = items;
+        this.direccionEnviar = direccionEnviar;
+
     }
 
     @Data
