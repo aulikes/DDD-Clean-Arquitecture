@@ -122,9 +122,12 @@ public class Orden {
     }
 
     private void validarEstadoEditable() {
-        if (!estado.equals(EstadoOrden.deTipo(EstadoOrden.Tipo.LISTA_PARA_PAGO)))
-            throw new IllegalStateException("No se puede modificar una orden que no está en estado NUEVA");
+        if (!estado.equals(EstadoOrden.deTipo(EstadoOrden.Tipo.LISTA_PARA_PAGO)) &&
+                !estado.equals(EstadoOrden.deTipo(EstadoOrden.Tipo.PENDIENTE_VALIDACION))) {
+            throw new IllegalStateException("No se puede modificar una orden en estado " + estado.getValor());
+        }
     }
+
 
     private void validarOrdenTieneItems() {
         if (items.isEmpty())

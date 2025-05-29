@@ -5,12 +5,14 @@ import com.aug.ecommerce.domain.model.inventario.Inventario;
 import com.aug.ecommerce.domain.repository.InventarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Service
 public class InventarioService {
     private final InventarioRepository inventarioRepository;
 
+    @Transactional
     public void crearInvenario(CrearInventarioCommand crearInventarioCommand){
 
         Inventario inventario = inventarioRepository.findById(crearInventarioCommand.productoId())

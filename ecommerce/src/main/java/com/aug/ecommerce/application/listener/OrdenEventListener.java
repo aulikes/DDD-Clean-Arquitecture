@@ -15,32 +15,68 @@ public class OrdenEventListener {
     private final OrdenValidacionService ordenValidacionService;
 
     @EventListener
-    public void onClienteValido(ClienteValidoEvent event) {
-        ordenValidacionService.registrarValidacionExitosa(event.ordenId(), "CLIENTE");
+    public void onClienteValido(ClienteValidoEvent event) throws Exception {
+        try {
+            log.debug("------------> ClienteValidoEvent");
+            ordenValidacionService.registrarValidacionExitosa(event.ordenId(), "CLIENTE");
+        } catch (Exception e) {
+            log.error("------------> onClienteValido", e);
+            throw new Exception(e);
+        }
     }
 
     @EventListener
-    public void onProductoValido(ProductoValidoEvent event) {
-        ordenValidacionService.registrarValidacionExitosa(event.ordenId(), "PRODUCTO");
+    public void onProductoValido(ProductoValidoEvent event) throws Exception{
+        try {
+            log.debug("------------> ProductoValidoEvent");
+            ordenValidacionService.registrarValidacionExitosa(event.ordenId(), "PRODUCTO");
+        } catch (Exception e) {
+            log.error("------------> onProductoValido", e);
+            throw new Exception(e);
+        }
     }
 
     @EventListener
-    public void onStockReservado(StockNoDisponibleEvent event) {
-        ordenValidacionService.registrarValidacionExitosa(event.ordenId(), "STOCK");
+    public void onStockReservado(StockDisponibleEvent event) throws Exception{
+        try {
+            log.debug("------------> StockDisponibleEvent");
+            ordenValidacionService.registrarValidacionExitosa(event.ordenId(), "STOCK");
+        } catch (Exception e) {
+            log.error("------------> onStockReservado", e);
+            throw new Exception(e);
+        }
     }
 
     @EventListener
-    public void onClienteInvalido(ClienteNoValidoEvent event) {
-        ordenValidacionService.registrarValidacionFallida(event.ordenId(), "CLIENTE");
+    public void onClienteNoValido(ClienteNoValidoEvent event) throws Exception{
+        try {
+            log.debug("------------> ClienteNoValidoEvent");
+            ordenValidacionService.registrarValidacionFallida(event.ordenId(), "CLIENTE");
+        } catch (Exception e) {
+            log.error("------------> onClienteNoValido", e);
+            throw new Exception(e);
+        }
     }
 
     @EventListener
-    public void onProductoInvalido(ProductoNoValidoEvent event) {
-        ordenValidacionService.registrarValidacionFallida(event.ordenId(), "PRODUCTO");
+    public void onProductoNoValido(ProductoNoValidoEvent event) throws Exception{
+        try {
+            log.debug("------------> ProductoNoValidoEvent");
+            ordenValidacionService.registrarValidacionFallida(event.ordenId(), "PRODUCTO");
+        } catch (Exception e) {
+            log.error("------------> onProductoNoValido", e);
+            throw new Exception(e);
+        }
     }
 
     @EventListener
-    public void onStockNoDisponible(StockNoDisponibleEvent event) {
-        ordenValidacionService.registrarValidacionFallida(event.ordenId(), "STOCK");
+    public void onStockNoDisponible(StockNoDisponibleEvent event) throws Exception{
+        try {
+            log.debug("------------> StockNoDisponibleEvent");
+            ordenValidacionService.registrarValidacionFallida(event.ordenId(), "STOCK");
+        } catch (Exception e) {
+            log.error("------------> onStockNoDisponible", e);
+            throw new Exception(e);
+        }
     }
 }

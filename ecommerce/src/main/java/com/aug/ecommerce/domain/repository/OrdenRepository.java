@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OrdenRepository {
-    void save(Orden orden);
+    Orden save(Orden orden);
     Optional<Orden> findById(Long id);
     List<Orden> findAll();
     void deleteById(Long id);

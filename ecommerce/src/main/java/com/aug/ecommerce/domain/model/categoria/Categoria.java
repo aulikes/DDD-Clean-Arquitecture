@@ -1,6 +1,6 @@
 package com.aug.ecommerce.domain.model.categoria;
 
-import com.aug.ecommerce.domain.util.ValidadorDominio;
+import java.util.Objects;
 
 public class Categoria {
     private final Long id;
@@ -21,11 +21,11 @@ public class Categoria {
     public boolean isActiva() { return activa; }
 
     public void setNombre(String nuevoNombre) {
-        this.nombre = ValidadorDominio.validarCampoObligatorio(nuevoNombre);
+        this.nombre = Objects.requireNonNull(nuevoNombre, "El nombre no puede ser nulo");
     }
 
     public void setDescripcion(String nuevaDescripcion) {
-        this.descripcion = ValidadorDominio.validarCampoObligatorio(nuevaDescripcion);
+        this.descripcion = Objects.requireNonNull(nuevaDescripcion, "La descripcion no puede ser nula");
     }
 
     public void inactivar() { this.activa = false; }

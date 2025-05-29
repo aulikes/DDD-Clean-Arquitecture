@@ -25,11 +25,11 @@ public class Cliente {
     }
 
     public void setNombre(String nuevoNombre) {
-        this.nombre = ValidadorDominio.validarCampoObligatorio(nuevoNombre);
+        this.nombre = Objects.requireNonNull(nuevoNombre, "El nombre no puede ser nulo");
     }
 
     public void setEmail(String nuevoEmail) {
-        this.email = ValidadorDominio.validarCampoObligatorio(nuevoEmail);
+        this.email = Objects.requireNonNull(nuevoEmail, "El email no puede ser nulo");;
     }
 
     public Direccion agregarDireccion(String calle, String ciudad, String pais, String codigoPostal) {

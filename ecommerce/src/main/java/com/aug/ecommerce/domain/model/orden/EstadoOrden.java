@@ -9,6 +9,17 @@ import java.util.*;
  */
 public final class EstadoOrden {
 
+    // Mapa de instancias únicas de EstadoOrden por tipo
+    private static final Map<Tipo, EstadoOrden> INSTANCIAS = new EnumMap<>(Tipo.class);
+
+    private final Tipo tipo;
+    private final List<Tipo> transicionesValidas;
+
+    private EstadoOrden(Tipo tipo, List<Tipo> transicionesValidas) {
+        this.tipo = tipo;
+        this.transicionesValidas = transicionesValidas;
+    }
+
     /**
      * Enum que contiene todos los posibles estados de una orden.
      */
@@ -38,18 +49,6 @@ public final class EstadoOrden {
         registrar(Tipo.ENTREGADA, List.of());
         registrar(Tipo.CANCELADA, List.of());
     }
-
-    // Mapa de instancias únicas de EstadoOrden por tipo
-    private static final Map<Tipo, EstadoOrden> INSTANCIAS = new EnumMap<>(Tipo.class);
-
-    private final Tipo tipo;
-    private final List<Tipo> transicionesValidas;
-
-    private EstadoOrden(Tipo tipo, List<Tipo> transicionesValidas) {
-        this.tipo = tipo;
-        this.transicionesValidas = transicionesValidas;
-    }
-
     /**
      * Registra una instancia única de EstadoOrden junto con sus transiciones válidas.
      */

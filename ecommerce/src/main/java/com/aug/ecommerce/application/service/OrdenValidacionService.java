@@ -4,9 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Servicio de aplicación encargado de coordinar la validación de órdenes.
+ * Acumula los eventos de validación (cliente, producto, stock) hasta que se completen todas.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -14,27 +18,37 @@ public class OrdenValidacionService {
 
     private final OrdenService ordenService;
 
-    private final Map<Long, Set<String>> validacionesPorOrden = new ConcurrentHashMap<>();
+    // Mapa concurrente que guarda el progreso de validación de cada orden
+    private final Map<Long, ResultadoValidacion> validaciones = new ConcurrentHashMap<>();
 
-    private static final Set<String> VALIDACIONES_REQUERIDAS = Set.of("CLIENTE", "PRODUCTO", "STOCK");
-
+    /**
+     * Registra una validación exitosa para un tipo específico (CLIENTE, PRODUCTO, STOCK).
+     * Si la orden ya tiene todas las validaciones, se marca como LISTA_PARA_PAGO.
+     */
     public void registrarValidacionExitosa(Long ordenId, String tipo) {
-        validacionesPorOrden
-                .computeIfAbsent(ordenId, k -> new HashSet<>())
-                .add(tipo);
+        // Obtiene o crea un objeto ResultadoValidacion para esta orden
+        ResultadoValidacion resultado = validaciones.computeIfAbsent(ordenId, ResultadoValidacion::new);
 
-        log.debug("Validación exitosa registrada: orden={}, tipo={}", ordenId, tipo);
+        // Marca la validación como exitosa
+        resultado.marcarExitosa(tipo);
 
-        if (validacionesPorOrden.get(ordenId).containsAll(VALIDACIONES_REQUERIDAS)) {
+        // Si ya se cumplieron todas las validaciones requeridas
+        if (resultado.isCompleta()) {
             ordenService.marcarOrdenValidada(ordenId);
-            validacionesPorOrden.remove(ordenId);
+            validaciones.remove(ordenId);
             log.info("Orden {} validada completamente", ordenId);
+        } else {
+            log.debug("Orden {} aún en validación: {}", ordenId, resultado);
         }
     }
 
+    /**
+     * Registra que una validación falló. Se descarta cualquier validación acumulada.
+     * La orden pasa al estado VALIDACION_FALLIDA.
+     */
     public void registrarValidacionFallida(Long ordenId, String tipo) {
-        log.warn("Orden {} falló validación de tipo {}", ordenId, tipo);
         ordenService.marcarOrdenFallida(ordenId);
-        validacionesPorOrden.remove(ordenId);
+        validaciones.remove(ordenId);
+        log.warn("Orden {} falló validación de tipo {}", ordenId, tipo);
     }
 }

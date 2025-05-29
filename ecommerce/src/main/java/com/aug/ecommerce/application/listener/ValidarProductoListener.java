@@ -1,5 +1,6 @@
 package com.aug.ecommerce.application.listener;
 
+import com.aug.ecommerce.application.event.ClienteNoValidoEvent;
 import com.aug.ecommerce.application.event.OrdenCreadaEvent;
 import com.aug.ecommerce.application.event.ProductoNoValidoEvent;
 import com.aug.ecommerce.application.event.ProductoValidoEvent;
@@ -19,16 +20,22 @@ public class ValidarProductoListener {
     private final ProductoEventPublisher publisher;
 
     @EventListener
-    public void handle(OrdenCreadaEvent event) {
-        boolean todosExisten = event.getItems().stream()
-                .allMatch(item -> productoRepository.findById(item.getProductoId()).isPresent());
+    public void handle(OrdenCreadaEvent event) throws Exception {
+        log.debug("---> Entrando al Listener ValidarProductoListener - OrdenCreadaEvent {}", event.getOrdenId());
+        try {
+            boolean todosExisten = event.getItems().stream()
+                    .allMatch(item -> productoRepository.findById(item.getProductoId()).isPresent());
 
-        if (todosExisten) {
-            log.debug("Todos los productos válidos para orden {}", event.getOrdenId());
-            publisher.publishProductoValido(new ProductoValidoEvent(event.getOrdenId()));
-        } else {
-            log.warn("Productos inválidos en orden {}", event.getOrdenId());
+            if (todosExisten) {
+                log.debug("Todos los productos válidos para orden {}", event.getOrdenId());
+                publisher.publishProductoValido(new ProductoValidoEvent(event.getOrdenId()));
+            } else {
+                throw new RuntimeException("Productos NO válidos para orden " + event.getOrdenId());
+            }
+        } catch (Exception e) {
+            log.error("Productos No válidos para orden {}", event.getOrdenId());
             publisher.publishProductoInvalido(new ProductoNoValidoEvent(event.getOrdenId()));
+            throw new Exception(e);
         }
     }
 }

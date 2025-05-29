@@ -9,6 +9,7 @@ import com.aug.ecommerce.domain.repository.OrdenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.stream.Collectors;
 
@@ -20,6 +21,7 @@ public class OrdenService {
     private final OrdenRepository ordenRepository;
     private final OrderEventPublisher publisher;
 
+    @Transactional
     public Long crearOrden(RealizarOrdenCommand command) {
         //Creamos la Orden
         Orden orden = Orden.create(command.getClienteId(), command.getDireccionEnviar());
@@ -31,6 +33,7 @@ public class OrdenService {
         return orden.getId();
     }
 
+    @Transactional
     public void marcarOrdenValidada(Long ordenId) {
         Orden orden = ordenRepository.findById(ordenId)
                 .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
@@ -39,6 +42,7 @@ public class OrdenService {
         log.debug("Orden {} marcada como LISTA_PARA_PAGO", ordenId);
     }
 
+    @Transactional
     public void marcarOrdenFallida(Long ordenId) {
         Orden orden = ordenRepository.findById(ordenId)
                 .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
@@ -47,12 +51,14 @@ public class OrdenService {
         log.debug("Orden {} marcada como VALIDACION_FALLIDA", ordenId);
     }
 
+    @Transactional
     public void reenviarOrdenAValidacion(Long ordenId) {
         Orden orden = ordenRepository.findById(ordenId)
                 .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
         guardarYEnviarAValidarOrden(orden);
     }
 
+    @Transactional
     public void iniciarPago(Long ordenId) {
         Orden orden = ordenRepository.findById(ordenId)
                 .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
@@ -67,6 +73,7 @@ public class OrdenService {
      * Solicita el inicio del proceso de pago para una orden.
      * Publica un evento al exterior con la intención de realizar el pago.
      */
+    @Transactional
     public void solicitarPago(Long idOrden, String medioPago){
         ordenRepository.findById(idOrden).ifPresentOrElse(orden -> {
             orden.iniciarPago();
@@ -87,9 +94,10 @@ public class OrdenService {
     }
 
     private void guardarYEnviarAValidarOrden(Orden orden) {
+        // Guardamos en BD
+        orden = ordenRepository.save(orden);
+        // Envías la orden a validación
         orden.enviarAValidacion();
-        //Guardamos en BD
-        ordenRepository.save(orden);
         // Publicar evento de orden creada para validación externa
         publisher.publishOrderOrdenCreated(this.getEvent(orden));
         log.debug("Orden {} enviada a validación y evento publicado", orden.getId());

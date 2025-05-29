@@ -2,7 +2,9 @@ package com.aug.ecommerce.infrastructure.persistence.repository.impl;
 
 import com.aug.ecommerce.domain.model.orden.Orden;
 import com.aug.ecommerce.domain.repository.OrdenRepository;
+import com.aug.ecommerce.infrastructure.persistence.entity.PagoEntity;
 import com.aug.ecommerce.infrastructure.persistence.mapper.OrdenMapper;
+import com.aug.ecommerce.infrastructure.persistence.mapper.PagoMapper;
 import com.aug.ecommerce.infrastructure.persistence.repository.contract.JpaOrdenCrudRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -17,8 +19,8 @@ public class OrdenRepositoryImp implements OrdenRepository {
     private final JpaOrdenCrudRepository jpa;
 
     @Override
-    public void save(Orden orden) {
-        jpa.save(OrdenMapper.toEntity(orden));
+    public Orden save(Orden orden) {
+        return OrdenMapper.toDomain(jpa.save(OrdenMapper.toEntity(orden)));
     }
 
     @Override
