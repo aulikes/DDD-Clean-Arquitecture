@@ -1,8 +1,5 @@
 package com.aug.ecommerce.domain.model.orden;
 
-import com.aug.ecommerce.domain.model.pago.EstadoPago;
-import com.aug.ecommerce.domain.model.pago.Pago;
-
 import java.util.*;
 
 public class Orden {
@@ -14,7 +11,8 @@ public class Orden {
 
     //Orden Nuevo
     public static Orden create(Long clienteId, String direccionEnviar) {
-        return new Orden(null, clienteId, direccionEnviar, new ArrayList<>(), EstadoOrden.NUEVA);
+        return new Orden(null, clienteId, direccionEnviar,
+                new ArrayList<>(), EstadoOrden.deTipo(EstadoOrden.Tipo.PENDIENTE_VALIDACION));
     }
 
     //Orden seteado desde BD
@@ -40,6 +38,7 @@ public class Orden {
 
     public void agregarItem(Long productoId, int cantidad, double precioUnitario) {
         validarEstadoEditable();
+        cambiarEstado( EstadoOrden.deTipo(EstadoOrden.Tipo.PENDIENTE_VALIDACION));
         items.add(ItemOrden.create(productoId, cantidad, precioUnitario));
     }
 
@@ -50,6 +49,7 @@ public class Orden {
     }
 
     public void removerItem(Long itemOrdenId) {
+        cambiarEstado( EstadoOrden.deTipo(EstadoOrden.Tipo.PENDIENTE_VALIDACION));
         validarEstadoEditable();
         items.removeIf(item -> item.getId().equals(itemOrdenId));
     }
@@ -76,24 +76,44 @@ public class Orden {
         return total;
     }
 
-    public void reservar() {
-        cambiarEstado(EstadoOrden.PENDIENTE);
+    public void marcarValidacionFallida() {
+        cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.VALIDACION_FALLIDA));
     }
 
-    public void pagar() {
-        cambiarEstado(EstadoOrden.PAGADA);
+    public void marcarListaParaPago() {
+        cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.LISTA_PARA_PAGO));
     }
 
-    public void enviar() {
-        cambiarEstado(EstadoOrden.ENVIADA);
+    public void reenviarAValidacion() {
+        cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.PENDIENTE_VALIDACION));
     }
 
-    public void entregar() {
-        cambiarEstado(EstadoOrden.ENTREGADA);
+    public void iniciarPago() {
+        cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.PAGO_EN_PROCESO));
+    }
+
+    public void registrarPagoFallido() {
+        cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.PAGO_RECHAZADO));
+    }
+
+    public void confirmarPago() {
+        cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.PAGADA));
+    }
+
+    public void iniciarEnvio() {
+        cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.INICIANDO_ENVIO));
+    }
+
+    public void marcarEnviada() {
+        cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.ENVIADA));
+    }
+
+    public void confirmarEntrega() {
+        cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.ENTREGADA));
     }
 
     public void cancelar() {
-        cambiarEstado(EstadoOrden.CANCELADA);
+        cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.CANCELADA));
     }
 
     private void cambiarEstado(EstadoOrden nuevoEstado) {
@@ -102,7 +122,7 @@ public class Orden {
     }
 
     private void validarEstadoEditable() {
-        if (!estado.equals(EstadoOrden.NUEVA))
+        if (!estado.equals(EstadoOrden.deTipo(EstadoOrden.Tipo.LISTA_PARA_PAGO)))
             throw new IllegalStateException("No se puede modificar una orden que no está en estado NUEVA");
     }
 

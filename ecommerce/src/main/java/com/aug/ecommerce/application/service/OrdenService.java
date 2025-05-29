@@ -50,7 +50,7 @@ public class OrdenService {
      */
     public void solicitarPago(Long idOrden, String medioPago){
         ordenRepository.findById(idOrden).ifPresentOrElse(orden -> {
-            orden.reservar();
+            orden.iniciarPago();
             ordenRepository.save(orden);
             log.info("Orden {} actualizada a estado PENDIENTE", orden.getId());
 
