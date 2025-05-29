@@ -18,6 +18,7 @@ public class OrdenMapper {
         entity.setId(orden.getId());
         entity.setClienteId(orden.getClienteId());
         entity.setEstado(orden.getEstado().getValor());
+        entity.setDireccionEnviar(orden.getDireccionEnviar());
 
         List<ItemOrdenEntity> items = orden.getItems().stream().map(item -> {
             ItemOrdenEntity e = new ItemOrdenEntity();

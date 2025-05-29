@@ -9,6 +9,7 @@ import lombok.Data;
 public class ItemOrdenEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private Long productoId;

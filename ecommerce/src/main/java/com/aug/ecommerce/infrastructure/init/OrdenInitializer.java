@@ -15,6 +15,9 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Order(4)
@@ -29,37 +32,49 @@ public class OrdenInitializer implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        List<Cliente> clientes = new ArrayList<>(clienteService.getAll());
-        List<Producto> productos = new ArrayList<>(productoService.getAll());
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
 
-        if (clientes.isEmpty() || productos.isEmpty()) {
-            log.warn("No se puede inicializar órdenes: no hay clientes o productos cargados.");
-            return;
-        }
+        executor.schedule(() -> {
+            try {
+                List<Cliente> clientes = new ArrayList<>(clienteService.getAll());
+                List<Producto> productos = new ArrayList<>(productoService.getAll());
 
-        Random random = new Random();
-        for (int i = 1; i <= 20; i++) {
-            Cliente cliente = clientes.get(random.nextInt(clientes.size()));
+                if (clientes.isEmpty() || productos.isEmpty()) {
+                    log.warn("No se puede inicializar órdenes: no hay clientes o productos cargados.");
+                    return;
+                }
 
-            // Selecciona entre 1 y 4 productos aleatorios
-            Collections.shuffle(productos);
-            List<Producto> seleccionados = productos.subList(0, random.nextInt(4) + 1);
+                Random random = new Random();
+                for (int i = 1; i <= 20; i++) {
+                    Cliente cliente = clientes.get(random.nextInt(clientes.size()));
 
-            List<RealizarOrdenRequestDTO.ItemOrdenDTO> items = new ArrayList<>();
-            for (Producto producto : seleccionados) {
-                RealizarOrdenRequestDTO.ItemOrdenDTO item = new RealizarOrdenRequestDTO.ItemOrdenDTO();
-                item.setProductoId(producto.getId());
-                item.setCantidad(random.nextInt(5) + 1); // Cantidad entre 1 y 5
-                items.add(item);
+                    // Selecciona entre 1 y 4 productos aleatorios
+                    Collections.shuffle(productos);
+                    List<Producto> seleccionados = productos.subList(0, random.nextInt(4) + 1);
+
+                    List<RealizarOrdenRequestDTO.ItemOrdenDTO> items = new ArrayList<>();
+                    for (Producto producto : seleccionados) {
+                        RealizarOrdenRequestDTO.ItemOrdenDTO item = new RealizarOrdenRequestDTO.ItemOrdenDTO();
+                        item.setProductoId(producto.getId());
+                        item.setCantidad(random.nextInt(5) + 1); // Cantidad entre 1 y 5
+                        items.add(item);
+                    }
+
+                    RealizarOrdenRequestDTO request = new RealizarOrdenRequestDTO();
+                    request.setClienteId(cliente.getId());
+                    request.setDireccionEnviar("Dirección ficticia #" + i);
+                    request.setItems(items);
+
+                    ordenService.crearOrden(mapper.toCommand(request));
+                    log.info("Orden #{} creada para cliente {}", i, cliente.getNombre());
+                }
+            } catch (Exception e) {
+                log.error("Error al inicializar órdenes:", e);
+            } finally {
+                // Solo se ejecuta una vez, se cierra el executor
+                executor.shutdown();
             }
+        }, 5, TimeUnit.SECONDS);
 
-            RealizarOrdenRequestDTO request = new RealizarOrdenRequestDTO();
-            request.setClienteId(cliente.getId());
-            request.setDireccionEnviar("Dirección ficticia #" + i);
-            request.setItems(items);
-
-//            ordenService.crearOrden(mapper.toCommand(request));
-            log.info("Orden #{} creada para cliente {}", i, cliente.getNombre());
-        }
     }
 }
