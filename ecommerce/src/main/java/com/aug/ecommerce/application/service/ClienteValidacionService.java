@@ -1,5 +1,9 @@
 package com.aug.ecommerce.application.service;
 
+import com.aug.ecommerce.application.event.ClienteNoValidoEvent;
+import com.aug.ecommerce.application.event.ClienteValidoEvent;
+import com.aug.ecommerce.application.publisher.ClienteEventPublisher;
+import com.aug.ecommerce.domain.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,4 +15,21 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Slf4j
 public class ClienteValidacionService {
+
+    private final ClienteRepository clienteRepository;
+    private final ClienteEventPublisher publisher;
+
+    public void validarClienteCreacionOrden(Long ordenId, Long clienteId) throws Exception {
+        try {
+            clienteRepository.findById(clienteId)
+                    .orElseThrow(() -> new IllegalArgumentException("Cliente no encontrado: " + clienteId));
+            log.debug("Cliente {} válido para orden {}", clienteId, ordenId);
+            publisher.publishClienteValido(new ClienteValidoEvent(ordenId));
+        } catch (Exception e) {
+            log.error("Cliente {} NO válido para orden {}", clienteId, ordenId);
+            publisher.publishClienteNoValido(new ClienteNoValidoEvent(ordenId));
+            throw new Exception(e);
+        }
+
+    }
 }
