@@ -28,7 +28,7 @@ public class ClienteValidacionService {
         } catch (Exception e) {
             log.error("Cliente {} NO válido para orden {}", clienteId, ordenId);
             publisher.publishClienteNoValido(new ClienteNoValidoEvent(ordenId));
-            throw new Exception(e);
+//            throw new Exception(e);
         }
 
     }

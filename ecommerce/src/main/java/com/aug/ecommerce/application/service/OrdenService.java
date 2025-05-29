@@ -4,6 +4,7 @@ import com.aug.ecommerce.application.command.RealizarOrdenCommand;
 import com.aug.ecommerce.application.event.OrdenCreadaEvent;
 import com.aug.ecommerce.application.event.OrderPaymentRequestedEvent;
 import com.aug.ecommerce.application.publisher.OrderEventPublisher;
+import com.aug.ecommerce.domain.model.orden.EstadoOrden;
 import com.aug.ecommerce.domain.model.orden.Orden;
 import com.aug.ecommerce.domain.repository.OrdenRepository;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +47,7 @@ public class OrdenService {
     public void marcarOrdenFallida(Long ordenId) {
         Orden orden = ordenRepository.findById(ordenId)
                 .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
+        if (orden.getEstado().equals(EstadoOrden.deTipo(EstadoOrden.Tipo.VALIDACION_FALLIDA))) return;
         orden.marcarValidacionFallida();
         ordenRepository.save(orden);
         log.debug("Orden {} marcada como VALIDACION_FALLIDA", ordenId);

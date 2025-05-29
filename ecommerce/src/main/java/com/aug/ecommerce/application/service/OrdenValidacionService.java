@@ -1,15 +1,17 @@
 package com.aug.ecommerce.application.service;
 
+import com.aug.ecommerce.application.listener.ValidacionCrearOrden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Servicio de aplicación encargado de coordinar la validación de órdenes.
- * Acumula los eventos de validación (cliente, producto, stock) hasta que se completen todas.
+ * Recibe eventos de validación (cliente, productos, stock) y decide el estado final.
  */
 @Service
 @RequiredArgsConstructor
@@ -18,37 +20,39 @@ public class OrdenValidacionService {
 
     private final OrdenService ordenService;
 
-    // Mapa concurrente que guarda el progreso de validación de cada orden
-    private final Map<Long, ResultadoValidacion> validaciones = new ConcurrentHashMap<>();
+    // Acumulador temporal en memoria (NO usar para varios pods/microservicios)
+    private final Map<Long, Set<ValidacionCrearOrden>> validacionesPorOrden = new ConcurrentHashMap<>();
+
+    // Tipos de validación requeridos
+    private static final Set<ValidacionCrearOrden> VALIDACIONES_REQUERIDAS = Set.of(
+            ValidacionCrearOrden.CLIENTE, ValidacionCrearOrden.PRODUCTO, ValidacionCrearOrden.STOCK
+    );
 
     /**
-     * Registra una validación exitosa para un tipo específico (CLIENTE, PRODUCTO, STOCK).
-     * Si la orden ya tiene todas las validaciones, se marca como LISTA_PARA_PAGO.
+     * Registra una validación exitosa para una orden.
+     * Si todas las validaciones requeridas están completas, marca la orden como lista para pago.
      */
-    public void registrarValidacionExitosa(Long ordenId, String tipo) {
-        // Obtiene o crea un objeto ResultadoValidacion para esta orden
-        ResultadoValidacion resultado = validaciones.computeIfAbsent(ordenId, ResultadoValidacion::new);
+    public void registrarValidacionExitosa(Long ordenId, ValidacionCrearOrden tipo) {
+        // Acumula el tipo de validación exitosa
+        validacionesPorOrden
+                .computeIfAbsent(ordenId, id -> ConcurrentHashMap.newKeySet())
+                .add(tipo);
 
-        // Marca la validación como exitosa
-        resultado.marcarExitosa(tipo);
-
-        // Si ya se cumplieron todas las validaciones requeridas
-        if (resultado.isCompleta()) {
+        // Si todas las validaciones han sido exitosas:
+        if (validacionesPorOrden.get(ordenId).containsAll(VALIDACIONES_REQUERIDAS)) {
+            // Cambia el estado de la orden aquí
             ordenService.marcarOrdenValidada(ordenId);
-            validaciones.remove(ordenId);
-            log.info("Orden {} validada completamente", ordenId);
-        } else {
-            log.debug("Orden {} aún en validación: {}", ordenId, resultado);
+            log.debug("Orden {} validada completamente", ordenId);
+            // Limpia el acumulador para esa orden
+            validacionesPorOrden.remove(ordenId);
         }
     }
 
     /**
-     * Registra que una validación falló. Se descarta cualquier validación acumulada.
-     * La orden pasa al estado VALIDACION_FALLIDA.
+     * Registra una validación fallida para una orden.
+     * Solo se marca una vez por orden, aunque lleguen múltiples eventos fallidos.
      */
-    public void registrarValidacionFallida(Long ordenId, String tipo) {
+    public void registrarValidacionFallida(Long ordenId, ValidacionCrearOrden tipo) {
         ordenService.marcarOrdenFallida(ordenId);
-        validaciones.remove(ordenId);
-        log.warn("Orden {} falló validación de tipo {}", ordenId, tipo);
     }
 }

@@ -18,7 +18,7 @@ public class OrdenEventListener {
     public void onClienteValido(ClienteValidoEvent event) throws Exception {
         try {
             log.debug("------------> ClienteValidoEvent");
-            ordenValidacionService.registrarValidacionExitosa(event.ordenId(), "CLIENTE");
+            ordenValidacionService.registrarValidacionExitosa(event.ordenId(), ValidacionCrearOrden.CLIENTE);
         } catch (Exception e) {
             log.error("------------> onClienteValido", e);
             throw new Exception(e);
@@ -29,7 +29,7 @@ public class OrdenEventListener {
     public void onProductoValido(ProductoValidoEvent event) throws Exception{
         try {
             log.debug("------------> ProductoValidoEvent");
-            ordenValidacionService.registrarValidacionExitosa(event.ordenId(), "PRODUCTO");
+            ordenValidacionService.registrarValidacionExitosa(event.ordenId(), ValidacionCrearOrden.PRODUCTO);
         } catch (Exception e) {
             log.error("------------> onProductoValido", e);
             throw new Exception(e);
@@ -40,7 +40,7 @@ public class OrdenEventListener {
     public void onStockReservado(StockDisponibleEvent event) throws Exception{
         try {
             log.debug("------------> StockDisponibleEvent");
-            ordenValidacionService.registrarValidacionExitosa(event.ordenId(), "STOCK");
+            ordenValidacionService.registrarValidacionExitosa(event.ordenId(), ValidacionCrearOrden.STOCK);
         } catch (Exception e) {
             log.error("------------> onStockReservado", e);
             throw new Exception(e);
@@ -51,7 +51,7 @@ public class OrdenEventListener {
     public void onClienteNoValido(ClienteNoValidoEvent event) throws Exception{
         try {
             log.debug("------------> ClienteNoValidoEvent");
-            ordenValidacionService.registrarValidacionFallida(event.ordenId(), "CLIENTE");
+            ordenValidacionService.registrarValidacionFallida(event.ordenId(), ValidacionCrearOrden.CLIENTE);
         } catch (Exception e) {
             log.error("------------> onClienteNoValido", e);
             throw new Exception(e);
@@ -62,7 +62,7 @@ public class OrdenEventListener {
     public void onProductoNoValido(ProductoNoValidoEvent event) throws Exception{
         try {
             log.debug("------------> ProductoNoValidoEvent");
-            ordenValidacionService.registrarValidacionFallida(event.ordenId(), "PRODUCTO");
+            ordenValidacionService.registrarValidacionFallida(event.ordenId(), ValidacionCrearOrden.PRODUCTO);
         } catch (Exception e) {
             log.error("------------> onProductoNoValido", e);
             throw new Exception(e);
@@ -73,7 +73,7 @@ public class OrdenEventListener {
     public void onStockNoDisponible(StockNoDisponibleEvent event) throws Exception{
         try {
             log.debug("------------> StockNoDisponibleEvent");
-            ordenValidacionService.registrarValidacionFallida(event.ordenId(), "STOCK");
+            ordenValidacionService.registrarValidacionFallida(event.ordenId(), ValidacionCrearOrden.STOCK);
         } catch (Exception e) {
             log.error("------------> onStockNoDisponible", e);
             throw new Exception(e);

@@ -22,7 +22,7 @@ public class ProductoValidacionService {
     private final ProductoRepository productoRepository;
     private final ProductoEventPublisher publisher;
 
-    public void validarProductoCreacionOrden(Long ordenId, List<OrdenCreadaEvent.ItemOrdenCreada> itemsOrden) throws Exception {
+    public void validarProductoCreacionOrden(Long ordenId, List<OrdenCreadaEvent.ItemOrdenCreada> itemsOrden) {
         try {
             boolean todosExisten = itemsOrden.stream()
                     .allMatch(item -> productoRepository.findById(item.getProductoId()).isPresent());
@@ -33,10 +33,9 @@ public class ProductoValidacionService {
             } else {
                 throw new RuntimeException("Productos NO válidos para orden " + ordenId);
             }
-        } catch (Exception e) {
-            log.error("Productos No válidos para orden {}", ordenId);
-            publisher.publishProductoInvalido(new ProductoNoValidoEvent(ordenId));
-            throw new Exception(e);
+        } catch (Exception ex) {
+            log.error(("Productos No válidos para orden " + ordenId), ex);
+            publisher.publishProductoNoValido(new ProductoNoValidoEvent(ordenId));
         }
 
     }

@@ -24,7 +24,7 @@ public class ProductoEventPublisherImp implements ProductoEventPublisher {
     }
 
     @Override
-    public void publishProductoInvalido(ProductoNoValidoEvent event) {
+    public void publishProductoNoValido(ProductoNoValidoEvent event) {
         publisher.publishEvent(event);
     }
 }

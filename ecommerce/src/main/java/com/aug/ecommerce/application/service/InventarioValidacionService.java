@@ -37,7 +37,7 @@ public class InventarioValidacionService {
         } catch (Exception e) {
             log.error("Stock insuficiente para orden {}", ordenId);
             publisher.publishStockNoDisponible(new StockNoDisponibleEvent(ordenId));
-            throw new Exception(e);
+//            throw new Exception(e);
         }
 
     }

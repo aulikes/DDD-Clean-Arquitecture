@@ -44,31 +44,41 @@ public class OrdenInitializer implements ApplicationRunner {
         }
 
         Random random = new Random();
+        //For para 20 órdenes
         for (int i = 1; i <= 20; i++) {
             Cliente cliente = clientes.get(random.nextInt(clientes.size()));
-
-            // Selecciona entre 1 y 4 productos aleatorios
-            Collections.shuffle(productos);
-            List<Producto> seleccionados = productos.subList(0, random.nextInt(4) + 1);
-
-            List<RealizarOrdenRequestDTO.ItemOrdenDTO> items =
-                    seleccionados.stream()
-                            .map(producto -> {
-                                RealizarOrdenRequestDTO.ItemOrdenDTO item = new RealizarOrdenRequestDTO.ItemOrdenDTO();
-                                item.setProductoId(producto.getId());
-                                item.setCantidad(random.nextInt(5) + 1); // Cantidad entre 1 y 5
-                                item.setPrecioUnitario(random.nextDouble());
-                                return item;
-                            })
-                            .collect(Collectors.toList());
 
             RealizarOrdenRequestDTO request = new RealizarOrdenRequestDTO();
             request.setClienteId(cliente.getId());
             request.setDireccionEnviar("Dirección ficticia #" + i);
-            request.setItems(items);
+            List<RealizarOrdenRequestDTO.ItemOrdenDTO> items;
 
+            if (i == 1) {
+                // Orden con producto inexistente (para probar validación fallida)
+                RealizarOrdenRequestDTO.ItemOrdenDTO itemNoValido = new RealizarOrdenRequestDTO.ItemOrdenDTO();
+                itemNoValido.setProductoId(99999L); // ID que no existe
+                itemNoValido.setCantidad(2);
+                itemNoValido.setPrecioUnitario(100.0);
+                items = List.of(itemNoValido);
+            } else {
+                // Órdenes válidas, selecciona entre 1 y 4 productos existentes aleatorios
+                Collections.shuffle(productos);
+                List<Producto> seleccionados = productos.subList(0, random.nextInt(4) + 1);
+
+                items = seleccionados.stream()
+                        .map(producto -> {
+                            RealizarOrdenRequestDTO.ItemOrdenDTO item = new RealizarOrdenRequestDTO.ItemOrdenDTO();
+                            item.setProductoId(producto.getId());
+                            item.setCantidad(random.nextInt(5) + 1);
+                            item.setPrecioUnitario(random.nextDouble() * 100);
+                            return item;
+                        })
+                        .collect(Collectors.toList());
+            }
+            request.setItems(items);
             ordenService.crearOrden(mapper.toCommand(request));
             log.info("Orden #{} creada para cliente {}", i, cliente.getNombre());
+
         }
         
 //        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
