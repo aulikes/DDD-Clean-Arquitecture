@@ -9,7 +9,6 @@ public class InventarioMapper {
 
     public static InventarioEntity toEntity(Inventario inv) {
         InventarioEntity e = new InventarioEntity();
-        e.setId(inv.getProductoId());
         e.setProductoId(inv.getProductoId());
         e.setCantidadDisponible(inv.getStockDisponible());
         return e;

@@ -27,17 +27,8 @@ public class InventarioRepositoryImp implements InventarioRepository {
     }
 
     @Override
-    public Optional<Inventario> findByProductoId(Long productoId) {
-        return jpa.findByProductoId(productoId).map(InventarioMapper::toDomain);
-    }
-
-    @Override
     public List<Inventario> findAll() {
         return jpa.findAll().stream().map(InventarioMapper::toDomain).toList();
     }
 
-    @Override
-    public void deleteById(Long id) {
-        jpa.deleteById(id);
-    }
 }

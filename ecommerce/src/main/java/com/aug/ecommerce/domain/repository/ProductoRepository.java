@@ -6,7 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface ProductoRepository {
-    void save(Producto producto);
+    Producto save(Producto producto);
     Optional<Producto> findById(Long id);
     List<Producto> findAll();
     void deleteById(Long id);

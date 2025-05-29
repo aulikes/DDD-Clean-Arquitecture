@@ -1,4 +1,4 @@
-package com.aug.ecommerce.config;
+package com.aug.ecommerce.infrastructure.init;
 
 import com.aug.ecommerce.adapters.rest.dto.CrearProductoRequestDTO;
 import com.aug.ecommerce.adapters.rest.mapper.ProductoMapper;
@@ -70,6 +70,7 @@ public class ProductoInitializer implements ApplicationRunner {
         dto.setNombre(nombre);
         dto.setDescripcion(descripcion);
         dto.setPrecio(precio);
+        dto.setCantidad(50L);
         dto.setImagenUrl(imagen);
         dto.setCategoriaId(categoriaId);
         return dto;

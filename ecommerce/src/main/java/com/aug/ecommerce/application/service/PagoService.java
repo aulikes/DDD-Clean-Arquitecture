@@ -3,7 +3,7 @@ package com.aug.ecommerce.application.service;
 import com.aug.ecommerce.application.dto.ResultadoPagoDTO;
 import com.aug.ecommerce.application.event.OrderPaymentRequestedEvent;
 import com.aug.ecommerce.application.event.PagoConfirmadoEvent;
-import com.aug.ecommerce.application.publisher.PagoEventDispatcher;
+import com.aug.ecommerce.application.publisher.PagoEventPublisher;
 import com.aug.ecommerce.application.gateway.PasarelaPagoClient;
 import com.aug.ecommerce.domain.model.pago.Pago;
 import com.aug.ecommerce.domain.repository.PagoRepository;
@@ -19,7 +19,7 @@ public class PagoService {
 
     private final PagoRepository pagoRepository;
     private final PasarelaPagoClient pasarelaPagoClient;
-    private final PagoEventDispatcher eventDispatcher;
+    private final PagoEventPublisher eventDispatcher;
 
     @Transactional
     public void realizarPago(OrderPaymentRequestedEvent event) {

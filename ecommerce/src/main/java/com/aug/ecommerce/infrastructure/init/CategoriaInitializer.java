@@ -1,4 +1,4 @@
-package com.aug.ecommerce.config;
+package com.aug.ecommerce.infrastructure.init;
 
 import com.aug.ecommerce.adapters.rest.dto.CrearCategoriaRequestDTO;
 import com.aug.ecommerce.adapters.rest.mapper.CategoriaMapper;

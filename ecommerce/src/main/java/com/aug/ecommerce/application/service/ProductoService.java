@@ -1,6 +1,8 @@
 package com.aug.ecommerce.application.service;
 
 import com.aug.ecommerce.application.command.CrearProductoCommand;
+import com.aug.ecommerce.application.event.ProductoCreadoEvent;
+import com.aug.ecommerce.application.publisher.ProductoEventPublisher;
 import com.aug.ecommerce.domain.model.categoria.Categoria;
 import com.aug.ecommerce.domain.model.producto.Producto;
 import com.aug.ecommerce.domain.repository.CategoriaRepository;
@@ -8,12 +10,15 @@ import com.aug.ecommerce.domain.repository.ProductoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class ProductoService {
 
     private final ProductoRepository productoRepository;
     private final CategoriaRepository categoriaRepository;
+    private final ProductoEventPublisher productoEventPublisher;
 
     public void crearProducto(CrearProductoCommand command) {
 
@@ -33,6 +38,11 @@ public class ProductoService {
                 command.categoriaId()
         );
 
-        productoRepository.save(producto);
+        producto = productoRepository.save(producto);
+        productoEventPublisher.publicarProductoCreado(new ProductoCreadoEvent(producto.getId(), command.cantidad()));
+    }
+
+    public List<Producto> getAll(){
+        return productoRepository.findAll();
     }
 }

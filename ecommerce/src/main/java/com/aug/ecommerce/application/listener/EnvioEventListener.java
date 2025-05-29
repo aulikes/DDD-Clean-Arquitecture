@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class EnvioEventHandler {
+public class EnvioEventListener {
     private final EnvioService envioService;
 
     @Transactional

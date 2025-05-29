@@ -4,9 +4,9 @@ import java.util.Objects;
 
 public class Inventario {
     private final Long productoId;
-    private int stockDisponible;
+    private Long stockDisponible;
 
-    public Inventario(Long productoId, int stockInicial) {
+    public Inventario(Long productoId, Long stockInicial) {
         this.productoId = Objects.requireNonNull(productoId, "El productoId no puede ser nulo");
         if (stockInicial < 0)
             throw new IllegalArgumentException("El stock inicial no puede ser negativo");
@@ -15,15 +15,15 @@ public class Inventario {
     }
 
     public Long getProductoId() { return productoId; }
-    public int getStockDisponible() { return stockDisponible; }
+    public Long getStockDisponible() { return stockDisponible; }
 
-    public void aumentarStock(int cantidad) {
+    public void aumentarStock(Long cantidad) {
         if (cantidad <= 0)
             throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
         this.stockDisponible += cantidad;
     }
 
-    public void disminuirStock(int cantidad) {
+    public void disminuirStock(Long cantidad) {
         if (cantidad <= 0)
             throw new IllegalArgumentException("La cantidad debe ser mayor a cero");
 

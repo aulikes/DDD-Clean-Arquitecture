@@ -7,6 +7,7 @@ import com.aug.ecommerce.domain.repository.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -62,5 +63,9 @@ public class ClienteService {
 
     public void eliminarDireccion(Cliente cliente, UUID direccionId) {
         cliente.eliminarDireccion(direccionId);
+    }
+
+    public List<Cliente> getAll(){
+        return clienteRepository.findAll();
     }
 }

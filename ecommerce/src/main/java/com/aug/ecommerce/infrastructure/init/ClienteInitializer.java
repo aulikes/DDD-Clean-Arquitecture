@@ -1,9 +1,8 @@
-package com.aug.ecommerce.config;
+package com.aug.ecommerce.infrastructure.init;
 
 import com.aug.ecommerce.adapters.rest.dto.CrearClienteRequestDTO;
 import com.aug.ecommerce.adapters.rest.mapper.ClienteMapper;
 import com.aug.ecommerce.application.service.ClienteService;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;

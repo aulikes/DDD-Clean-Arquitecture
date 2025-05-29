@@ -32,7 +32,7 @@ public class OrdenService {
             Producto producto = productoRepository.findById(item.getProductoId())
                     .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado: " + item.getProductoId()));
 
-            Inventario inventario = inventarioRepository.findByProductoId(producto.getId())
+            Inventario inventario = inventarioRepository.findById(producto.getId())
                     .orElseThrow(() -> new IllegalArgumentException("Inventario no encontrado: " + producto.getId()));
 
             if (inventario.getStockDisponible() < item.getCantidad()) {

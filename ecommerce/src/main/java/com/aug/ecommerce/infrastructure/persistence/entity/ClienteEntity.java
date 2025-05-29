@@ -18,7 +18,7 @@ public class ClienteEntity {
     private String nombre;
     private String email;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "cliente_id") // FK en direcciones
     private List<DireccionEntity> direcciones = new ArrayList<>();
 }

@@ -23,5 +23,8 @@ public class CrearProductoRequestDTO {
     private String imagenUrl;
 
     @NotEmpty
+    private Long cantidad;
+
+    @NotEmpty
     private Long categoriaId;
 }

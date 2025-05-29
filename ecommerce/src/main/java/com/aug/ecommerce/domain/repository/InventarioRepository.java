@@ -8,7 +8,5 @@ public interface InventarioRepository {
     void save(Inventario inventario);
     Optional<Inventario> findById(Long id);
     List<Inventario> findAll();
-    void deleteById(Long id);
 
-    Optional<Inventario> findByProductoId(Long productoId);
 }

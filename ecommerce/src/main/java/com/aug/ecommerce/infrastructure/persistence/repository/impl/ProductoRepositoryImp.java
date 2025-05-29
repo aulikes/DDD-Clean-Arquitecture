@@ -17,8 +17,8 @@ public class ProductoRepositoryImp implements ProductoRepository {
     private final JpaProductoCrudRepository jpa;
 
     @Override
-    public void save(Producto producto) {
-        jpa.save(ProductoMapper.toEntity(producto));
+    public Producto save(Producto producto) {
+        return ProductoMapper.toDomain(jpa.save(ProductoMapper.toEntity(producto)));
     }
 
     @Override
