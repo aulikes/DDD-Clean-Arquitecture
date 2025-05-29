@@ -1,15 +1,16 @@
 package com.aug.ecommerce.application.service;
 
 import com.aug.ecommerce.application.command.RealizarOrdenCommand;
+import com.aug.ecommerce.application.event.OrdenCreadaEvent;
 import com.aug.ecommerce.application.event.OrderPaymentRequestedEvent;
 import com.aug.ecommerce.application.publisher.OrderEventPublisher;
 import com.aug.ecommerce.domain.model.orden.Orden;
-import com.aug.ecommerce.domain.model.producto.Producto;
-import com.aug.ecommerce.domain.model.inventario.Inventario;
-import com.aug.ecommerce.domain.repository.*;
+import com.aug.ecommerce.domain.repository.OrdenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -17,31 +18,49 @@ import org.springframework.stereotype.Service;
 public class OrdenService {
 
     private final OrdenRepository ordenRepository;
-    private final ClienteRepository clienteRepository;
-    private final ProductoRepository productoRepository;
-    private final InventarioRepository inventarioRepository;
     private final OrderEventPublisher publisher;
 
     public Long crearOrden(RealizarOrdenCommand command) {
-        // Validar cliente
-        if (clienteRepository.findById(command.getClienteId()).isEmpty()) {
-            throw new IllegalArgumentException("Cliente no encontrado");
-        }
+        //Creamos la Orden
         Orden orden = Orden.create(command.getClienteId(), command.getDireccionEnviar());
+        //Adicionamos Items a la Orden
         for (RealizarOrdenCommand.Item item : command.getItems()) {
-            Producto producto = productoRepository.findById(item.getProductoId())
-                    .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado: " + item.getProductoId()));
-
-            Inventario inventario = inventarioRepository.findById(producto.getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Inventario no encontrado: " + producto.getId()));
-
-            if (inventario.getStockDisponible() < item.getCantidad()) {
-                throw new IllegalStateException("Stock insuficiente para producto: " + producto.getNombre());
-            }
-            orden.agregarItem(producto.getId(), item.getCantidad(), producto.getPrecio());
+            orden.agregarItem(item.getProductoId(), item.getCantidad(), item.getPrecioUnitario());
         }
-        ordenRepository.save(orden);
+        this.guardarYEnviarAValidarOrden(orden);
         return orden.getId();
+    }
+
+    public void marcarOrdenValidada(Long ordenId) {
+        Orden orden = ordenRepository.findById(ordenId)
+                .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
+        orden.marcarListaParaPago();
+        ordenRepository.save(orden);
+        log.debug("Orden {} marcada como LISTA_PARA_PAGO", ordenId);
+    }
+
+    public void marcarOrdenFallida(Long ordenId) {
+        Orden orden = ordenRepository.findById(ordenId)
+                .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
+        orden.marcarValidacionFallida();
+        ordenRepository.save(orden);
+        log.debug("Orden {} marcada como VALIDACION_FALLIDA", ordenId);
+    }
+
+    public void reenviarOrdenAValidacion(Long ordenId) {
+        Orden orden = ordenRepository.findById(ordenId)
+                .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
+        guardarYEnviarAValidarOrden(orden);
+    }
+
+    public void iniciarPago(Long ordenId) {
+        Orden orden = ordenRepository.findById(ordenId)
+                .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
+        orden.iniciarPago();
+        ordenRepository.save(orden);
+        log.debug("Orden {} pasó a estado PAGO_EN_PROCESO", ordenId);
+
+        // Aquí puedes emitir OrderPaymentRequestedEvent si deseas
     }
 
     /**
@@ -52,7 +71,7 @@ public class OrdenService {
         ordenRepository.findById(idOrden).ifPresentOrElse(orden -> {
             orden.iniciarPago();
             ordenRepository.save(orden);
-            log.info("Orden {} actualizada a estado PENDIENTE", orden.getId());
+            log.debug("Orden {} actualizada a estado PAGO_EN_PROCESO", orden.getId());
 
             // Publicar evento
             OrderPaymentRequestedEvent event = new OrderPaymentRequestedEvent(
@@ -63,29 +82,27 @@ public class OrdenService {
             );
 
             publisher.publishOrderPaymentRequested(event);
-            log.info("Evento OrderPaymentRequestEvent publicado para orden {}", orden.getId());
+            log.debug("Evento OrderPaymentRequestEvent publicado para orden {}", orden.getId());
         }, () -> log.error("Orden con ID {} no encontrada", idOrden));
     }
 
-    //FALTARÍA IMPLEMENTAR
-//    public void agregarItem(Orden orden, Long productoId, int cantidad, double precioUnitario) {
-//        orden.agregarItem(productoId, cantidad, precioUnitario);
-//    }
-//
-//    public void removerItem(Orden orden, Long itemOrdenId) {
-//        orden.removerItem(itemOrdenId);
-//    }
-//
-//    public void cambiarCantidadItem(Orden orden, Long itemOrdenId, int nuevaCantidad) {
-//        orden.cambiarCantidadItem(itemOrdenId, nuevaCantidad);
-//    }
-//
-//    public double calcularTotal(Orden orden) {
-//        return orden.calcularTotal();
-//    }
-//
-//    public BOOLEAN cancelarOrden(Orden orden) {
-//        orden.cancelar();
-//        return new OrdenCancelada(orden.getId());
-//    }
+    private void guardarYEnviarAValidarOrden(Orden orden) {
+        orden.enviarAValidacion();
+        //Guardamos en BD
+        ordenRepository.save(orden);
+        // Publicar evento de orden creada para validación externa
+        publisher.publishOrderOrdenCreated(this.getEvent(orden));
+        log.debug("Orden {} enviada a validación y evento publicado", orden.getId());
+    }
+
+    private OrdenCreadaEvent getEvent(Orden orden){
+        return new OrdenCreadaEvent(
+                orden.getId(),
+                orden.getClienteId(),
+                orden.getDireccionEnviar(),
+                orden.getItems().stream()
+                        .map(i -> new OrdenCreadaEvent.ItemOrdenCreada(i.getProductoId(), i.getCantidad()))
+                        .collect(Collectors.toList())
+        );
+    }
 }

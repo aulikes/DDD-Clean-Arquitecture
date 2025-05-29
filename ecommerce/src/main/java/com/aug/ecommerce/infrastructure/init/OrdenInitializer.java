@@ -2,6 +2,7 @@ package com.aug.ecommerce.infrastructure.init;
 
 import com.aug.ecommerce.adapters.rest.dto.RealizarOrdenRequestDTO;
 import com.aug.ecommerce.adapters.rest.mapper.OrdenMapper;
+import com.aug.ecommerce.application.event.OrdenCreadaEvent;
 import com.aug.ecommerce.application.service.ClienteService;
 import com.aug.ecommerce.application.service.OrdenService;
 import com.aug.ecommerce.application.service.ProductoService;
@@ -18,6 +19,7 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Order(4)
@@ -52,13 +54,16 @@ public class OrdenInitializer implements ApplicationRunner {
                     Collections.shuffle(productos);
                     List<Producto> seleccionados = productos.subList(0, random.nextInt(4) + 1);
 
-                    List<RealizarOrdenRequestDTO.ItemOrdenDTO> items = new ArrayList<>();
-                    for (Producto producto : seleccionados) {
-                        RealizarOrdenRequestDTO.ItemOrdenDTO item = new RealizarOrdenRequestDTO.ItemOrdenDTO();
-                        item.setProductoId(producto.getId());
-                        item.setCantidad(random.nextInt(5) + 1); // Cantidad entre 1 y 5
-                        items.add(item);
-                    }
+                    List<RealizarOrdenRequestDTO.ItemOrdenDTO> items =
+                            seleccionados.stream()
+                                .map(producto -> {
+                                    RealizarOrdenRequestDTO.ItemOrdenDTO item = new RealizarOrdenRequestDTO.ItemOrdenDTO();
+                                    item.setProductoId(producto.getId());
+                                    item.setCantidad(random.nextInt(5) + 1); // Cantidad entre 1 y 5
+                                    item.setPrecioUnitario(random.nextDouble());
+                                    return item;
+                                })
+                                .collect(Collectors.toList());
 
                     RealizarOrdenRequestDTO request = new RealizarOrdenRequestDTO();
                     request.setClienteId(cliente.getId());

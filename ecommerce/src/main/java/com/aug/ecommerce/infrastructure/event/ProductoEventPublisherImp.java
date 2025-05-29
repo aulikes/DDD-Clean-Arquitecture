@@ -1,6 +1,8 @@
 package com.aug.ecommerce.infrastructure.event;
 
 import com.aug.ecommerce.application.event.ProductoCreadoEvent;
+import com.aug.ecommerce.application.event.ProductoNoValidoEvent;
+import com.aug.ecommerce.application.event.ProductoValidoEvent;
 import com.aug.ecommerce.application.publisher.ProductoEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -14,5 +16,15 @@ public class ProductoEventPublisherImp implements ProductoEventPublisher {
     @Override
     public void publicarProductoCreado(ProductoCreadoEvent productoCreadoEvent) {
         publisher.publishEvent(productoCreadoEvent);
+    }
+
+    @Override
+    public void publishProductoValido(ProductoValidoEvent event) {
+        publisher.publishEvent(event);
+    }
+
+    @Override
+    public void publishProductoInvalido(ProductoNoValidoEvent event) {
+        publisher.publishEvent(event);
     }
 }

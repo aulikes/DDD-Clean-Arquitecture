@@ -84,7 +84,7 @@ public class Orden {
         cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.LISTA_PARA_PAGO));
     }
 
-    public void reenviarAValidacion() {
+    public void enviarAValidacion() {
         cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.PENDIENTE_VALIDACION));
     }
 

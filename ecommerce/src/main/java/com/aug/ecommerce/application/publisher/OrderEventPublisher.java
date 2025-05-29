@@ -1,5 +1,6 @@
 package com.aug.ecommerce.application.publisher;
 
+import com.aug.ecommerce.application.event.OrdenCreadaEvent;
 import com.aug.ecommerce.application.event.OrderPaymentRequestedEvent;
 
 /**
@@ -7,5 +8,8 @@ import com.aug.ecommerce.application.event.OrderPaymentRequestedEvent;
  * Su implementación concreta vive en la capa de infraestructura.
  */
 public interface OrderEventPublisher {
+
+    void publishOrderOrdenCreated(OrdenCreadaEvent event);
+
     void publishOrderPaymentRequested(OrderPaymentRequestedEvent event);
 }

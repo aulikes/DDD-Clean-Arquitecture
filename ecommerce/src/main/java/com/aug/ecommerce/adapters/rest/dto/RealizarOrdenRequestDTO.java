@@ -23,5 +23,8 @@ public class RealizarOrdenRequestDTO {
 
         @Min(1)
         private int cantidad;
+
+        @NotNull
+        private double precioUnitario;
     }
 }
