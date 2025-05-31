@@ -20,3 +20,17 @@ spring:
     console:
       enabled: true
       path: /h2-console
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      pasarelaPago:
+        slidingWindowSize: 10
+        failureRateThreshold: 50
+        waitDurationInOpenState: 10s
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+#        recordExceptions:
+#          - java.lang.RuntimeException
+#        ignoreExceptions:
+#          - com.aug.ecommerce.domain.exception.ErrorNegocioException

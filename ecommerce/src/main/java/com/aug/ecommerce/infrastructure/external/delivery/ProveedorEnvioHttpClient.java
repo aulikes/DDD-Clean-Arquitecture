@@ -11,14 +11,9 @@ import java.util.UUID;
 public class ProveedorEnvioHttpClient implements ProveedorEnvioClient {
 
     @Override
-    public ResultadoEnvioDTO realizarEnvio(Envio envio) {
+    public ResultadoEnvioDTO prepararEnvio(Envio envio) {
         // Simulación: siempre exitoso, genera tracking
         String trackingNumber = "TRACK-" + UUID.randomUUID();
         return new ResultadoEnvioDTO(true, "PREPARANDO", trackingNumber, "Envío generado exitosamente.");
-    }
-
-    @Override
-    public ResultadoEnvioDTO actualizarEnvio(Envio envio) {
-        return null;
     }
 }

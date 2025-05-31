@@ -1,6 +1,8 @@
 package com.aug.ecommerce.application.service;
 
 import com.aug.ecommerce.application.command.RealizarOrdenCommand;
+import com.aug.ecommerce.application.command.RealizarPagoCommand;
+import com.aug.ecommerce.application.event.EnvioRequestedEvent;
 import com.aug.ecommerce.application.event.OrdenCreadaEvent;
 import com.aug.ecommerce.application.event.OrderPaymentRequestedEvent;
 import com.aug.ecommerce.application.publisher.OrderEventPublisher;
@@ -60,24 +62,13 @@ public class OrdenService {
         guardarYEnviarAValidarOrden(orden);
     }
 
-    @Transactional
-    public void iniciarPago(Long ordenId) {
-        Orden orden = ordenRepository.findById(ordenId)
-                .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
-        orden.iniciarPago();
-        ordenRepository.save(orden);
-        log.debug("Orden {} pasó a estado PAGO_EN_PROCESO", ordenId);
-
-        // Aquí puedes emitir OrderPaymentRequestedEvent si deseas
-    }
-
     /**
      * Solicita el inicio del proceso de pago para una orden.
      * Publica un evento al exterior con la intención de realizar el pago.
      */
     @Transactional
-    public void solicitarPago(Long idOrden, String medioPago){
-        ordenRepository.findById(idOrden).ifPresentOrElse(orden -> {
+    public void solicitarPago(RealizarPagoCommand command){
+        ordenRepository.findById(command.idOrden()).ifPresentOrElse(orden -> {
             orden.iniciarPago();
             ordenRepository.save(orden);
             log.debug("Orden {} actualizada a estado PAGO_EN_PROCESO", orden.getId());
@@ -85,14 +76,52 @@ public class OrdenService {
             // Publicar evento
             OrderPaymentRequestedEvent event = new OrderPaymentRequestedEvent(
                     orden.getId(),
-                    orden.getDireccionEnviar(),
                     orden.calcularTotal(),
-                    medioPago
+                    command.medioPago()
             );
 
             publisher.publishOrderPaymentRequested(event);
             log.debug("Evento OrderPaymentRequestEvent publicado para orden {}", orden.getId());
-        }, () -> log.error("Orden con ID {} no encontrada", idOrden));
+        }, () -> log.error("Orden con ID {} no encontrada", command.idOrden()));
+    }
+
+    @Transactional
+    public void pagoConfirmado(Long ordenId) {
+        Orden orden = ordenRepository.findById(ordenId)
+                .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
+        orden.confirmarPago();
+        orden = ordenRepository.save(orden);
+        log.debug("Orden {} pasó a estado PAGADA", ordenId);
+        publisher.publishOrdenEnvioRequested(
+                new EnvioRequestedEvent(orden.getId(), orden.getDireccionEnviar()));
+        log.debug("Evento EnvioRequestedEvent publicado para orden {}", ordenId);
+    }
+
+    @Transactional
+    public void pagoRechazado(Long ordenId) {
+        Orden orden = ordenRepository.findById(ordenId)
+                .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
+        orden.registrarPagoFallido();
+        ordenRepository.save(orden);
+        log.debug("Orden {} pasó a estado PAGO_RECHAZADO", ordenId);
+    }
+
+    @Transactional
+    public void envioConfirmado(Long ordenId) {
+        Orden orden = ordenRepository.findById(ordenId)
+                .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
+        orden.iniciarEnvio();
+        ordenRepository.save(orden);
+        log.debug("Orden {} pasó a estado INICIANDO_ENVIO", ordenId);
+    }
+
+    @Transactional
+    public void envioError(Long ordenId) {
+        Orden orden = ordenRepository.findById(ordenId)
+                .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
+        orden.registrarPagoFallido();
+        ordenRepository.save(orden);
+        log.debug("Orden {} pasó a estado NO_CONFIRMADO_ENVIO", ordenId);
     }
 
     private void guardarYEnviarAValidarOrden(Orden orden) {
@@ -101,7 +130,7 @@ public class OrdenService {
         // Envías la orden a validación
         orden.enviarAValidacion();
         // Publicar evento de orden creada para validación externa
-        publisher.publishOrderOrdenCreated(this.getEvent(orden));
+        publisher.publishOrdenCreated(this.getEvent(orden));
         log.debug("Orden {} enviada a validación y evento publicado", orden.getId());
     }
 

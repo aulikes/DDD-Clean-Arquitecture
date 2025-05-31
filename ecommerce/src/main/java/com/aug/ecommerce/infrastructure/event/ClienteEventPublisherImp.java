@@ -15,7 +15,11 @@ public class ClienteEventPublisherImp implements ClienteEventPublisher {
 
     @Override
     public void publishClienteValido(ClienteValidoEvent event) {
-        publisher.publishEvent(event);
+
+        // No se publica para una ordenId == 5
+        if (event.ordenId() != 5L) {
+            publisher.publishEvent(event);
+        }
     }
 
     @Override

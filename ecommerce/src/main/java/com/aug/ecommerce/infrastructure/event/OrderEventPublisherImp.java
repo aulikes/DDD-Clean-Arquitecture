@@ -1,5 +1,6 @@
 package com.aug.ecommerce.infrastructure.event;
 
+import com.aug.ecommerce.application.event.EnvioRequestedEvent;
 import com.aug.ecommerce.application.event.OrdenCreadaEvent;
 import com.aug.ecommerce.application.event.OrderPaymentRequestedEvent;
 import com.aug.ecommerce.application.publisher.OrderEventPublisher;
@@ -13,12 +14,17 @@ public class OrderEventPublisherImp implements OrderEventPublisher {
     private final ApplicationEventPublisher publisher;
 
     @Override
-    public void publishOrderOrdenCreated(OrdenCreadaEvent event) {
+    public void publishOrdenCreated(OrdenCreadaEvent event) {
         publisher.publishEvent(event);
     }
 
     @Override
     public void publishOrderPaymentRequested(OrderPaymentRequestedEvent event) {
+        publisher.publishEvent(event);
+    }
+
+    @Override
+    public void publishOrdenEnvioRequested(EnvioRequestedEvent event) {
         publisher.publishEvent(event);
     }
 }

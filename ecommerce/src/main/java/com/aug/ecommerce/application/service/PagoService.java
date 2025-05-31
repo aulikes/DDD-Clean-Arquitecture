@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.concurrent.TimeoutException;
 
 @RequiredArgsConstructor
 @Service
@@ -27,15 +28,23 @@ public class PagoService {
         Pago pago = pagoRepository.save(
                 Pago.create(event.ordenId(), event.monto(), event.medioPago()));
 
-        ResultadoPagoDTO resultado = pasarelaPagoClient.realizarPago(pago);
+        ResultadoPagoDTO resultado = null;
+        try {
+            resultado = pasarelaPagoClient.realizarPago(pago);
+        } catch (TimeoutException e) {
+            resultado = new ResultadoPagoDTO(false, null, e.getMessage());
+        }
 
         if (resultado.exitoso()) {
             pago.confirmar(resultado.codigoTransaccion());
-            eventDispatcher.publicarPagoRealizado(
-                    new PagoConfirmadoEvent(event.ordenId(), event.direccionEntrega(), Instant.now())); // evento lanzado
         } else {
             pago.fallar(resultado.mensaje());
         }
         pagoRepository.save(pago);
+        //lanza evento
+        eventDispatcher.publicarPagoRealizado(
+            new PagoConfirmadoEvent(event.ordenId(), pago.getId(), Instant.now(),
+                    resultado.exitoso(), resultado.codigoTransaccion(), resultado.mensaje()));
+
     }
 }

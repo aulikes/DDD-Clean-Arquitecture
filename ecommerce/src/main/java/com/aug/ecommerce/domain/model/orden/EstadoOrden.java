@@ -31,6 +31,7 @@ public final class EstadoOrden {
         PAGO_RECHAZADO, // La pasarela rechazó el pago. Se permite reintentar o cancelar.
         PAGADA, // El pago fue exitoso. La orden puede proceder a ser enviada.
         INICIANDO_ENVIO, // Inicia el proceso logístico de envío. El pedido aún no ha salido.
+        NO_CONFIRMADO_ENVIO, // Se trata de iniciar el proceso de envío pero ocurre algún error.
         ENVIADA, // El pedido ha sido enviado al cliente.
         ENTREGADA, // El pedido fue recibido por el cliente.
         CANCELADA // La orden fue cancelada, ya sea manual o automáticamente.
@@ -44,7 +45,8 @@ public final class EstadoOrden {
         registrar(Tipo.PAGO_EN_PROCESO, List.of(Tipo.PAGADA, Tipo.PAGO_RECHAZADO, Tipo.CANCELADA));
         registrar(Tipo.PAGO_RECHAZADO, List.of(Tipo.PAGO_EN_PROCESO, Tipo.CANCELADA));
         registrar(Tipo.PAGADA, List.of(Tipo.INICIANDO_ENVIO, Tipo.CANCELADA));
-        registrar(Tipo.INICIANDO_ENVIO, List.of(Tipo.ENVIADA));
+        registrar(Tipo.INICIANDO_ENVIO, List.of(Tipo.ENVIADA, Tipo.NO_CONFIRMADO_ENVIO));
+        registrar(Tipo.NO_CONFIRMADO_ENVIO, List.of(Tipo.INICIANDO_ENVIO));
         registrar(Tipo.ENVIADA, List.of(Tipo.ENTREGADA));
         registrar(Tipo.ENTREGADA, List.of());
         registrar(Tipo.CANCELADA, List.of());

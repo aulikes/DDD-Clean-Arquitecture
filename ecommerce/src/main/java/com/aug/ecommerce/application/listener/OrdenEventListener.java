@@ -1,6 +1,7 @@
 package com.aug.ecommerce.application.listener;
 
 import com.aug.ecommerce.application.event.*;
+import com.aug.ecommerce.application.service.OrdenService;
 import com.aug.ecommerce.application.service.OrdenValidacionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Component;
 public class OrdenEventListener {
 
     private final OrdenValidacionService ordenValidacionService;
+    private final OrdenService ordenService;
 
     @EventListener
     public void onClienteValido(ClienteValidoEvent event) throws Exception {
@@ -70,13 +72,25 @@ public class OrdenEventListener {
     }
 
     @EventListener
-    public void onStockNoDisponible(StockNoDisponibleEvent event) throws Exception{
+    public void onOrdenPagada(PagoConfirmadoEvent event) throws Exception{
         try {
-            log.debug("------------> StockNoDisponibleEvent");
-            ordenValidacionService.registrarValidacionFallida(event.ordenId(), ValidacionCrearOrden.STOCK);
+            log.debug("------------> PagoConfirmadoEvent");
+            ordenValidacionService.gestionarInformacionPago(event);
         } catch (Exception e) {
-            log.error("------------> onStockNoDisponible", e);
+            log.error("------------> PagoConfirmadoEvent", e);
             throw new Exception(e);
         }
     }
+
+    @EventListener
+    public void onOrdenPreparada(EnvioPreparadoEvent event) throws Exception{
+        try {
+            log.debug("------------> EnvioPreparadoEvent");
+            ordenValidacionService.gestionarInformacionEnvio(event);
+        } catch (Exception e) {
+            log.error("------------> EnvioPreparadoEvent", e);
+            throw new Exception(e);
+        }
+    }
+
 }

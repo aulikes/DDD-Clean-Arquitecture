@@ -104,6 +104,10 @@ public class Orden {
         cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.INICIANDO_ENVIO));
     }
 
+    public void errorEnvio() {
+        cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.NO_CONFIRMADO_ENVIO));
+    }
+
     public void marcarEnviada() {
         cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.ENVIADA));
     }
