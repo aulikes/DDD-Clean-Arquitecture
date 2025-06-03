@@ -23,20 +23,20 @@ public class InventarioValidacionService {
     public void validarInventarioCreacionOrden(Long ordenId, List<OrdenCreadaEvent.ItemOrdenCreada> itemsOrden) throws Exception {
         try {
             boolean hayStockSuficiente = itemsOrden.stream().allMatch(item -> {
-                return inventarioRepository.findById(item.getProductoId())
-                        .map(inv -> inv.getStockDisponible() >= item.getCantidad())
+                return inventarioRepository.findById(item.productoId())
+                        .map(inv -> inv.getStockDisponible() >= item.cantidad())
                         .orElse(false);
             });
 
             if (hayStockSuficiente) {
                 log.debug("Stock reservado para orden {}", ordenId);
-                publisher.publishStockDisponible(new StockDisponibleEvent(ordenId));
+                publisher.publishStockDisponible(new InventarioDisponibleEvent(ordenId));
             } else {
                 throw new RuntimeException("Stock insuficiente para orden " + ordenId);
             }
         } catch (Exception e) {
             log.error("Stock insuficiente para orden {}", ordenId);
-            publisher.publishStockNoDisponible(new StockNoDisponibleEvent(ordenId));
+            publisher.publishStockNoDisponible(new InventarioNoDisponibleEvent(ordenId));
 //            throw new Exception(e);
         }
 

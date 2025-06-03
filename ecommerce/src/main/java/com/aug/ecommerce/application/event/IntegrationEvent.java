@@ -10,6 +10,13 @@ import java.util.UUID;
 public interface IntegrationEvent {
 
     /**
+     * Establece la Traza del proceso, por el momento lo vamos a dejar instanciado aquí, pero cada proceso lo debe instanciar
+     */
+    default String getTraceId(){
+        return UUID.randomUUID().toString();
+    };
+
+    /**
      * ID único del evento, útil para trazabilidad.
      */
     default String getEventId() {

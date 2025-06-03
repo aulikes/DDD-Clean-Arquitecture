@@ -9,7 +9,7 @@ public record PagoConfirmadoEvent(
 
     @Override
     public String getEventType() {
-        return "pago.confirmado";
+        return "pago.orden.confirmado";
     }
 
     @Override

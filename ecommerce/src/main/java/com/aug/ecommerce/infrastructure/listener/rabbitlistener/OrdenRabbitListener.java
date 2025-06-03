@@ -3,6 +3,7 @@ package com.aug.ecommerce.infrastructure.listener.rabbitlistener;
 import com.aug.ecommerce.application.event.*;
 import com.aug.ecommerce.application.service.OrdenValidacionService;
 import com.aug.ecommerce.infrastructure.listener.evenlistener.ValidacionCrearOrden;
+import com.aug.ecommerce.infrastructure.queue.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,18 +22,18 @@ public class OrdenRabbitListener {
     private final ObjectMapper objectMapper;
     private final OrdenValidacionService ordenValidacionService;
 
-    @RabbitListener(queues = "cliente-events-queue")
+    @RabbitListener(queues = "cliente.orden.validado.v1.queue")
     public void recibirDesdeClienteQueue(String payload) {
         try {
             IntegrationEventWrapper wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
             switch (wrapper.getEventType()) {
-                case "cliente.valido" -> {
-                    ClienteValidoEvent evento = objectMapper.readValue(payload, ClienteValidoEvent.class);
-                    ordenValidacionService.registrarValidacionExitosa(evento.ordenId(), ValidacionCrearOrden.CLIENTE);
+                case "cliente.orden.valido" -> {
+                    ClienteValidoEvent event = objectMapper.convertValue(wrapper.getData(), ClienteValidoEvent.class);
+                    ordenValidacionService.registrarValidacionExitosa(event.ordenId(), ValidacionCrearOrden.CLIENTE);
                 }
-                case "cliente.no-valido" -> {
-                    ClienteNoValidoEvent evento = objectMapper.readValue(payload, ClienteNoValidoEvent.class);
-                    ordenValidacionService.registrarValidacionFallida(evento.ordenId(), ValidacionCrearOrden.CLIENTE);
+                case "cliente.orden.no-valido" -> {
+                    ClienteNoValidoEvent event = objectMapper.convertValue(wrapper.getData(), ClienteNoValidoEvent.class);
+                    ordenValidacionService.registrarValidacionFallida(event.ordenId(), ValidacionCrearOrden.CLIENTE);
                 }
                 default -> log.warn("Evento de cliente no reconocido: {}", wrapper.getEventType());
             }
@@ -41,18 +42,18 @@ public class OrdenRabbitListener {
         }
     }
 
-    @RabbitListener(queues = "producto-events-queue")
+    @RabbitListener(queues = "producto.orden.validado.v1.queue")// CAMBIAR
     public void recibirDesdeProductoQueue(String payload) {
         try {
             IntegrationEventWrapper wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
             switch (wrapper.getEventType()) {
-                case "producto.valido" -> {
-                    ProductoValidoEvent evento = objectMapper.readValue(payload, ProductoValidoEvent.class);
-                    ordenValidacionService.registrarValidacionExitosa(evento.ordenId(), ValidacionCrearOrden.PRODUCTO);
+                case "producto.orden.valido" -> {
+                    ProductoValidoEvent event = objectMapper.convertValue(wrapper.getData(), ProductoValidoEvent.class);
+                    ordenValidacionService.registrarValidacionExitosa(event.ordenId(), ValidacionCrearOrden.PRODUCTO);
                 }
-                case "producto.no-valido" -> {
-                    ProductoNoValidoEvent evento = objectMapper.readValue(payload, ProductoNoValidoEvent.class);
-                    ordenValidacionService.registrarValidacionFallida(evento.ordenId(), ValidacionCrearOrden.PRODUCTO);
+                case "producto.orden.no-valido" -> {
+                    ProductoNoValidoEvent event = objectMapper.convertValue(wrapper.getData(), ProductoNoValidoEvent.class);
+                    ordenValidacionService.registrarValidacionFallida(event.ordenId(), ValidacionCrearOrden.PRODUCTO);
                 }
                 default -> log.warn("Evento de producto no reconocido: {}", wrapper.getEventType());
             }
@@ -61,18 +62,18 @@ public class OrdenRabbitListener {
         }
     }
 
-    @RabbitListener(queues = "inventario-events-queue")
+    @RabbitListener(queues = "inventario.orden.validado.v1.queue")
     public void recibirDesdeInventarioQueue(String payload) {
         try {
             IntegrationEventWrapper wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
             switch (wrapper.getEventType()) {
-                case "inventario.disponible" -> {
-                    StockDisponibleEvent evento = objectMapper.readValue(payload, StockDisponibleEvent.class);
-                    ordenValidacionService.registrarValidacionExitosa(evento.ordenId(), ValidacionCrearOrden.STOCK);
+                case "inventario.orden.disponible" -> {
+                    InventarioDisponibleEvent event = objectMapper.convertValue(wrapper.getData(), InventarioDisponibleEvent.class);
+                    ordenValidacionService.registrarValidacionExitosa(event.ordenId(), ValidacionCrearOrden.STOCK);
                 }
-                case "inventario.no-disponible" -> {
-                    StockNoDisponibleEvent evento = objectMapper.readValue(payload, StockNoDisponibleEvent.class);
-                    ordenValidacionService.registrarValidacionFallida(evento.ordenId(), ValidacionCrearOrden.STOCK);
+                case "inventario.orden.no-disponible" -> {
+                    InventarioNoDisponibleEvent event = objectMapper.convertValue(wrapper.getData(), InventarioNoDisponibleEvent.class);
+                    ordenValidacionService.registrarValidacionFallida(event.ordenId(), ValidacionCrearOrden.STOCK);
                 }
                 default -> log.warn("Evento de inventario no reconocido: {}", wrapper.getEventType());
             }
@@ -81,13 +82,13 @@ public class OrdenRabbitListener {
         }
     }
 
-    @RabbitListener(queues = "pago-events-queue")
+    @RabbitListener(queues = "pago.orden.validado.v1.queue")
     public void recibirDesdePagoQueue(String payload) {
         try {
             IntegrationEventWrapper wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("pago.confirmado".equals(wrapper.getEventType())) {
-                PagoConfirmadoEvent evento = objectMapper.readValue(payload, PagoConfirmadoEvent.class);
-                ordenValidacionService.gestionarInformacionPago(evento);
+            if ("pago.orden.confirmado".equals(wrapper.getEventType())) {
+                PagoConfirmadoEvent event = objectMapper.convertValue(wrapper.getData(), PagoConfirmadoEvent.class);
+                ordenValidacionService.gestionarInformacionPago(event);
             } else {
                 log.warn("Evento de pago no reconocido: {}", wrapper.getEventType());
             }
@@ -96,13 +97,13 @@ public class OrdenRabbitListener {
         }
     }
 
-    @RabbitListener(queues = "envio-events-queue")
+    @RabbitListener(queues = "envio.orden.preparado.v1.queue")
     public void recibirDesdeEnvioQueue(String payload) {
         try {
             IntegrationEventWrapper wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("envio.preparado".equals(wrapper.getEventType())) {
-                EnvioPreparadoEvent evento = objectMapper.readValue(payload, EnvioPreparadoEvent.class);
-                ordenValidacionService.gestionarInformacionEnvio(evento);
+            if ("envio.orden.preparado".equals(wrapper.getEventType())) {
+                EnvioPreparadoEvent event = objectMapper.convertValue(wrapper.getData(), EnvioPreparadoEvent.class);
+                ordenValidacionService.gestionarInformacionEnvio(event);
             } else {
                 log.warn("Evento de envío no reconocido: {}", wrapper.getEventType());
             }

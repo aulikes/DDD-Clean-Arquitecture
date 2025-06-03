@@ -2,7 +2,7 @@ package com.aug.ecommerce.infrastructure.publisher;
 
 import com.aug.ecommerce.application.event.IntegrationEvent;
 import com.aug.ecommerce.application.publisher.OrdenEventPublisher;
-import com.aug.ecommerce.infrastructure.queue.RabbitMQIntegrationEventPublisher;
+import com.aug.ecommerce.infrastructure.queue.RabbitMQEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OrdenEventPublisherImp implements OrdenEventPublisher {
     private final ApplicationEventPublisher publisher;
-    private final RabbitMQIntegrationEventPublisher rabbitPublisher;
+    private final RabbitMQEventPublisher rabbitPublisher;
 
     @Override
     public void publishOrdenCreated(IntegrationEvent event) {

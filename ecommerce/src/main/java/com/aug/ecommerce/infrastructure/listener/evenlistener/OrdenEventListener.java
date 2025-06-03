@@ -2,7 +2,6 @@ package com.aug.ecommerce.infrastructure.listener.evenlistener;
 
 import com.aug.ecommerce.application.event.*;
 import com.aug.ecommerce.application.service.OrdenValidacionService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -38,7 +37,7 @@ public class OrdenEventListener {
     }
 
     @EventListener
-    public void onStockDisponible(StockDisponibleEvent event) throws Exception{
+    public void onStockDisponible(InventarioDisponibleEvent event) throws Exception{
         try {
             log.debug("------------> StockDisponibleEvent");
             ordenValidacionService.registrarValidacionExitosa(event.ordenId(), ValidacionCrearOrden.STOCK);
@@ -49,7 +48,7 @@ public class OrdenEventListener {
     }
 
     @EventListener
-    public void onStockNoDisponible(StockNoDisponibleEvent event) throws Exception{
+    public void onStockNoDisponible(InventarioNoDisponibleEvent event) throws Exception{
         try {
             log.debug("------------> StockNoDisponibleEvent");
             ordenValidacionService.registrarValidacionFallida(event.ordenId(), ValidacionCrearOrden.STOCK);

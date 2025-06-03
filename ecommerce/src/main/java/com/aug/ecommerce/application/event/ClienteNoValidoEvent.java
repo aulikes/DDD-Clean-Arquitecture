@@ -6,7 +6,7 @@ public record ClienteNoValidoEvent(Long ordenId) implements IntegrationEvent, Se
 
     @Override
     public String getEventType() {
-        return "cliente.no-valido";
+        return "cliente.orden.no-valido";
     }
 
     @Override

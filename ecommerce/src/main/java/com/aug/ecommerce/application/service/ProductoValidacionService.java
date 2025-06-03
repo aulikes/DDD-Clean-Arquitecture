@@ -25,7 +25,7 @@ public class ProductoValidacionService {
     public void validarProductoCreacionOrden(Long ordenId, List<OrdenCreadaEvent.ItemOrdenCreada> itemsOrden) {
         try {
             boolean todosExisten = itemsOrden.stream()
-                    .allMatch(item -> productoRepository.findById(item.getProductoId()).isPresent());
+                    .allMatch(item -> productoRepository.findById(item.productoId()).isPresent());
 
             if (todosExisten) {
                 log.debug("Todos los productos válidos para orden {}", ordenId);

@@ -6,7 +6,7 @@ public record ClienteValidoEvent (Long ordenId) implements IntegrationEvent, Ser
 
     @Override
     public String getEventType() {
-        return "cliente.valido";
+        return "cliente.orden.valido";
     }
 
     @Override

@@ -2,11 +2,11 @@ package com.aug.ecommerce.application.event;
 
 import java.io.Serializable;
 
-public record StockDisponibleEvent(Long ordenId)  implements IntegrationEvent, Serializable {
+public record InventarioDisponibleEvent(Long ordenId)  implements IntegrationEvent, Serializable {
 
     @Override
     public String getEventType() {
-        return "inventario.disponible";
+        return "inventario.orden.disponible";
     }
 
     @Override

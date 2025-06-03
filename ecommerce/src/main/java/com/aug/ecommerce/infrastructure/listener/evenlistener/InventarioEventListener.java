@@ -28,7 +28,7 @@ public class InventarioEventListener {
     @Transactional
     @EventListener
     public void validarInventario(OrdenCreadaEvent event) throws Exception {
-        log.debug("---> Entrando al Listener ValidarInventarioListener - OrdenCreadaEvent {}", event.getOrdenId());
-        inventarioValidacionService.validarInventarioCreacionOrden(event.getOrdenId(), event.getItems());
+        log.debug("---> Entrando al Listener ValidarInventarioListener - OrdenCreadaEvent {}", event.ordenId());
+        inventarioValidacionService.validarInventarioCreacionOrden(event.ordenId(), event.items());
     }
 }

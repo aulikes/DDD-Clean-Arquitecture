@@ -1,7 +1,7 @@
 package com.aug.ecommerce.application.service;
 
 import com.aug.ecommerce.application.dto.ResultadoPagoDTO;
-import com.aug.ecommerce.application.event.OrderPaymentRequestedEvent;
+import com.aug.ecommerce.application.event.OrdenAPagarEvent;
 import com.aug.ecommerce.application.event.PagoConfirmadoEvent;
 import com.aug.ecommerce.application.publisher.PagoEventPublisher;
 import com.aug.ecommerce.application.gateway.PasarelaPagoClient;
@@ -23,7 +23,7 @@ public class PagoService {
     private final PagoEventPublisher pagoEventPublisher;
 
     @Transactional
-    public void realizarPago(OrderPaymentRequestedEvent event) {
+    public void realizarPago(OrdenAPagarEvent event) {
 
         Pago pago = pagoRepository.save(
                 Pago.create(event.ordenId(), event.monto(), event.medioPago()));

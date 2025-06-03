@@ -6,7 +6,7 @@ public record EnvioRequestedEvent(Long ordenId, String direccionEnvio)  implemen
 
     @Override
     public String getEventType() {
-        return "envio.pedido";
+        return "orden.envio.preparar";
     }
 
     @Override

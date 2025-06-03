@@ -16,7 +16,7 @@ public class ClienteEventListener {
 
     @EventListener
     public void validarCliente(OrdenCreadaEvent event) throws Exception {
-        log.debug("---> Entrando al Listener ValidarClienteListener - OrdenCreadaEvent {}", event.getOrdenId());
-        clienteValidacionService.validarClienteCreacionOrden(event.getOrdenId(), event.getClienteId());
+        log.debug("---> Entrando al Listener ValidarClienteListener - OrdenCreadaEvent {}", event.ordenId());
+        clienteValidacionService.validarClienteCreacionOrden(event.ordenId(), event.clienteId());
     }
 }

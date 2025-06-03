@@ -9,7 +9,7 @@ public record EnvioPreparadoEvent(
 
     @Override
     public String getEventType() {
-        return "envio.preparado";
+        return "envio.orden.preparado";
     }
 
     @Override

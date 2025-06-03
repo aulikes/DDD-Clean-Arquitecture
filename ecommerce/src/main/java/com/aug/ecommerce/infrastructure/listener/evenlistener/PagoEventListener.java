@@ -1,6 +1,6 @@
 package com.aug.ecommerce.infrastructure.listener.evenlistener;
 
-import com.aug.ecommerce.application.event.OrderPaymentRequestedEvent;
+import com.aug.ecommerce.application.event.OrdenAPagarEvent;
 import com.aug.ecommerce.application.service.PagoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,7 @@ public class PagoEventListener {
      * Llama al servicio de pago para registrar y procesar el pago.
      */
     @EventListener
-    public void handle(OrderPaymentRequestedEvent event) {
+    public void handle(OrdenAPagarEvent event) {
         log.info("Recibido OrderPaymentRequestEvent para la orden: {}", event.ordenId());
         pagoService.realizarPago(event);
     }

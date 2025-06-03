@@ -4,6 +4,7 @@ import com.aug.ecommerce.application.command.CrearInventarioCommand;
 import com.aug.ecommerce.application.event.*;
 import com.aug.ecommerce.application.service.InventarioService;
 import com.aug.ecommerce.application.service.InventarioValidacionService;
+import com.aug.ecommerce.infrastructure.queue.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,15 +20,14 @@ public class InventarioRabbitListener {
     private final InventarioValidacionService inventarioValidacionService;
     private final ObjectMapper objectMapper;
 
-    @RabbitListener(queues = "orden-events-queue")
+    @RabbitListener(queues = "orden.inventario.validar.v1.queue")
     public void validarInventario(String payload) {
-        log.debug("---> Entrando al RabbitListener InventarioRabbitListener - onEvento");
         try {
             IntegrationEventWrapper wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("orden.creada".equals(wrapper.getEventType())) {
-                OrdenCreadaEvent event = objectMapper.readValue(payload, OrdenCreadaEvent.class);
-                log.debug("---> Entrando al RabbitListener InventarioRabbitListener - onEvento, orden: {}", event.getOrdenId());
-                inventarioValidacionService.validarInventarioCreacionOrden(event.getOrdenId(), event.getItems());
+            if ("orden.multicast.creada".equals(wrapper.getEventType())) {
+                OrdenCreadaEvent event = objectMapper.convertValue(wrapper.getData(), OrdenCreadaEvent.class);
+                log.debug("---> Entrando al RabbitListener InventarioRabbitListener - onEvento, orden: {}", event.ordenId());
+                inventarioValidacionService.validarInventarioCreacionOrden(event.ordenId(), event.items());
             } else
                 log.warn("### validarInventario -> Evento de orden no reconocido: {}", wrapper.getEventType());
 
@@ -36,12 +36,12 @@ public class InventarioRabbitListener {
         }
     }
 
-    @RabbitListener(queues = "producto-events-queue")
+    @RabbitListener(queues = "producto.inventario.crear.v1.queue")
     public void crearInventario(String payload) {
         try {
             IntegrationEventWrapper wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("producto.creado".equals(wrapper.getEventType())) {
-                ProductoCreadoEvent event = objectMapper.readValue(payload, ProductoCreadoEvent.class);
+            if ("producto.inventario.crear".equals(wrapper.getEventType())) {
+                ProductoCreadoEvent event = objectMapper.convertValue(wrapper.getData(), ProductoCreadoEvent.class);
                 log.debug("---> Entrando al RabbitListener InventarioRabbitListener - onEvento, producto: {}", event.productoId());
                 inventarioService.crearInvenario(new CrearInventarioCommand(event.productoId(), event.cantidad()));
             } else

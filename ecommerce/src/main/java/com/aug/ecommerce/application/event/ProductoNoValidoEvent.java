@@ -6,7 +6,7 @@ public record ProductoNoValidoEvent(Long ordenId)  implements IntegrationEvent, 
 
     @Override
     public String getEventType() {
-        return "producto.no-valido";
+        return "producto.orden.no-valido";
     }
 
     @Override

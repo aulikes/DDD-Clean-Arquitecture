@@ -16,7 +16,7 @@ public class ProductoEventListener {
 
     @EventListener
     public void handle(OrdenCreadaEvent event) throws Exception {
-        log.debug("---> Entrando al Listener ValidarProductoListener - OrdenCreadaEvent {}", event.getOrdenId());
-        productoValidacionService.validarProductoCreacionOrden(event.getOrdenId(), event.getItems());
+        log.debug("---> Entrando al Listener ValidarProductoListener - OrdenCreadaEvent {}", event.ordenId());
+        productoValidacionService.validarProductoCreacionOrden(event.ordenId(), event.items());
     }
 }

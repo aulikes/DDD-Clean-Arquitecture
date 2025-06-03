@@ -35,36 +35,33 @@ public class RabbitMQConfig {
         return new FanoutExchange(eventRabbitMQ.getExchangeFanout());
     }
 
-    // =======================
-    // Cola y binding - ORDEN
-    // =======================
     /**
      * Cola intermediaria que recibe el evento 'orden.creada.vX' desde el exchange 'topic'
      * y lo redirige al exchange 'fanout'.
      */
     @Bean
-    public Queue ordenDispatcherQueue() {
-        return new Queue("orden-dispatcher-queue", true);
+    public Queue ordenMulticastDispatcherQueue() {
+        return new Queue("orden.multicast.creada.v1.queue", true);
     }
 
     /**
      * Vincula 'orden-dispatcher-queue' al exchange topic, escuchando el routing key 'orden.creada.v1'.
      */
     @Bean
-    public Binding ordenDispatcherBinding(Queue ordenDispatcherQueue, TopicExchange eventExchange) {
+    public Binding ordenDispatcherBinding(Queue ordenMulticastDispatcherQueue, TopicExchange eventExchange) {
         return BindingBuilder
-                .bind(ordenDispatcherQueue)
+                .bind(ordenMulticastDispatcherQueue)
                 .to(eventExchange)
-                .with("orden.creada.v1");
+                .with("orden.multicast.creada.v1");
     }
 
     /**
-     * Conecta 'orden-dispatcher-queue' al fanout exchange para propagar el mensaje.
+     * Conecta 'orden.multicast.creada.v1.queue' al fanout exchange para propagar el mensaje.
      */
     @Bean
-    public Binding ordenFanoutBridgeBinding(Queue ordenDispatcherQueue, FanoutExchange ordenFanoutExchange) {
+    public Binding ordenMulticastFanoutBridgeBinding(Queue ordenMulticastDispatcherQueue, FanoutExchange ordenFanoutExchange) {
         return BindingBuilder
-                .bind(ordenDispatcherQueue)
+                .bind(ordenMulticastDispatcherQueue)
                 .to(ordenFanoutExchange);
     }
 
@@ -73,34 +70,34 @@ public class RabbitMQConfig {
      * =========================================================*/
     // Cliente -> Orden, para OBTENER la validación de Cliente cuando se va a crear una nueva orden
     @Bean
-    public Queue ordenClienteQueue() {
-        return new Queue("orden-cliente-queue");
+    public Queue ordenClienteValidarQueue() {
+        return new Queue("orden.cliente.validar.v1.queue");
     }
 
     @Bean
-    public Binding ordenClienteBinding(Queue ordenClienteQueue, FanoutExchange ordenFanoutExchange) {
-        return BindingBuilder.bind(ordenClienteQueue).to(ordenFanoutExchange);
+    public Binding ordenClienteBinding(Queue ordenClienteValidarQueue, FanoutExchange ordenFanoutExchange) {
+        return BindingBuilder.bind(ordenClienteValidarQueue).to(ordenFanoutExchange);
     }
 
     // Producto -> Orden, para OBTENER la validación de Producto cuando se va a crear una nueva orden
     @Bean
-    public Queue ordenProductoQueue() {
-        return new Queue("orden-producto-queue");
+    public Queue ordenProductoValidarQueue() {
+        return new Queue("orden.producto.validar.v1.queue");
     }
     @Bean
-    public Binding ordenProductoBinding(Queue ordenProductoQueue, FanoutExchange ordenFanoutExchange) {
-        return BindingBuilder.bind(ordenProductoQueue).to(ordenFanoutExchange);
+    public Binding ordenProductoBinding(Queue ordenProductoValidarQueue, FanoutExchange ordenFanoutExchange) {
+        return BindingBuilder.bind(ordenProductoValidarQueue).to(ordenFanoutExchange);
     }
 
     // Inventario -> Orden, para OBTENER la validación de Inventario cuando se va a crear una nueva orden
     @Bean
-    public Queue ordenInventarioQueue() {
-        return new Queue("orden-inventario-queue");
+    public Queue ordenInventarioValidarQueue() {
+        return new Queue("orden.inventario.validar.v1.queue");
     }
 
     @Bean
-    public Binding ordenStockBinding(Queue ordenInventarioQueue, FanoutExchange ordenFanoutExchange) {
-        return BindingBuilder.bind(ordenInventarioQueue).to(ordenFanoutExchange);
+    public Binding ordenStockBinding(Queue ordenInventarioValidarQueue, FanoutExchange ordenFanoutExchange) {
+        return BindingBuilder.bind(ordenInventarioValidarQueue).to(ordenFanoutExchange);
     }
 
 
@@ -112,78 +109,98 @@ public class RabbitMQConfig {
     // Cola y binding - ORDEN
     // =======================
     @Bean
-    public Queue ordenQueue() {
-        return new Queue("orden-events-queue");
+    public Queue ordenPagoSolicitarQueue() {
+        return new Queue("orden.pago.solicitar.v1.queue");
     }
 
     @Bean
-    public Binding ordenBinding(Queue ordenQueue, TopicExchange eventTopicExchange) {
-        return BindingBuilder.bind(ordenQueue).to(eventTopicExchange).with("orden.#.v1");
+    public Binding ordenPagoSolicitarBinding(Queue ordenPagoSolicitarQueue, TopicExchange eventTopicExchange) {
+        return BindingBuilder.bind(ordenPagoSolicitarQueue).to(eventTopicExchange).with("orden.pago.#.v1");
+    }
+    @Bean
+    public Queue ordenEnvioPrepararQueue() {
+        return new Queue("orden.envio.preparar.v1.queue");
+    }
+
+    @Bean
+    public Binding ordenEnvioPrepararBinding(Queue ordenEnvioPrepararQueue, TopicExchange eventTopicExchange) {
+        return BindingBuilder.bind(ordenEnvioPrepararQueue).to(eventTopicExchange).with("orden.envio.#.v1");
     }
 
     // =======================
     // Cola y binding - PAGO
     // =======================
     @Bean
-    public Queue pagoQueue() {
-        return new Queue("pago-events-queue");
+    public Queue pagoOrdenValidadoQueue() {
+        return new Queue("pago.orden.validado.v1.queue");
     }
 
     @Bean
-    public Binding pagoBinding(Queue pagoQueue, TopicExchange eventTopicExchange) {
-        return BindingBuilder.bind(pagoQueue).to(eventTopicExchange).with("pago.#.v1");
+    public Binding pagoOrdenValidadoBinding(Queue pagoOrdenValidadoQueue, TopicExchange eventTopicExchange) {
+        return BindingBuilder.bind(pagoOrdenValidadoQueue).to(eventTopicExchange).with("pago.orden.#.v1");
     }
 
     // =======================
     // Cola y binding - CLIENTE
     // =======================
     @Bean
-    public Queue clienteQueue() {
-        return new Queue("cliente-events-queue");
+    public Queue clienteOrdenValidadoQueue() {
+        return new Queue("cliente.orden.validado.v1.queue"); //cliente-orden-validate-queue
     }
 
     @Bean
-    public Binding clienteBinding(Queue clienteQueue, TopicExchange eventTopicExchange) {
-        return BindingBuilder.bind(clienteQueue).to(eventTopicExchange).with("cliente.#.v1");
+    public Binding clienteOrdenValidadoBinding(Queue clienteOrdenValidadoQueue, TopicExchange eventTopicExchange) {
+        return BindingBuilder.bind(clienteOrdenValidadoQueue).to(eventTopicExchange).with("cliente.orden.#.v1");
     }
 
     // =======================
     // Cola y binding - PRODUCTO
     // =======================
     @Bean
-    public Queue productoQueue() {
-        return new Queue("producto-events-queue");
+    public Queue productoInventarioCrearQueue() {
+        return new Queue("producto.inventario.crear.v1.queue");
     }
 
     @Bean
-    public Binding productoBinding(Queue productoQueue, TopicExchange eventTopicExchange) {
-        return BindingBuilder.bind(productoQueue).to(eventTopicExchange)
-                .with("producto.#.v1");
+    public Binding productoInventarioCrearBinding(Queue productoInventarioCrearQueue, TopicExchange eventTopicExchange) {
+        return BindingBuilder.bind(productoInventarioCrearQueue).to(eventTopicExchange)
+                .with("producto.inventario.#.v1");
+    }
+
+    @Bean
+    public Queue productoOrdenValidadoQueue() {
+        return new Queue("producto.orden.validado.v1.queue");
+    }
+
+    @Bean
+    public Binding productoOrdenValidadoBinding(Queue productoOrdenValidadoQueue, TopicExchange eventTopicExchange) {
+        return BindingBuilder.bind(productoOrdenValidadoQueue).to(eventTopicExchange)
+                .with("producto.orden.#.v1");
     }
 
     // =======================
     // Cola y binding - INVENTARIO
     // =======================
     @Bean
-    public Queue inventarioQueue() {
-        return new Queue("inventario-events-queue");
+    public Queue inventarioOrdenValidadoQueue() {
+        return new Queue("inventario.orden.validado.v1.queue");
     }
 
     @Bean
-    public Binding inventarioBinding(Queue inventarioQueue, TopicExchange eventTopicExchange) {
-        return BindingBuilder.bind(inventarioQueue).to(eventTopicExchange).with("inventario.#.v1");
+    public Binding inventarioOrdenValidadoBinding(Queue inventarioOrdenValidadoQueue, TopicExchange eventTopicExchange) {
+        return BindingBuilder.bind(inventarioOrdenValidadoQueue).to(eventTopicExchange).with("inventario.orden.#.v1");
     }
 
     // =======================
     // Cola y binding - ENVIO
     // =======================
     @Bean
-    public Queue envioQueue() {
-        return new Queue("envio-events-queue");
+    public Queue envioOrdenPreparadoQueue() {
+        return new Queue("envio.orden.preparado.v1.queue");
     }
 
     @Bean
-    public Binding envioBinding(Queue envioQueue, TopicExchange eventTopicExchange) {
-        return BindingBuilder.bind(envioQueue).to(eventTopicExchange).with("envio.#.v1");
+    public Binding envioBinding(Queue envioOrdenPreparadoQueue, TopicExchange eventTopicExchange) {
+        return BindingBuilder.bind(envioOrdenPreparadoQueue).to(eventTopicExchange).with("envio.orden.#.v1");
     }
 }

@@ -40,7 +40,7 @@ public class RabbitMQIntegrationEventPublisher {
                 log.error("Routing Key: {}", returned.getRoutingKey());
                 log.error("Reply Text : {}", returned.getReplyText());
             });
-            rabbitTemplate.send(eventRabbitMQ.getExchange(), routingKey, message);
+            rabbitTemplate.send(eventRabbitMQ.getExchangeTopic(), routingKey, message);
         } catch (Exception ex) {
             // Aquí se puede integrar un sistema de monitoreo o fallback
             log.error("Error publicando evento: " + ex.getMessage());

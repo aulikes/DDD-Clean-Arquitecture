@@ -2,6 +2,7 @@ package com.aug.ecommerce.infrastructure.listener.rabbitlistener;
 
 import com.aug.ecommerce.application.event.OrdenCreadaEvent;
 import com.aug.ecommerce.application.service.ProductoValidacionService;
+import com.aug.ecommerce.infrastructure.queue.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,13 +17,13 @@ public class ProductoRabbitListener {
     private final ProductoValidacionService productoValidacionService;
     private final ObjectMapper objectMapper;
 
-    @RabbitListener(queues = "orden-events-queue")
+    @RabbitListener(queues = "orden.producto.validar.v1.queue")
     public void validarProductoCreacionOrden(String payload) { //Valida si el producto existe
         try {
             IntegrationEventWrapper wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("orden.creada".equals(wrapper.getEventType())) {
-                OrdenCreadaEvent event = objectMapper.readValue(payload, OrdenCreadaEvent.class);
-                productoValidacionService.validarProductoCreacionOrden(event.getOrdenId(), event.getItems());
+            if ("orden.multicast.creada".equals(wrapper.getEventType())) {
+                OrdenCreadaEvent event = objectMapper.convertValue(wrapper.getData(), OrdenCreadaEvent.class);
+                productoValidacionService.validarProductoCreacionOrden(event.ordenId(), event.items());
             } else
                 log.warn("### validarProductoCreacionOrden -> Evento de producto no reconocido: {}", wrapper.getEventType());
         } catch (Exception e) {

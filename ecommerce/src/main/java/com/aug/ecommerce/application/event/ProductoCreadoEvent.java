@@ -9,7 +9,7 @@ public record ProductoCreadoEvent(
 
     @Override
     public String getEventType() {
-        return "producto.creado";
+        return "producto.inventario.crear";
     }
 
     @Override

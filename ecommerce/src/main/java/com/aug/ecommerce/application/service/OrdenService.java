@@ -4,7 +4,7 @@ import com.aug.ecommerce.application.command.RealizarOrdenCommand;
 import com.aug.ecommerce.application.command.RealizarPagoCommand;
 import com.aug.ecommerce.application.event.EnvioRequestedEvent;
 import com.aug.ecommerce.application.event.OrdenCreadaEvent;
-import com.aug.ecommerce.application.event.OrderPaymentRequestedEvent;
+import com.aug.ecommerce.application.event.OrdenAPagarEvent;
 import com.aug.ecommerce.application.publisher.OrdenEventPublisher;
 import com.aug.ecommerce.domain.model.orden.EstadoOrden;
 import com.aug.ecommerce.domain.model.orden.Orden;
@@ -74,7 +74,7 @@ public class OrdenService {
             log.debug("Orden {} actualizada a estado PAGO_EN_PROCESO", orden.getId());
 
             // Publicar evento
-            OrderPaymentRequestedEvent event = new OrderPaymentRequestedEvent(
+            OrdenAPagarEvent event = new OrdenAPagarEvent(
                     orden.getId(),
                     orden.calcularTotal(),
                     command.medioPago()
