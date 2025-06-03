@@ -1,9 +1,8 @@
 package com.aug.ecommerce.application.publisher;
 
-import com.aug.ecommerce.application.event.ClienteNoValidoEvent;
-import com.aug.ecommerce.application.event.ClienteValidoEvent;
+import com.aug.ecommerce.application.event.IntegrationEvent;
 
 public interface ClienteEventPublisher {
-    void publishClienteValido(ClienteValidoEvent event);
-    void publishClienteNoValido(ClienteNoValidoEvent event);
+    void publishClienteValido(IntegrationEvent event);
+    void publishClienteNoValido(IntegrationEvent event);
 }

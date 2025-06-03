@@ -1,7 +1,8 @@
-package com.aug.ecommerce.infrastructure.event;
+package com.aug.ecommerce.infrastructure.publisher;
 
-import com.aug.ecommerce.application.event.EnvioPreparadoEvent;
+import com.aug.ecommerce.application.event.IntegrationEvent;
 import com.aug.ecommerce.application.publisher.EnvioEventPublisher;
+import com.aug.ecommerce.infrastructure.queue.RabbitMQIntegrationEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Component;
@@ -11,9 +12,10 @@ import org.springframework.stereotype.Component;
 public class EnvioEventPublisherImp implements EnvioEventPublisher {
 
     private final ApplicationEventPublisher publisher;
+    private final RabbitMQIntegrationEventPublisher rabbitPublisher;
 
     @Override
-    public void publicarEnvioPreparado(EnvioPreparadoEvent evento) {
-        publisher.publishEvent(evento);
+    public void publicarEnvioPreparado(IntegrationEvent evento) {
+        rabbitPublisher.publishEvent(evento);
     }
 }

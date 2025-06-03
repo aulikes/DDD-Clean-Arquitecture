@@ -1,7 +1,7 @@
 package com.aug.ecommerce.application.publisher;
 
-import com.aug.ecommerce.application.event.PagoConfirmadoEvent;
+import com.aug.ecommerce.application.event.IntegrationEvent;
 
 public interface PagoEventPublisher {
-    void publicarPagoRealizado(PagoConfirmadoEvent evento);
+    void publicarPagoRealizado(IntegrationEvent evento);
 }

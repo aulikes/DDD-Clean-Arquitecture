@@ -1,4 +1,4 @@
-package com.aug.ecommerce.application.listener;
+package com.aug.ecommerce.infrastructure.listener.evenlistener;
 
 public enum ValidacionCrearOrden {
     CLIENTE, PRODUCTO, STOCK

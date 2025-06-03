@@ -2,7 +2,7 @@ package com.aug.ecommerce.application.service;
 
 import com.aug.ecommerce.application.event.EnvioPreparadoEvent;
 import com.aug.ecommerce.application.event.PagoConfirmadoEvent;
-import com.aug.ecommerce.application.listener.ValidacionCrearOrden;
+import com.aug.ecommerce.infrastructure.listener.evenlistener.ValidacionCrearOrden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class OrdenValidacionService {
     // Ejecutor para programar tareas con retraso (timeouts)
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(2);
 
-    private static final long TIMEOUT_SECONDS = 30;
+    private static final long TIMEOUT_SECONDS = 180;
 
     /**
      * Registra una validación exitosa para una orden.

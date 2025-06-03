@@ -1,4 +1,16 @@
 package com.aug.ecommerce.application.event;
 
-public record ProductoValidoEvent(Long ordenId) {
+import java.io.Serializable;
+
+public record ProductoValidoEvent(Long ordenId)  implements IntegrationEvent, Serializable {
+
+    @Override
+    public String getEventType() {
+        return "producto.valido";
+    }
+
+    @Override
+    public String getVersion() {
+        return "v1";
+    }
 }

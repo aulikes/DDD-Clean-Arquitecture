@@ -5,7 +5,7 @@ import com.aug.ecommerce.application.command.RealizarPagoCommand;
 import com.aug.ecommerce.application.event.EnvioRequestedEvent;
 import com.aug.ecommerce.application.event.OrdenCreadaEvent;
 import com.aug.ecommerce.application.event.OrderPaymentRequestedEvent;
-import com.aug.ecommerce.application.publisher.OrderEventPublisher;
+import com.aug.ecommerce.application.publisher.OrdenEventPublisher;
 import com.aug.ecommerce.domain.model.orden.EstadoOrden;
 import com.aug.ecommerce.domain.model.orden.Orden;
 import com.aug.ecommerce.domain.repository.OrdenRepository;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class OrdenService {
 
     private final OrdenRepository ordenRepository;
-    private final OrderEventPublisher publisher;
+    private final OrdenEventPublisher publisher;
 
     @Transactional
     public Long crearOrden(RealizarOrdenCommand command) {

@@ -1,7 +1,6 @@
-package com.aug.ecommerce.application.listener;
+package com.aug.ecommerce.infrastructure.listener.evenlistener;
 
 import com.aug.ecommerce.application.event.EnvioRequestedEvent;
-import com.aug.ecommerce.application.event.PagoConfirmadoEvent;
 import com.aug.ecommerce.application.service.EnvioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

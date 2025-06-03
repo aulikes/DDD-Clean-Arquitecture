@@ -3,6 +3,7 @@ package com.aug.ecommerce.application.event;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -11,7 +12,7 @@ import java.util.List;
  */
 @Getter
 @AllArgsConstructor
-public class OrdenCreadaEvent {
+public class OrdenCreadaEvent implements IntegrationEvent, Serializable {
 
     private final Long ordenId;
     private final Long clienteId;
@@ -23,5 +24,15 @@ public class OrdenCreadaEvent {
     public static class ItemOrdenCreada {
         private final Long productoId;
         private final int cantidad;
+    }
+
+    @Override
+    public String getEventType() {
+        return "orden.creada";
+    }
+
+    @Override
+    public String getVersion() {
+        return "v1";
     }
 }

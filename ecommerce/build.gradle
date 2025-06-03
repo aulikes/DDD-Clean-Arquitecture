@@ -31,10 +31,15 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
+	//Resilience
 	implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.1.0'
 	implementation 'io.github.resilience4j:resilience4j-circuitbreaker:2.1.0'
 	implementation 'io.github.resilience4j:resilience4j-retry:2.1.0'
 	implementation 'io.github.resilience4j:resilience4j-core:2.1.0'
+
+	//RabbitMQ
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+
 
 	// Lombok
 	implementation "org.projectlombok:lombok:1.18.30"

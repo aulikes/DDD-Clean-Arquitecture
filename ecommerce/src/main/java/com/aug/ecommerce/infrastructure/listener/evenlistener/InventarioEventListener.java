@@ -1,8 +1,7 @@
-package com.aug.ecommerce.application.listener;
+package com.aug.ecommerce.infrastructure.listener.evenlistener;
 
 import com.aug.ecommerce.application.command.CrearInventarioCommand;
 import com.aug.ecommerce.application.event.OrdenCreadaEvent;
-import com.aug.ecommerce.application.event.PagoConfirmadoEvent;
 import com.aug.ecommerce.application.event.ProductoCreadoEvent;
 import com.aug.ecommerce.application.service.InventarioService;
 import com.aug.ecommerce.application.service.InventarioValidacionService;

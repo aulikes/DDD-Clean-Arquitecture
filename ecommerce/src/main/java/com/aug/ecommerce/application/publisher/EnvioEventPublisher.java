@@ -1,7 +1,7 @@
 package com.aug.ecommerce.application.publisher;
 
-import com.aug.ecommerce.application.event.EnvioPreparadoEvent;
+import com.aug.ecommerce.application.event.IntegrationEvent;
 
 public interface EnvioEventPublisher {
-    void publicarEnvioPreparado(EnvioPreparadoEvent evento);
+    void publicarEnvioPreparado(IntegrationEvent evento);
 }
