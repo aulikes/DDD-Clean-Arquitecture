@@ -36,33 +36,15 @@ public class RabbitMQConfig {
     }
 
     /**
-     * Cola intermediaria que recibe el evento 'orden.creada.vX' desde el exchange 'topic'
-     * y lo redirige al exchange 'fanout'.
+     * Bridge de Topic Exchange a Fanout Exchange para propagar el mensaje.
      */
     @Bean
-    public Queue ordenMulticastDispatcherQueue() {
-        return new Queue("orden.multicast.creada.v1.queue", true);
-    }
-
-    /**
-     * Vincula 'orden-dispatcher-queue' al exchange topic, escuchando el routing key 'orden.creada.v1'.
-     */
-    @Bean
-    public Binding ordenDispatcherBinding(Queue ordenMulticastDispatcherQueue, TopicExchange eventExchange) {
+    public Binding ordenMulticastFanoutBridgeBinding(
+            TopicExchange eventTopicExchange, FanoutExchange ordenFanoutExchange) {
         return BindingBuilder
-                .bind(ordenMulticastDispatcherQueue)
-                .to(eventExchange)
+                .bind(ordenFanoutExchange)
+                .to(eventTopicExchange)
                 .with("orden.multicast.creada.v1");
-    }
-
-    /**
-     * Conecta 'orden.multicast.creada.v1.queue' al fanout exchange para propagar el mensaje.
-     */
-    @Bean
-    public Binding ordenMulticastFanoutBridgeBinding(Queue ordenMulticastDispatcherQueue, FanoutExchange ordenFanoutExchange) {
-        return BindingBuilder
-                .bind(ordenMulticastDispatcherQueue)
-                .to(ordenFanoutExchange);
     }
 
     /**=========================================================

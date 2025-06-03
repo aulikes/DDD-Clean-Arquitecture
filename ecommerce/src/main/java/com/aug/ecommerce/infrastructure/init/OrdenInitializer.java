@@ -45,7 +45,7 @@ public class OrdenInitializer implements ApplicationRunner {
 
         Random random = new Random();
         //For para 20 órdenes
-        for (int i = 1; i <= 2; i++) {
+        for (int i = 1; i <= 20; i++) {
             Cliente cliente = clientes.get(random.nextInt(clientes.size()));
 
             RealizarOrdenRequestDTO request = new RealizarOrdenRequestDTO();
