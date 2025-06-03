@@ -24,6 +24,7 @@ public class AppProperties {
 
     @Data
     public static class EventRabbitMQ {
-        private String exchange;
+        private String exchangeTopic;
+        private String exchangeFanout;
     }
 }

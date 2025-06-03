@@ -63,4 +63,5 @@ resilience4j:
 
 app:
   eventRabbitmq:
-    exchange: ecommerce.exchange
+    exchange-topic: ecommerce.topicexchange  # Exchange Ppal, enruta basado en el routing key
+    exchange-fanout: ecommerce.fanoutexchange # Exchange intermedio para enviar multiples mensajes desde el Exchange Ppal

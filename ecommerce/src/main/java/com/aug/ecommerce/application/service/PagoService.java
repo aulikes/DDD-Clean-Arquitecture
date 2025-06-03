@@ -20,7 +20,7 @@ public class PagoService {
 
     private final PagoRepository pagoRepository;
     private final PasarelaPagoClient pasarelaPagoClient;
-    private final PagoEventPublisher eventDispatcher;
+    private final PagoEventPublisher pagoEventPublisher;
 
     @Transactional
     public void realizarPago(OrderPaymentRequestedEvent event) {
@@ -42,7 +42,7 @@ public class PagoService {
         }
         pagoRepository.save(pago);
         //lanza evento
-        eventDispatcher.publicarPagoRealizado(
+        pagoEventPublisher.publicarPagoRealizado(
             new PagoConfirmadoEvent(event.ordenId(), pago.getId(), Instant.now(),
                     resultado.exitoso(), resultado.codigoTransaccion(), resultado.mensaje()));
 
