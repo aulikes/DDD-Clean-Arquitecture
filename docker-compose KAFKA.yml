@@ -1,0 +1,51 @@
+version: '3.8'  # Versión del esquema de Docker Compose
+
+services:
+  # ---------------------------------------------------
+  # Servicio Zookeeper 
+  # ---------------------------------------------------
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest  # Imagen oficial de Zookeeper
+    container_name: zookeeper                # Nombre del contenedor
+    ports:
+      - "2181:2181"                          # Puerto de conexión para clientes Kafka
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181           # Puerto interno que escucha Zookeeper
+      ZOOKEEPER_TICK_TIME: 2000             # Intervalo base del sistema de reloj de Zookeeper
+
+  # ---------------------------------------------------
+  # Servicio Kafka
+  # ---------------------------------------------------
+  kafka:
+    image: confluentinc/cp-kafka:latest      # Imagen oficial de Apache Kafka
+    container_name: kafka                    # Nombre del contenedor
+    depends_on:
+      - zookeeper                            # Espera que Zookeeper esté listo antes de iniciar
+    ports:
+      - "9092:9092"                          # Puerto expuesto para comunicación externa con Kafka
+    environment:
+      KAFKA_BROKER_ID: 1                     # ID único del broker Kafka
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181  				        # Dirección de Zookeeper (nombre del contenedor + puerto)
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092  			        # Dirección de escucha dentro del contenedor
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092  	        # Dirección anunciada (nombre del contenedor → accesible desde AKHQ)
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT     # Mapa de protocolos
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"                       # Permite crear topics automáticamente al publicar
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1                     # Número de réplicas para los offsets (mínimo 1 para clúster de 1 nodo)
+
+  # ---------------------------------------------------
+  # Servicio AKHQ - interfaz web para monitorear Kafka
+  # ---------------------------------------------------
+  akhq:
+    image: tchiotludo/akhq:latest               # Imagen de AKHQ
+    container_name: akhq                        # Nombre del contenedor
+    ports:
+      - "8099:8080"                             # Puerto externo (localhost:8099) → interno AKHQ (8080)
+    environment:
+      AKHQ_CONFIGURATION: |                     # Configuración YAML embebida
+        akhq:
+          connections:
+            kafka-cluster:                      # Nombre del clúster en la interfaz
+              properties:
+                bootstrap.servers: "kafka:9092"  # Dirección de Kafka (desde la red interna de Docker)
+    depends_on:
+      - kafka                                   # AKHQ espera a que Kafka esté disponible
