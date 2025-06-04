@@ -15,6 +15,8 @@ public class EnvioMapper {
         entity.setDireccionEnvio(envio.getDireccionEnvio());
         entity.setTrackingNumber(envio.getTrackingNumber());
         entity.setEstado(EnvioEntity.Estado.valueOf(envio.getEstado().name()));
+        entity.setIntentos(envio.getIntentos());
+        entity.setRazonFallo(envio.getRazonFallo());
         return entity;
     }
 
@@ -24,7 +26,9 @@ public class EnvioMapper {
                 entity.getOrdenId(),
                 entity.getDireccionEnvio(),
                 EstadoEnvio.valueOf(entity.getEstado().name()),
-                entity.getTrackingNumber()
+                entity.getTrackingNumber(),
+                entity.getRazonFallo(),
+                entity.getIntentos()
         );
     }
 }

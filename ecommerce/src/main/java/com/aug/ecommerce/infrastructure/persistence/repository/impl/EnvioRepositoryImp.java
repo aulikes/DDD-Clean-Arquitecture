@@ -30,4 +30,9 @@ public class EnvioRepositoryImp implements EnvioRepository {
     public List<Envio> findByOrdenId(Long ordenId) {
         return jpa.findByOrdenId(ordenId).stream().map(EnvioMapper::toDomain).toList();
     }
+
+    @Override
+    public List<Envio> findByEstado(String estadoEnvio, int maxIntentos) {
+        return jpa.findByEstado(estadoEnvio, maxIntentos).stream().map(EnvioMapper::toDomain).toList();
+    }
 }

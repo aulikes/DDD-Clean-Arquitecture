@@ -10,7 +10,4 @@ public interface ProductoRepository {
     Optional<Producto> findById(Long id);
     List<Producto> findAll();
     void deleteById(Long id);
-
-//    List<Producto> findByCategoriaId(UUID categoriaId);
-//    List<Producto> findByNombreContaining(String nombre);
 }

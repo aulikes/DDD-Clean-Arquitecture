@@ -1,0 +1,36 @@
+package com.aug.ecommerce.infrastructure.persistence.mapper;
+
+import com.aug.ecommerce.domain.model.envio.Envio;
+import com.aug.ecommerce.domain.model.envio.EstadoEnvio;
+import com.aug.ecommerce.infrastructure.persistence.entity.EnvioEntity;
+
+public class EnvioMapper {
+
+    private EnvioMapper(){ }
+
+    public static EnvioEntity toEntity(Envio envio) {
+        EnvioEntity entity = new EnvioEntity();
+        entity.setId(envio.getId());
+        entity.setOrdenId(envio.getOrdenId());
+        entity.setDireccionEnvio(envio.getDireccionEnvio());
+        entity.setTrackingNumber(envio.getTrackingNumber());
+        entity.setEstado(EnvioEntity.Estado.valueOf(envio.getEstado().name()));
+        entity.setIntentos(envio.getIntentos());
+        entity.setRazonFallo(envio.getRazonFallo());
+        return entity;
+    }
+
+    public static Envio toDomain(EnvioEntity entity) {
+        Envio envio = Envio.fromPersistence(
+                entity.getId(),
+                entity.getOrdenId(),
+                entity.getDireccionEnvio(),
+                EstadoEnvio.valueOf(entity.getEstado().name()),
+                entity.getTrackingNumber()
+                entity.getTrackingNumber()
+        );
+        envio.setIntentos(entity.getIntentos());
+        envio.setRazonFallo(entity.getRazonFallo());
+        return envio;
+    }
+}

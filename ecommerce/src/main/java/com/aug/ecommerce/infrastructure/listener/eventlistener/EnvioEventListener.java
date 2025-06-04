@@ -1,6 +1,6 @@
 package com.aug.ecommerce.infrastructure.listener.eventlistener;
 
-import com.aug.ecommerce.application.event.EnvioRequestedEvent;
+import com.aug.ecommerce.application.event.OrdenPagadaEvent;
 import com.aug.ecommerce.application.service.EnvioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ public class EnvioEventListener {
 
     @Transactional
     @EventListener
-    public void manejarPagoConfirmado(EnvioRequestedEvent event) {
-        envioService.prepararEnvio(event.ordenId(), event.direccionEnvio());
+    public void manejarPagoConfirmado(OrdenPagadaEvent event) {
+        envioService.crearEnvio(event.ordenId(), event.direccionEnvio());
     }
 }

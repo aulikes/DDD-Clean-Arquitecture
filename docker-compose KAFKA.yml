@@ -23,12 +23,13 @@ services:
       - zookeeper                            # Espera que Zookeeper esté listo antes de iniciar
     ports:
       - "9092:9092"                          # Puerto expuesto para comunicación externa con Kafka
+      - "9093:9093"                          # Usado internamente por contenedores como AKHQ
     environment:
       KAFKA_BROKER_ID: 1                     # ID único del broker Kafka
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181  				        # Dirección de Zookeeper (nombre del contenedor + puerto)
-      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092  			        # Dirección de escucha dentro del contenedor
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092  	        # Dirección anunciada (nombre del contenedor → accesible desde AKHQ)
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT     # Mapa de protocolos
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,DOCKER://0.0.0.0:9093  	# Listeners internos y externos
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,DOCKER://kafka:9093  # Listeners anunciados: uno para el host, uno para los contenedores
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,DOCKER:PLAINTEXT  # Mapa de protocolos de los listeners
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"                       # Permite crear topics automáticamente al publicar
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1                     # Número de réplicas para los offsets (mínimo 1 para clúster de 1 nodo)
 
@@ -46,6 +47,6 @@ services:
           connections:
             kafka-cluster:                      # Nombre del clúster en la interfaz
               properties:
-                bootstrap.servers: "kafka:9092"  # Dirección de Kafka (desde la red interna de Docker)
+                bootstrap.servers: "kafka:9093"  # Dirección de Kafka (desde la red interna de Docker)
     depends_on:
       - kafka                                   # AKHQ espera a que Kafka esté disponible

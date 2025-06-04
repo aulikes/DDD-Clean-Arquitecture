@@ -29,7 +29,13 @@ public class EnvioEntity {
     @Column(name = "trackingNumber")
     private String trackingNumber;
 
+    @Column(name = "intentos")
+    private int intentos;
+
+    @Column(name = "razon_fallo")
+    private String razonFallo;
+
     public enum Estado {
-        PENDIENTE, PREPARANDO, DESPACHADO, ENTREGADO
+        PENDIENTE, PREPARANDO, DESPACHADO, ENTREGADO, FALLIDO
     }
 }

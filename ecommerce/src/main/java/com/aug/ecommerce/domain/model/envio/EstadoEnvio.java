@@ -5,7 +5,8 @@ public enum EstadoEnvio {
     PENDIENTE("PENDIENTE"),
     PREPARANDO("PREPARANDO"),
     ENTREGADO("ENTREGADO"),
-    DESPACHADO("DESPACHADO");
+    DESPACHADO("DESPACHADO"),
+    FALLIDO("FALLIDO");
 
     private final String value;
 

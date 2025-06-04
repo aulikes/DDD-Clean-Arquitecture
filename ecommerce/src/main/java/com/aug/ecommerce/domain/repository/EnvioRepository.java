@@ -8,4 +8,5 @@ public interface EnvioRepository {
     Envio save(Envio envio);
     Optional<Envio> findById(Long id);
     List<Envio> findByOrdenId(Long ordenId);
+    List<Envio> findByEstado(String estadoEnvio, int maxIntentos);
 }

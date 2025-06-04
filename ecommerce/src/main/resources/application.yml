@@ -4,7 +4,7 @@ debug: true
 
 spring:
   profiles:
-    active: rabbit #dev rabbit kafka
+    active: kafka #dev rabbit kafka
 
   datasource:
     url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
@@ -30,15 +30,14 @@ spring:
     password: guest
 
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: localhost:9092 # Dirección del broker de Kafka al que se conectará la aplicación
     consumer:
-      group-id: orden-consumer-group
-      auto-offset-reset: earliest
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest # Si no hay offset guardado, empieza a consumir desde el primer mensaje del topic
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer # Deserializador para la clave del mensaje recibido
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer # Deserializador para el valor del mensaje recibido
     producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer # Serializador para la clave del mensaje que se va a enviar
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer # Serializador para el valor del mensaje que se va a enviar
 
 ---
 
@@ -76,3 +75,34 @@ app:
   eventRabbitmq:
     exchange-topic: ecommerce.topicexchange  # Exchange Ppal, enruta basado en el routing key
     exchange-fanout: ecommerce.fanoutexchange # Exchange intermedio para enviar multiples mensajes desde el Exchange Ppal
+
+  kafka:
+    producer: # Un topic por cada evento
+      cliente-validado-topic: cliente.validado
+      cliente-no-validado-topic: cliente.novalidado
+      envio-preparado-topic: envio.preparado
+      inventario-validado-topic: inventario.validado
+      inventario-no-validado-topic: inventario.novalidado
+      orden-creada-topic: orden.creada
+      orden-preparada-pago-topic: orden.preparada.pago
+      orden-pagada-topic: orden.pagada
+      pago-realizado-topic: pago.realizado
+      producto-creado-topic: producto.creado
+      producto-validado-topic: producto.validado
+      producto-no-validado-topic: producto.novalidado
+
+    consumer:
+      orden-cliente-validar-groupId: orden-cliente-validar
+      orden-inventario.validar-groupId: orden-inventario-validar
+      orden-producto-validar-groupId: orden-producto-validar
+      orden-envio-preparar-groupId: orden-envio-preparar
+      producto-inventario-crear-groupId: producto-inventario-crear
+      cliente-orden-validado-groupId: cliente-orden-validado
+      cliente-orden-no-validado-groupId: cliente-orden-validado
+      producto-orden-validado-groupId: producto-orden-validado
+      producto-orden-no-validado-groupId: producto-orden-validado
+      inventario-orden-validado-groupId: inventario-orden-validado
+      inventario-orden-no-validado-groupId: inventario-orden-no-validado
+      pago-orden-validado-groupId: pago-orden-validado
+      envio-orden-preparado-groupId: envio-orden-preparado
+      orden-pago-solicitar-groupId: orden.pago.solicitar
