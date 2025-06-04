@@ -2,7 +2,7 @@ package com.aug.ecommerce.application.service;
 
 import com.aug.ecommerce.application.event.EnvioPreparadoEvent;
 import com.aug.ecommerce.application.event.PagoConfirmadoEvent;
-import com.aug.ecommerce.infrastructure.listener.evenlistener.ValidacionCrearOrden;
+import com.aug.ecommerce.infrastructure.listener.eventlistener.ValidacionCrearOrden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

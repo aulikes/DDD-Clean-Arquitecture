@@ -1,15 +1,17 @@
-package com.aug.ecommerce.infrastructure.publisher;
+package com.aug.ecommerce.infrastructure.publisher.rabbitpublisher;
 
 import com.aug.ecommerce.application.event.IntegrationEvent;
 import com.aug.ecommerce.application.publisher.ProductoEventPublisher;
 import com.aug.ecommerce.infrastructure.queue.RabbitMQEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class ProductoEventPublisherImp implements ProductoEventPublisher {
+@Profile("rabbit")
+public class ProductoRabbitEventPublisherImp implements ProductoEventPublisher {
     private final ApplicationEventPublisher publisher;
     private final RabbitMQEventPublisher rabbitPublisher;
 

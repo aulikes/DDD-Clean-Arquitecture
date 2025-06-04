@@ -1,4 +1,4 @@
-package com.aug.ecommerce.infrastructure.listener.evenlistener;
+package com.aug.ecommerce.infrastructure.listener.eventlistener;
 
 import com.aug.ecommerce.application.event.OrdenCreadaEvent;
 import com.aug.ecommerce.application.service.ClienteValidacionService;

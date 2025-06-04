@@ -3,12 +3,10 @@ package com.aug.ecommerce.infrastructure.queue;
 import com.aug.ecommerce.application.event.IntegrationEvent;
 import com.aug.ecommerce.infrastructure.config.AppProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.core.MessageProperties;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j

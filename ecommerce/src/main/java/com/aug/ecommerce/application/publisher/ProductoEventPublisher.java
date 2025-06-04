@@ -6,7 +6,7 @@ import com.aug.ecommerce.application.event.ProductoNoValidoEvent;
 import com.aug.ecommerce.application.event.ProductoValidoEvent;
 
 public interface ProductoEventPublisher {
-    void publicarProductoCreado(IntegrationEvent productoCreadoEvent);
+    void publicarProductoCreado(IntegrationEvent event);
     void publishProductoValido(IntegrationEvent event);
     void publishProductoNoValido(IntegrationEvent event);
 }

@@ -40,6 +40,8 @@ dependencies {
 	//RabbitMQ
 	implementation 'org.springframework.boot:spring-boot-starter-amqp'
 
+	//Kafka
+	implementation 'org.springframework.kafka:spring-kafka'
 
 	// Lombok
 	implementation "org.projectlombok:lombok:1.18.30"
