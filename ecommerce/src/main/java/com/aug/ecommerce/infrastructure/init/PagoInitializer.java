@@ -61,6 +61,7 @@ public class PagoInitializer implements ApplicationRunner {
                 int cont = 0;
                 int cant = (candidatas.size() / 2) + 1;
                 while (!candidatas.isEmpty()) {
+                    log.info("Cantidad de Ordenes a pagar {}, iteracion #{}", cant, cont);
                     int indice = random.nextInt(candidatas.size());
                     Orden orden = candidatas.remove(indice); // elimina de candidatas
                     ordenService.solicitarPago(new RealizarPagoCommand(orden.getId(), "Inicial"));

@@ -2,6 +2,7 @@ package com.aug.ecommerce.infrastructure.listener.eventlistener;
 
 import com.aug.ecommerce.application.event.*;
 import com.aug.ecommerce.application.service.OrdenValidacionService;
+import com.aug.ecommerce.application.service.ValidacionCrearOrden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

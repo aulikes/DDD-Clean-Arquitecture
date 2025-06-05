@@ -3,7 +3,7 @@ package com.aug.ecommerce.infrastructure.listener.rabbitlistener;
 import com.aug.ecommerce.application.event.*;
 import com.aug.ecommerce.application.service.OrdenValidacionService;
 import com.aug.ecommerce.infrastructure.config.AppProperties;
-import com.aug.ecommerce.infrastructure.listener.eventlistener.ValidacionCrearOrden;
+import com.aug.ecommerce.application.service.ValidacionCrearOrden;
 import com.aug.ecommerce.infrastructure.queue.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
