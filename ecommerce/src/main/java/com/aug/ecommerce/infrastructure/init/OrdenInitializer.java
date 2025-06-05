@@ -2,7 +2,6 @@ package com.aug.ecommerce.infrastructure.init;
 
 import com.aug.ecommerce.adapters.rest.dto.RealizarOrdenRequestDTO;
 import com.aug.ecommerce.adapters.rest.mapper.OrdenMapper;
-import com.aug.ecommerce.application.event.OrdenCreadaEvent;
 import com.aug.ecommerce.application.service.ClienteService;
 import com.aug.ecommerce.application.service.OrdenService;
 import com.aug.ecommerce.application.service.ProductoService;
@@ -16,9 +15,6 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,20 +27,33 @@ public class OrdenInitializer implements ApplicationRunner {
     private final ProductoService productoService;
     private final OrdenService ordenService;
     private final OrdenMapper mapper;
+    private final StartupDelayManager startupDelayManager;
 
     @Override
-    public void run(ApplicationArguments args) {
+    public void run(ApplicationArguments args) throws InterruptedException {
 
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        while (!startupDelayManager.isReady()) {
+            try {
+                Thread.sleep(500); // Espera pasiva hasta que esté listo
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        int intentos = 0;
+        int cantClientes = 3;
+        int cantProductos = 20;
 
-        executor.schedule(() -> {
+        while (intentos < 5) {
             try {
                 List<Cliente> clientes = new ArrayList<>(clienteService.getAll());
                 List<Producto> productos = new ArrayList<>(productoService.getAll());
 
-                if (clientes.isEmpty() || productos.isEmpty()) {
-                    log.warn("No se puede inicializar órdenes: no hay clientes o productos cargados.");
-                    return;
+                if (clientes.size() < cantClientes || productos.size() < cantProductos) {
+                    log.error("Reintento #{}, Cantidad de Clientes: {}, Cantidad de Productos: {}",
+                            intentos + 1, clientes.size(), productos.size());
+                    Thread.sleep(5000);
+                    intentos++;
+                    continue;
                 }
 
                 Random random = new Random();
@@ -66,7 +75,7 @@ public class OrdenInitializer implements ApplicationRunner {
                         items = List.of(itemNoValido);
                     } else {
                         // Órdenes válidas, selecciona entre 1 y 4 productos existentes aleatorios
-                        Collections.shuffle(productos);
+                        Collections.shuffle(productos);  //baraja la lista
                         List<Producto> seleccionados = productos.subList(0, random.nextInt(4) + 1);
 
                         items = seleccionados.stream()
@@ -83,15 +92,13 @@ public class OrdenInitializer implements ApplicationRunner {
                     ordenService.crearOrden(mapper.toCommand(request));
                     log.info("Orden #{} creada para cliente {}", i, cliente.getNombre());
                 }
+                log.info("Creadas todas las Órdenes");
+                return;
             } catch (Exception e) {
                 log.error("Error al inicializar órdenes:", e);
                 throw new RuntimeException(e);
-            } finally {
-                log.info("Creadas todas las Orden");
-                // Solo se ejecuta una vez, se cierra el executor
-                executor.shutdown();
             }
-        }, 5, TimeUnit.SECONDS);
-
+        }
+        log.error("No se pudo completar la carga de órdenes tras {} intentos", intentos);
     }
 }

@@ -20,9 +20,17 @@ public class CategoriaInitializer implements ApplicationRunner {
 
     private final CategoriaService categoriaService;
     private final CategoriaMapper mapper;
+    private final StartupDelayManager startupDelayManager;
 
     @Override
     public void run(ApplicationArguments args) {
+        while (!startupDelayManager.isReady()) {
+            try {
+                Thread.sleep(500); // Espera pasiva hasta que esté listo
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
 
         List<CrearCategoriaRequestDTO> categorias = List.of(
                 new CrearCategoriaRequestDTO("Laptops", "Computadores portátiles"),

@@ -22,10 +22,18 @@ public class ClienteInitializer implements ApplicationRunner {
 
     private final ClienteService clienteService;
     private final ClienteMapper clienteMapper;
+    private final StartupDelayManager startupDelayManager;
 
     @Override
     @Transactional
     public void run(ApplicationArguments args) {
+        while (!startupDelayManager.isReady()) {
+            try {
+                Thread.sleep(500); // Espera pasiva hasta que esté listo
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
         CrearClienteRequestDTO juan = new CrearClienteRequestDTO("Juan Pérez", "juan@ecommerce.com", new ArrayList<>());
         juan.getDirecciones().add(new CrearClienteRequestDTO.Direccion("Calle 123", "Bogotá", "Colombia", "110111"));
 
