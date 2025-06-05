@@ -1,7 +1,9 @@
 package com.aug.ecommerce.infrastructure.persistence.repository.impl;
 
 import com.aug.ecommerce.domain.model.envio.Envio;
+import com.aug.ecommerce.domain.model.envio.EstadoEnvio;
 import com.aug.ecommerce.domain.repository.EnvioRepository;
+import com.aug.ecommerce.infrastructure.persistence.entity.EnvioEntity;
 import com.aug.ecommerce.infrastructure.persistence.mapper.EnvioMapper;
 import com.aug.ecommerce.infrastructure.persistence.repository.contract.JpaEnvioCrudRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +34,8 @@ public class EnvioRepositoryImp implements EnvioRepository {
     }
 
     @Override
-    public List<Envio> findByEstado(String estadoEnvio, int maxIntentos) {
-        return jpa.findByEstado(estadoEnvio, maxIntentos).stream().map(EnvioMapper::toDomain).toList();
+    public List<Envio> findByEstado(EstadoEnvio estadoEnvio, int maxIntentos) {
+        var entityEstado = EnvioEntity.Estado.valueOf(estadoEnvio.name());
+        return jpa.findByEstado(entityEstado, maxIntentos).stream().map(EnvioMapper::toDomain).toList();
     }
 }

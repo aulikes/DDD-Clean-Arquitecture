@@ -16,11 +16,11 @@ public class EnvioRetryScheduler {
     private final EnvioService service;
 
     /**
-     * Ejecuta cada 10 minutos y reintenta enviar aquellos envíos pendientes.
+     * Ejecuta cada 3 minutos y reintenta enviar aquellos envíos pendientes.
      */
-    @Scheduled(fixedDelay = 600000)
+    @Scheduled(fixedDelay = 180000)
     @Transactional
     public void reintentarEnviosPendientes() {
-        service.reintentarEnvios();
+//        service.reintentarEnvios();
     }
 }

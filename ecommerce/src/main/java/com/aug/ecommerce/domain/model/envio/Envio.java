@@ -13,7 +13,7 @@ public class Envio {
     private String trackingNumber;
 
     public static Envio create(Long ordenId, String direccionEnvio) {
-        return new Envio(null, ordenId, direccionEnvio, EstadoEnvio.PENDIENTE, null, null, 0);
+        return new Envio(null, ordenId, direccionEnvio, getEstadoInicial(), null, null, 0);
     }
 
     public static Envio fromPersistence(Long id, Long ordenId, String direccionEnvio,
@@ -42,8 +42,8 @@ public class Envio {
     public String getRazonFallo() { return razonFallo; }
     public void incrementarReintentos() { this.intentos++; }
 
-    public static String getEstadoInicial(){
-        return EstadoEnvio.PENDIENTE.getValue();
+    public static EstadoEnvio getEstadoInicial(){
+        return EstadoEnvio.PENDIENTE;
     }
 
     //Se cambia el estado cuando el proveeddor de envíos recibió la petición
@@ -52,6 +52,8 @@ public class Envio {
             throw new IllegalStateException("Solo puede preparar un envío que está pendiente");
         this.trackingNumber = Objects.requireNonNull(trackingNumber, "El número de seguimiento no puede ser nulo");
         this.estado = EstadoEnvio.PREPARANDO;
+        this.razonFallo = null;
+        this.intentos = 0;
     }
 
     //Solo se pueden cambiar los estados desde el proveedor de envios si es Preparando o Despachando

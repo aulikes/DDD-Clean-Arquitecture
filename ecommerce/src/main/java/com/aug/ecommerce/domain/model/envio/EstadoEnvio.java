@@ -4,8 +4,9 @@ public enum EstadoEnvio {
 
     PENDIENTE("PENDIENTE"),
     PREPARANDO("PREPARANDO"),
-    ENTREGADO("ENTREGADO"),
-    DESPACHADO("DESPACHADO"),
+    ENVIADO("ENVIADO"),  // es actualizado por webhooks
+    ENTREGADO("ENTREGADO"), // es actualizado por webhooks
+    DESPACHADO("DESPACHADO"), // es actualizado por webhooks
     FALLIDO("FALLIDO");
 
     private final String value;

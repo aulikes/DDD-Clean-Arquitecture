@@ -64,7 +64,7 @@ public class WompiPasarelaPagoClient implements PasarelaPagoClient {
                 }
             }
         };
-        // Retry envuelve la lógica interna
+        // Retry envuelve la lógica interna, y de esta manera, el # de intentos de RETRY, son uno solo para CB
         Supplier<ResultadoPagoDTO> retryWrapped = Retry.decorateSupplier(retry, coreLogic);
         // CircuitBreaker envuelve el Retry como una unidad
         Supplier<ResultadoPagoDTO> circuitBreakerWrapped = CircuitBreaker.decorateSupplier(circuitBreaker, retryWrapped);

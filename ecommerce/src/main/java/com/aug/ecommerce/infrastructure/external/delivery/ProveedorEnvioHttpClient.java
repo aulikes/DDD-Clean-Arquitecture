@@ -28,19 +28,19 @@ public class ProveedorEnvioHttpClient implements ProveedorEnvioClient {
                 // Simula latencia entre 1 y 3 segundos
                 Thread.sleep(random.nextInt(2000) + 1000);
 
-                if (probabilidad < 50) {
-                    result = new ResultadoEnvioDTO(
-                            true,
-                            "TRX-FEDEX-" + UUID.randomUUID(),
-                            "PREPARANDO",
-                            "Envío generado exitosamente."
-                    );
-                } else {
+                if (probabilidad > 50) {
                     result = new ResultadoEnvioDTO(
                             false,
                             null,
                             null,
                             "Error de Servidor"
+                    );
+                } else {
+                    result = new ResultadoEnvioDTO(
+                            true,
+                            "TRX-FEDEX-" + UUID.randomUUID(),
+                            "PREPARANDO",
+                            "Envío generado exitosamente."
                     );
                 }
             } catch (InterruptedException e) {

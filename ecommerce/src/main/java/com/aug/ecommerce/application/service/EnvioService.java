@@ -51,27 +51,22 @@ public class EnvioService {
         // Si fue exitoso, actualizar estado a ENVIADO
         if (resultadoEnvio.exitoso()) {
             envio.prepararEnvio(resultadoEnvio.trackingNumber());
-            envio = envioRepository.save(envio);
-            envioEventPublisher.publicarEnvioPreparado(
-            new EnvioPreparadoEvent(envio.getOrdenId(), envio.getId(), Instant.now(),
-                    resultadoEnvio.exitoso(), resultadoEnvio.trackingNumber(),
-                    resultadoEnvio.mensaje()));
         } else{
             log.error("Error al reenviar envío ID {}: {}", envio.getId(), resultadoEnvio.mensaje());
             envio.incrementarReintentos(); // se debe persistir este conteo
             if (envio.getIntentos() > MAX_REINTENTOS) {
                 envio.marcarComoFallido("Excedido número máximo de reintentos.");
             }
-            envio = envioRepository.save(envio);
         }
+        envio = envioRepository.save(envio);
+        publicarEventoEnvio(envio, resultadoEnvio);
         return envio;
     }
 
-    @Transactional
-    public void actualizarEstadoEnvio(Long envioId, EstadoEnvio nuevoEstado) {
-        Envio envio = envioRepository.findById(envioId)
-                .orElseThrow(() -> new IllegalArgumentException("Envío no encontrado"));
-        envio.actualizarEstadoFromSupplier(nuevoEstado);
-        envioRepository.save(envio);
+    private void publicarEventoEnvio(Envio envio, ResultadoEnvioDTO resultadoEnvio){
+        envioEventPublisher.publicarEnvioPreparado(
+        new EnvioPreparadoEvent(envio.getOrdenId(), envio.getId(), Instant.now(),
+                resultadoEnvio.exitoso(), resultadoEnvio.trackingNumber(),
+                resultadoEnvio.mensaje()));
     }
 }

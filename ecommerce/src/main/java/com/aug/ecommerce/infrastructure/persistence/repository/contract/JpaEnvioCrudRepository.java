@@ -11,5 +11,5 @@ public interface JpaEnvioCrudRepository extends JpaRepository<EnvioEntity, Long>
     List<EnvioEntity> findByOrdenId(Long ordenId);
 
     @Query("select e from EnvioEntity e where e.estado = :estado and e.intentos <= :intentos")
-    List<EnvioEntity> findByEstado (@Param("estado") String estado, @Param("intentos") int intentos);
+    List<EnvioEntity> findByEstado (@Param("estado") EnvioEntity.Estado estado, @Param("intentos") int intentos);
 }

@@ -105,12 +105,12 @@ public class Orden {
         cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.PAGADA));
     }
 
-    public void iniciarEnvio() {
-        cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.INICIANDO_ENVIO));
+    public void confirmarEnvio() {
+        cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.ENVIO_CONFIRMADO));
     }
 
     public void errorEnvio() {
-        cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.NO_CONFIRMADO_ENVIO));
+        cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.ENVIO_NO_CONFIRMADO));
     }
 
     public void marcarEnviada() {

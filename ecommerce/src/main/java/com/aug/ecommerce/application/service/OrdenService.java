@@ -116,7 +116,7 @@ public class OrdenService {
     public void envioConfirmado(Long ordenId) {
         Orden orden = ordenRepository.findById(ordenId)
                 .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
-        orden.iniciarEnvio();
+        orden.confirmarEnvio();
         ordenRepository.save(orden);
         log.debug("Orden {} pasó a estado INICIANDO_ENVIO", ordenId);
     }
@@ -125,7 +125,7 @@ public class OrdenService {
     public void envioError(Long ordenId) {
         Orden orden = ordenRepository.findById(ordenId)
                 .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
-        orden.registrarPagoFallido();
+        orden.errorEnvio();
         ordenRepository.save(orden);
         log.debug("Orden {} pasó a estado NO_CONFIRMADO_ENVIO", ordenId);
     }
