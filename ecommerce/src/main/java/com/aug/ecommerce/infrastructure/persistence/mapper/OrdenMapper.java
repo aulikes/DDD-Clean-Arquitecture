@@ -19,6 +19,7 @@ public class OrdenMapper {
         entity.setClienteId(orden.getClienteId());
         entity.setEstado(orden.getEstado().getValor());
         entity.setDireccionEnviar(orden.getDireccionEnviar());
+        entity.setError(orden.getError());
 
         List<ItemOrdenEntity> items = orden.getItems().stream().map(item -> {
             ItemOrdenEntity e = new ItemOrdenEntity();
@@ -35,7 +36,8 @@ public class OrdenMapper {
 
     public static Orden toDomain(OrdenEntity entity) {
         Orden orden = Orden.fromPersistence(entity.getId(), entity.getClienteId(),
-                entity.getDireccionEnviar(), new ArrayList<>(), EstadoOrden.desde(entity.getEstado())
+                entity.getDireccionEnviar(), new ArrayList<>(),
+                EstadoOrden.desde(entity.getEstado()), entity.getError()
                 );
         entity.getItems().forEach(item -> orden.restoreItem(
                 item.getId(),

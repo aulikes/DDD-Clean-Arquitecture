@@ -52,11 +52,11 @@ public class OrdenService {
     }
 
     @Transactional
-    public void marcarOrdenFallida(Long ordenId) {
+    public void marcarOrdenFallida(Long ordenId, String error) {
         Orden orden = ordenRepository.findById(ordenId)
                 .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
         if (orden.getEstado().equals(EstadoOrden.deTipo(EstadoOrden.Tipo.VALIDACION_FALLIDA))) return;
-        orden.marcarValidacionFallida();
+        orden.marcarValidacionFallida(error);
         ordenRepository.save(orden);
         log.debug("Orden {} marcada como VALIDACION_FALLIDA", ordenId);
     }

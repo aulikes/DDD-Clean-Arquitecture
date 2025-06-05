@@ -29,6 +29,8 @@ public class OrdenEntity {
     @Column(nullable = false)
     private String direccionEnviar;
 
+    private String error;
+
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "orden_id")
     private List<ItemOrdenEntity> items;

@@ -67,7 +67,7 @@ public class OrdenValidacionService {
      */
     public void registrarValidacionFallida(Long ordenId, ValidacionCrearOrden tipo) {
         log.warn("Validación fallida [{}] en orden {}", tipo, ordenId);
-        ordenService.marcarOrdenFallida(ordenId);
+        ordenService.marcarOrdenFallida(ordenId, "Validación fallida tipo: " + tipo.name());
         limpiarEstado(ordenId);
     }
 
@@ -101,7 +101,8 @@ public class OrdenValidacionService {
 
             if (!acumuladas.containsAll(VALIDACIONES_REQUERIDAS)) {
                 log.warn("Timeout de validaciones alcanzado para orden {}. Validaciones recibidas: {}", ordenId, acumuladas);
-                ordenService.marcarOrdenFallida(ordenId);
+                ordenService.marcarOrdenFallida(ordenId,
+                        "Timeout de validaciones alcanzado. Validaciones recibidas: " + acumuladas.toString());
                 limpiarEstado(ordenId);
             }
         }, TIMEOUT_SECONDS, TimeUnit.SECONDS);

@@ -8,26 +8,28 @@ public class Orden {
     private String direccionEnviar;
     private final List<ItemOrden> items;
     private EstadoOrden estado;
+    private String error;
 
     //Orden Nuevo
     public static Orden create(Long clienteId, String direccionEnviar) {
         return new Orden(null, clienteId, direccionEnviar,
-                new ArrayList<>(), EstadoOrden.deTipo(EstadoOrden.Tipo.PENDIENTE_VALIDACION));
+                new ArrayList<>(), EstadoOrden.deTipo(EstadoOrden.Tipo.PENDIENTE_VALIDACION), null);
     }
 
     //Orden seteado desde BD
     public static Orden fromPersistence(Long ordenId, Long clienteId, String direccionEnviar,
-                                        List<ItemOrden> items, EstadoOrden estado) {
+                                        List<ItemOrden> items, EstadoOrden estado, String error) {
         if (ordenId == null) throw new IllegalArgumentException("El ordenId no puede ser nulo");
-        return new Orden(ordenId, clienteId, direccionEnviar, items, estado);
+        return new Orden(ordenId, clienteId, direccionEnviar, items, estado, error);
     }
 
-    private Orden(Long id, Long clienteId, String direccionEnviar, List<ItemOrden> items, EstadoOrden estado) {
+    private Orden(Long id, Long clienteId, String direccionEnviar, List<ItemOrden> items, EstadoOrden estado, String error) {
         this.id = id;
         this.clienteId = Objects.requireNonNull(clienteId, "El clienteId no puede ser nulo");
         this.direccionEnviar = Objects.requireNonNull(direccionEnviar, "La direccionEnviar no puede ser nula");
         this.items = items;
         this.estado = estado;
+        this.error = error;
     }
 
     public Long getId() { return id; }
@@ -35,6 +37,8 @@ public class Orden {
     public List<ItemOrden> getItems() { return Collections.unmodifiableList(items); }
     public EstadoOrden getEstado() { return estado; }
     public String getDireccionEnviar() { return direccionEnviar; }
+    public String getError() { return error; }
+    public void setError(String error) { this.error = error; }
 
     public void agregarItem(Long productoId, int cantidad, double precioUnitario) {
         validarEstadoEditable();
@@ -76,8 +80,9 @@ public class Orden {
         return total;
     }
 
-    public void marcarValidacionFallida() {
+    public void marcarValidacionFallida(String error) {
         cambiarEstado(EstadoOrden.deTipo(EstadoOrden.Tipo.VALIDACION_FALLIDA));
+        this.error = error;
     }
 
     public void marcarListaParaPago() {
