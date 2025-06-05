@@ -7,38 +7,32 @@
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <pattern>${LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset> <!-- SI LO SOPORTA -->
+            <outputPatternAsHeader>true</outputPatternAsHeader>
         </encoder>
     </appender>
 
-    <springProfile name="dev">
-        <logger name="org.hibernate.SQL" level="DEBUG"/>
-        <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
-    </springProfile>
+    <!-- Mostrar DEBUG solo del código -->
+    <logger name="com.aug.ecommerce" level="DEBUG"/>
 
-    <springProfile name="kafka">
-        <logger name="org.hibernate.SQL" level="OFF"/>
-        <logger name="org.hibernate.type.descriptor.sql" level="OFF"/>
-        <logger name="org.hibernate.orm.jdbc.bind" level="OFF"/>
+    <!-- Ocultar DEBUG de Spring Boot -->
+    <logger name="org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger" level="OFF"/>
+    <logger name="org.springframework" level="INFO"/>
 
-        <logger name="org.apache.kafka" level="WARN"/>
-        <logger name="org.apache.kafka.clients.admin.AdminClientConfig" level="WARN"/>
-        <logger name="org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger" level="INFO"/>
-    </springProfile>
+    <!-- Ocultar DEBUG de Hibernate -->
+    <logger name="org.hibernate.SQL" level="OFF"/>
+    <logger name="org.hibernate.type.descriptor.sql" level="OFF"/>
+    <logger name="org.hibernate.orm.jdbc.bind" level="OFF"/>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="OFF"/>
 
-    <springProfile name="rabbit">
-        <logger name="org.hibernate.SQL" level="OFF"/>
-        <logger name="org.hibernate.type.descriptor.sql" level="OFF"/>
-        <logger name="org.hibernate.orm.jdbc.bind" level="OFF"/>
-        <logger name="org.apache.kafka.clients.admin.AdminClientConfig" level="WARN"/>
-        <logger name="org.springframework.boot.autoconfigure.logging.ConditionEvaluationReportLogger" level="INFO"/>
-    </springProfile>
+    <!-- Ocultar DEBUG/INFO de Kafka -->
+    <logger name="org.apache.kafka" level="WARN"/>
+    <logger name="org.apache.kafka.clients.admin.AdminClientConfig" level="OFF"/>
 
-    <springProfile name="prod">
-        <logger name="org.hibernate.SQL" level="OFF"/>
-        <logger name="org.hibernate.type.descriptor.sql" level="OFF"/>
-        <logger name="org.hibernate.orm.jdbc.bind" level="OFF"/>
-        <logger name="org.apache.kafka.clients.admin.AdminClientConfig" level="WARN"/>
-    </springProfile>
+    <!-- Nivel global mínimo -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
 
     <root level="INFO">
         <appender-ref ref="CONSOLE"/>

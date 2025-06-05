@@ -8,6 +8,7 @@ import com.aug.ecommerce.application.gateway.PasarelaPagoClient;
 import com.aug.ecommerce.domain.model.pago.Pago;
 import com.aug.ecommerce.domain.repository.PagoRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeoutException;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class PagoService {
 
     private final PagoRepository pagoRepository;
@@ -37,10 +39,13 @@ public class PagoService {
 
         if (resultado.exitoso()) {
             pago.confirmar(resultado.codigoTransaccion());
+            log.debug("---> Pago confirmado, codigoTransaccion: {}", resultado.codigoTransaccion());
         } else {
             pago.fallar(resultado.mensaje());
+            log.debug("---> Pago ERROR, mensaje: {}", resultado.mensaje());
         }
         pagoRepository.save(pago);
+        log.debug("---> Pago realizado y guardado. Próximo a publicar");
         //lanza evento
         pagoEventPublisher.publicarPagoRealizado(
             new PagoConfirmadoEvent(event.ordenId(), pago.getId(), Instant.now(),

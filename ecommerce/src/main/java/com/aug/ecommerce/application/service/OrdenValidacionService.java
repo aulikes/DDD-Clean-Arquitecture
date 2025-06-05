@@ -81,7 +81,7 @@ public class OrdenValidacionService {
     }
 
     public void gestionarInformacionEnvio(EnvioPreparadoEvent event){
-        log.warn("Gestionar Envio [{}] en orden {}", event.envioId(), event.ordenId());
+        log.debug("Gestionar Envio [{}] en orden {}", event.envioId(), event.ordenId());
         if (event.exitoso()){
             ordenService.envioConfirmado(event.ordenId());
         }
