@@ -65,7 +65,7 @@ public class ProductoInitializer {
         dto.setNombre(nombre);
         dto.setDescripcion(descripcion);
         dto.setPrecio(precio);
-        dto.setCantidad(50L);
+        dto.setCantidad(500L);
         dto.setImagenUrl(imagen);
         dto.setCategoriaId(categoriaId);
         return dto;

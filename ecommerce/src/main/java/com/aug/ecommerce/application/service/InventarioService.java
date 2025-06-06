@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class InventarioService {
@@ -26,5 +28,9 @@ public class InventarioService {
             ));
 
         inventarioRepository.save(inventario);
+    }
+
+    public List<Inventario> getAll(){
+        return inventarioRepository.findAll();
     }
 }

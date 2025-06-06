@@ -20,10 +20,12 @@ public class RabbitMQConfig {
 
     /**
      * Exchange principal de tipo 'topic', usado para publicar eventos con routing keys como 'orden.creada.vX'.
+     * Durable = true: persiste entre reinicios
+     * AutoDelete = false: no se elimina cuando queda sin colas
      */
     @Bean
     public TopicExchange eventTopicExchange() {
-        return new TopicExchange(eventRabbitMQ.getExchangeTopic());
+        return new TopicExchange(eventRabbitMQ.getExchangeTopic(), true, false);
     }
 
     /**
@@ -32,7 +34,7 @@ public class RabbitMQConfig {
      */
     @Bean
     public FanoutExchange ordenFanoutExchange() {
-        return new FanoutExchange(eventRabbitMQ.getExchangeFanout());
+        return new FanoutExchange(eventRabbitMQ.getExchangeFanout(), true, false);
     }
 
     /**
@@ -50,10 +52,11 @@ public class RabbitMQConfig {
     /**=========================================================
      * Colas específicas que escuchan fanout de orden.creada.v1
      * =========================================================*/
+
     // Cliente -> Orden, para OBTENER la validación de Cliente cuando se va a crear una nueva orden
     @Bean
     public Queue ordenClienteValidarQueue() {
-        return new Queue("orden.cliente.validar.v1.queue");
+        return new Queue("orden.cliente.validar.v1.queue", true, false, false);
     }
 
     @Bean
@@ -64,8 +67,9 @@ public class RabbitMQConfig {
     // Producto -> Orden, para OBTENER la validación de Producto cuando se va a crear una nueva orden
     @Bean
     public Queue ordenProductoValidarQueue() {
-        return new Queue("orden.producto.validar.v1.queue");
+        return new Queue("orden.producto.validar.v1.queue", true, false, false);
     }
+
     @Bean
     public Binding ordenProductoBinding(Queue ordenProductoValidarQueue, FanoutExchange ordenFanoutExchange) {
         return BindingBuilder.bind(ordenProductoValidarQueue).to(ordenFanoutExchange);
@@ -74,14 +78,13 @@ public class RabbitMQConfig {
     // Inventario -> Orden, para OBTENER la validación de Inventario cuando se va a crear una nueva orden
     @Bean
     public Queue ordenInventarioValidarQueue() {
-        return new Queue("orden.inventario.validar.v1.queue");
+        return new Queue("orden.inventario.validar.v1.queue", true, false, false);
     }
 
     @Bean
     public Binding ordenStockBinding(Queue ordenInventarioValidarQueue, FanoutExchange ordenFanoutExchange) {
         return BindingBuilder.bind(ordenInventarioValidarQueue).to(ordenFanoutExchange);
     }
-
 
     /**=========================================================
      * Colas para otros dominios que escuchan del TopicExchange
@@ -92,16 +95,17 @@ public class RabbitMQConfig {
     // =======================
     @Bean
     public Queue ordenPagoSolicitarQueue() {
-        return new Queue("orden.pago.solicitar.v1.queue");
+        return new Queue("orden.pago.solicitar.v1.queue", true, false, false);
     }
 
     @Bean
     public Binding ordenPagoSolicitarBinding(Queue ordenPagoSolicitarQueue, TopicExchange eventTopicExchange) {
         return BindingBuilder.bind(ordenPagoSolicitarQueue).to(eventTopicExchange).with("orden.pago.#.v1");
     }
+
     @Bean
     public Queue ordenEnvioPrepararQueue() {
-        return new Queue("orden.envio.preparar.v1.queue");
+        return new Queue("orden.envio.preparar.v1.queue", true, false, false);
     }
 
     @Bean
@@ -114,7 +118,7 @@ public class RabbitMQConfig {
     // =======================
     @Bean
     public Queue pagoOrdenValidadoQueue() {
-        return new Queue("pago.orden.validado.v1.queue");
+        return new Queue("pago.orden.validado.v1.queue", true, false, false);
     }
 
     @Bean
@@ -127,7 +131,7 @@ public class RabbitMQConfig {
     // =======================
     @Bean
     public Queue clienteOrdenValidadoQueue() {
-        return new Queue("cliente.orden.validado.v1.queue"); //cliente-orden-validate-queue
+        return new Queue("cliente.orden.validado.v1.queue", true, false, false);
     }
 
     @Bean
@@ -140,7 +144,7 @@ public class RabbitMQConfig {
     // =======================
     @Bean
     public Queue productoInventarioCrearQueue() {
-        return new Queue("producto.inventario.crear.v1.queue");
+        return new Queue("producto.inventario.crear.v1.queue", true, false, false);
     }
 
     @Bean
@@ -151,7 +155,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue productoOrdenValidadoQueue() {
-        return new Queue("producto.orden.validado.v1.queue");
+        return new Queue("producto.orden.validado.v1.queue", true, false, false);
     }
 
     @Bean
@@ -165,7 +169,7 @@ public class RabbitMQConfig {
     // =======================
     @Bean
     public Queue inventarioOrdenValidadoQueue() {
-        return new Queue("inventario.orden.validado.v1.queue");
+        return new Queue("inventario.orden.validado.v1.queue", true, false, false);
     }
 
     @Bean
@@ -178,7 +182,7 @@ public class RabbitMQConfig {
     // =======================
     @Bean
     public Queue envioOrdenPreparadoQueue() {
-        return new Queue("envio.orden.preparado.v1.queue");
+        return new Queue("envio.orden.preparado.v1.queue", true, false, false);
     }
 
     @Bean
