@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Random;
 import java.util.UUID;
+import java.util.concurrent.TimeoutException;
 
 @Component
 @RequiredArgsConstructor
@@ -19,41 +20,45 @@ public class ProveedorEnvioHttpClient implements ProveedorEnvioClient {
     public ResultadoEnvioDTO prepararEnvio(Envio envio) {
         Random random = new Random();
         int probabilidad = random.nextInt(100);
-        if (probabilidad >= 80) {
-            throw new RuntimeException("Simulación de timeout en FEDEX");
-        }
-        else{
-            ResultadoEnvioDTO result;
-            try {
-                // Simula latencia entre 1 y 3 segundos
-                Thread.sleep(random.nextInt(2000) + 1000);
-
-                if (probabilidad > 50) {
-                    result = new ResultadoEnvioDTO(
-                            false,
-                            null,
-                            null,
-                            "Error de Servidor"
-                    );
-                } else {
-                    result = new ResultadoEnvioDTO(
-                            true,
-                            "TRX-FEDEX-" + UUID.randomUUID(),
-                            "PREPARANDO",
-                            "Envío generado exitosamente."
-                    );
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                result = new ResultadoEnvioDTO(
-                        false,
-                        null,
-                        null,
-                        "Error de latencia simulada"
-                );
-                log.error("Error de latencia simulada", e);
+        ResultadoEnvioDTO result;
+        try {
+            if (probabilidad >= 80) {
+                throw new TimeoutException("Simulación de timeout en FEDEX");
             }
-            return result;
+            else{
+                try {
+                    // Simula latencia entre 1 y 3 segundos
+                    Thread.sleep(random.nextInt(2000) + 1000);
+
+                    if (probabilidad > 50) {
+                        result = new ResultadoEnvioDTO(
+                                false,
+                                null,
+                                null,
+                                "Error de Servidor"
+                        );
+                    } else {
+                        result = new ResultadoEnvioDTO(
+                                true,
+                                "TRX-FEDEX-" + UUID.randomUUID(),
+                                "PREPARANDO",
+                                "Envío generado exitosamente."
+                        );
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    log.error("Error de latencia simulada", e);
+                    throw new InterruptedException(e.getMessage());
+                }
+            }
+        } catch (TimeoutException | InterruptedException e) {
+            result = new ResultadoEnvioDTO(
+                    false,
+                    null,
+                    null,
+                    e.getMessage()
+            );
         }
+        return result;
     }
 }

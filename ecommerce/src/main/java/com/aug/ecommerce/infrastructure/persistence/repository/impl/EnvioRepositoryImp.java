@@ -4,8 +4,10 @@ import com.aug.ecommerce.domain.model.envio.Envio;
 import com.aug.ecommerce.domain.model.envio.EstadoEnvio;
 import com.aug.ecommerce.domain.repository.EnvioRepository;
 import com.aug.ecommerce.infrastructure.persistence.entity.EnvioEntity;
+import com.aug.ecommerce.infrastructure.persistence.entity.enums.EstadoEnvioEntity;
 import com.aug.ecommerce.infrastructure.persistence.mapper.EnvioMapper;
 import com.aug.ecommerce.infrastructure.persistence.repository.contract.JpaEnvioCrudRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -19,13 +21,22 @@ public class EnvioRepositoryImp implements EnvioRepository {
     private final JpaEnvioCrudRepository jpa;
 
     @Override
-    public Envio save(Envio envio) {
-        return EnvioMapper.toDomain(jpa.save(EnvioMapper.toEntity(envio)));
+    public Envio saveWithHistorial(Envio envio) {
+        EnvioEntity entity = jpa.save(EnvioMapper.toEntityWithHistorial(envio));
+        EnvioEntity opcEntity = jpa.findByIdWithHistorial(entity.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Error al buscar el envio con su historial"));
+        return EnvioMapper.toDomainWithHistorial(opcEntity);
     }
 
     @Override
     public Optional<Envio> findById(Long id) {
         return jpa.findById(id).map(EnvioMapper::toDomain);
+    }
+
+    @Override
+    public Optional<Envio> findByIdWithHistorial(Long id) {
+        jpa.findByIdWithHistorial(id);
+        return Optional.empty();
     }
 
     @Override
@@ -35,7 +46,7 @@ public class EnvioRepositoryImp implements EnvioRepository {
 
     @Override
     public List<Envio> findByEstado(EstadoEnvio estadoEnvio, int maxIntentos) {
-        var entityEstado = EnvioEntity.Estado.valueOf(estadoEnvio.name());
+        var entityEstado = EstadoEnvioEntity.valueOf(estadoEnvio.name());
         return jpa.findByEstado(entityEstado, maxIntentos).stream().map(EnvioMapper::toDomain).toList();
     }
 }

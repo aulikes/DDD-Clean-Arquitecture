@@ -3,10 +3,16 @@ package com.aug.ecommerce.infrastructure.persistence.mapper;
 import com.aug.ecommerce.domain.model.envio.Envio;
 import com.aug.ecommerce.domain.model.envio.EstadoEnvio;
 import com.aug.ecommerce.infrastructure.persistence.entity.EnvioEntity;
+import com.aug.ecommerce.infrastructure.persistence.entity.EnvioEstadoHistorialEntity;
+import com.aug.ecommerce.infrastructure.persistence.entity.enums.EstadoEnvioEntity;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class EnvioMapper {
 
-    private EnvioMapper(){ }
+    private EnvioMapper() {}
 
     public static EnvioEntity toEntity(Envio envio) {
         EnvioEntity entity = new EnvioEntity();
@@ -14,9 +20,29 @@ public class EnvioMapper {
         entity.setOrdenId(envio.getOrdenId());
         entity.setDireccionEnvio(envio.getDireccionEnvio());
         entity.setTrackingNumber(envio.getTrackingNumber());
-        entity.setEstado(EnvioEntity.Estado.valueOf(envio.getEstado().name()));
+        entity.setEstado(EstadoEnvioEntity.valueOf(envio.getEstado().name()));
         entity.setIntentos(envio.getIntentos());
         entity.setRazonFallo(envio.getRazonFallo());
+        return entity;
+    }
+
+    public static EnvioEntity toEntityWithHistorial(Envio envio) {
+        EnvioEntity entity = toEntity(envio);
+
+        List<EnvioEstadoHistorialEntity> historialEntities = envio.getHistorial().stream()
+                .map(h -> {
+                    EnvioEstadoHistorialEntity histEntity = new EnvioEstadoHistorialEntity();
+                    histEntity.setId(h.getId());
+                    histEntity.setEstado(EstadoEnvioEntity.valueOf(h.getEstadoEnvio().name()));
+                    histEntity.setObservacion(h.getObservacion());
+                    histEntity.setFechaCambio(h.getFechaCambio());
+                    histEntity.setEnvio(entity); // establecer la relación inversa
+                    return histEntity;
+                })
+                .collect(Collectors.toList());
+
+        entity.setHistorial(historialEntities);
+
         return entity;
     }
 
@@ -28,7 +54,19 @@ public class EnvioMapper {
                 EstadoEnvio.valueOf(entity.getEstado().name()),
                 entity.getTrackingNumber(),
                 entity.getRazonFallo(),
-                entity.getIntentos()
+                entity.getIntentos(),
+                new ArrayList<>()
         );
+    }
+
+    public static Envio toDomainWithHistorial(EnvioEntity entity) {
+        Envio envio = toDomain(entity);
+
+        entity.getHistorial().forEach(h -> envio.restoreHistorial(
+                h.getId(),
+                EstadoEnvio.valueOf(h.getEstado().name()),
+                h.getObservacion(),
+                h.getFechaCambio()));
+        return envio;
     }
 }

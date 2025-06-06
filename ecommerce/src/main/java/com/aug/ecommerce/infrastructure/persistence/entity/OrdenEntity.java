@@ -17,9 +17,12 @@ public class OrdenEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToMany(mappedBy = "orden", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<ItemOrdenEntity> items;
+
     @NotNull
     @Column(nullable = false)
-    private Long clienteId;
+    private Long clienteId; //No se hace la FK, simulando que van a estar en micros diferentes
 
     @NotNull
     @Column(nullable = false)
@@ -30,10 +33,6 @@ public class OrdenEntity {
     private String direccionEnviar;
 
     private String error;
-
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "orden_id")
-    private List<ItemOrdenEntity> items;
 
 }
 

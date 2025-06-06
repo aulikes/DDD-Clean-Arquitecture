@@ -2,14 +2,10 @@ package com.aug.ecommerce.application.service;
 
 import com.aug.ecommerce.application.dto.ResultadoEnvioDTO;
 import com.aug.ecommerce.application.event.EnvioPreparadoEvent;
-import com.aug.ecommerce.application.event.PagoConfirmadoEvent;
 import com.aug.ecommerce.application.gateway.ProveedorEnvioClient;
 import com.aug.ecommerce.application.publisher.EnvioEventPublisher;
 import com.aug.ecommerce.domain.model.envio.Envio;
-import com.aug.ecommerce.domain.model.envio.EstadoEnvio;
-import com.aug.ecommerce.domain.model.orden.Orden;
 import com.aug.ecommerce.domain.repository.EnvioRepository;
-import com.aug.ecommerce.domain.repository.OrdenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,24 +29,24 @@ public class EnvioService {
         // Crear envío con estado PENDIENTE
         Envio envio = Envio.create(ordenId, direccionEntrega);
         // Guardar Envío en BD
-        envio = envioRepository.save(envio);
-        return prepararEnvio(envio);
+        envio = envioRepository.saveWithHistorial(envio);
+        return realizarEnvio(envio);
     }
 
     public void reintentarEnvios(){
         List<Envio> pendientes = envioRepository.findByEstado(Envio.getEstadoInicial(), MAX_REINTENTOS);
         for (Envio envio : pendientes) {
-            this.prepararEnvio(envio);
+            this.realizarEnvio(envio);
         }
     }
 
     @Transactional
-    private Envio prepararEnvio(Envio envio){
+    private Envio realizarEnvio(Envio envio){
         // Invocar sistema externo para ejecutar el envío
         ResultadoEnvioDTO resultadoEnvio = proveedorEnvioClient.prepararEnvio(envio);
         // Si fue exitoso, actualizar estado a ENVIADO
         if (resultadoEnvio.exitoso()) {
-            envio.prepararEnvio(resultadoEnvio.trackingNumber());
+            envio.iniciarPreparacionEnvio(resultadoEnvio.trackingNumber());
         } else{
             log.error("Error al reenviar envío ID {}: {}", envio.getId(), resultadoEnvio.mensaje());
             envio.incrementarReintentos(); // se debe persistir este conteo
@@ -58,7 +54,7 @@ public class EnvioService {
                 envio.marcarComoFallido("Excedido número máximo de reintentos.");
             }
         }
-        envio = envioRepository.save(envio);
+        envio = envioRepository.saveWithHistorial(envio);
         publicarEventoEnvio(envio, resultadoEnvio);
         return envio;
     }

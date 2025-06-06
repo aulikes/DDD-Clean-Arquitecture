@@ -1,8 +1,10 @@
 package com.aug.ecommerce.infrastructure.persistence.entity;
 
+import com.aug.ecommerce.infrastructure.persistence.entity.enums.EstadoEnvioEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -13,18 +15,15 @@ public class EnvioEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull
     @Column(name = "orden_id", nullable = false)
     private Long ordenId;
 
-    @NotNull
     @Column(nullable = false, name = "direccion_envio")
     private String direccionEnvio;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Estado estado;
+    private EstadoEnvioEntity estado;
 
     @Column(name = "trackingNumber")
     private String trackingNumber;
@@ -35,7 +34,6 @@ public class EnvioEntity {
     @Column(name = "razon_fallo")
     private String razonFallo;
 
-    public enum Estado {
-        PENDIENTE, PREPARANDO, DESPACHADO, ENTREGADO, FALLIDO
-    }
+    @OneToMany(mappedBy = "envio", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<EnvioEstadoHistorialEntity> historial;
 }

@@ -9,36 +9,23 @@ import com.aug.ecommerce.domain.model.cliente.Cliente;
 import com.aug.ecommerce.domain.model.producto.Producto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Order(4)
 @Component
 @RequiredArgsConstructor
-public class OrdenInitializer implements ApplicationRunner {
+public class OrdenInitializer {
 
     private final ClienteService clienteService;
     private final ProductoService productoService;
     private final OrdenService ordenService;
     private final OrdenMapper mapper;
-    private final StartupDelayManager startupDelayManager;
 
-    @Override
-    public void run(ApplicationArguments args) throws InterruptedException {
+    public void run() {
 
-        while (!startupDelayManager.isReady()) {
-            try {
-                Thread.sleep(500); // Espera pasiva hasta que esté listo
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
         int intentos = 0;
         int cantClientes = 3;
         int cantProductos = 20;

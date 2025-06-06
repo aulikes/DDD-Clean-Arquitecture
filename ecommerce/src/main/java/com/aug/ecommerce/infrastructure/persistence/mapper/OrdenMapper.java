@@ -24,6 +24,7 @@ public class OrdenMapper {
         List<ItemOrdenEntity> items = orden.getItems().stream().map(item -> {
             ItemOrdenEntity e = new ItemOrdenEntity();
             e.setId(item.getId());
+            e.setOrden(entity);
             e.setProductoId(item.getProductoId());
             e.setCantidad(item.getCantidad());
             e.setPrecioUnitario(item.getPrecioUnitario());
@@ -39,6 +40,7 @@ public class OrdenMapper {
                 entity.getDireccionEnviar(), new ArrayList<>(),
                 EstadoOrden.desde(entity.getEstado()), entity.getError()
                 );
+
         entity.getItems().forEach(item -> orden.restoreItem(
                 item.getId(),
                 item.getProductoId(),

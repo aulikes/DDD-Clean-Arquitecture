@@ -6,9 +6,6 @@ import com.aug.ecommerce.domain.model.orden.EstadoOrden;
 import com.aug.ecommerce.domain.model.orden.Orden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -16,23 +13,12 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 @Slf4j
-@Order(5)
 @Component
 @RequiredArgsConstructor
-public class PagoInitializer implements ApplicationRunner {
+public class PagoInitializer {
     private final OrdenService ordenService;
-    private final StartupDelayManager startupDelayManager;
 
-    @Override
-    public void run(ApplicationArguments args) throws InterruptedException {
-
-        while (!startupDelayManager.isReady()) {
-            try {
-                Thread.sleep(500); // Espera pasiva hasta que esté listo
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
+    public void run() {
         int cantOrdenes = 20;
         int intentos = 0;
 

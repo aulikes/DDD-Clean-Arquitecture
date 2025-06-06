@@ -7,34 +7,20 @@ import com.aug.ecommerce.domain.model.categoria.Categoria;
 import com.aug.ecommerce.domain.repository.CategoriaRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.ApplicationArguments;
-import org.springframework.boot.ApplicationRunner;
-import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-
 @Component
-@Order(3)
 @RequiredArgsConstructor
 @Slf4j
-public class ProductoInitializer implements ApplicationRunner {
+public class ProductoInitializer {
 
     private final ProductoService productoService;
     private final CategoriaRepository categoriaRepository;
     private final ProductoMapper productoMapper;
-    private final StartupDelayManager startupDelayManager;
 
-    @Override
-    public void run(ApplicationArguments args) {
-        while (!startupDelayManager.isReady()) {
-            try {
-                Thread.sleep(500); // Espera pasiva hasta que esté listo
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }
+    public void run() {
         List<Long> categorias = categoriaRepository.findAll().stream()
                 .map(Categoria::getId)
                 .toList();

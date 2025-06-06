@@ -7,8 +7,9 @@ import java.util.List;
 import java.util.Optional;
 
 public interface EnvioRepository {
-    Envio save(Envio envio);
+    Envio saveWithHistorial(Envio envio);
     Optional<Envio> findById(Long id);
+    Optional<Envio> findByIdWithHistorial(Long id);
     List<Envio> findByOrdenId(Long ordenId);
     List<Envio> findByEstado(EstadoEnvio estadoEnvio, int maxIntentos);
 }
