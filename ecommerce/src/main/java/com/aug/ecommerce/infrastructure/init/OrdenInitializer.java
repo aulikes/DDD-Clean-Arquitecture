@@ -32,9 +32,9 @@ public class OrdenInitializer {
     private final InventarioService inventarioService;
     private final OrdenMapper mapper;
 
-    private static final AtomicInteger intentos = new AtomicInteger(0);
-    private static final int cantClientes = 3;
-    private static final int cantProductos = 20;
+    private static final AtomicInteger INTENTOS = new AtomicInteger(0);
+    private static final int CANT_CLIENTES = 3;
+    private static final int CANT_PRODUCTOS = 20;
 
     public void run() {
         Callable<Boolean> readyOrden = ejecutarOrdenes();
@@ -58,7 +58,6 @@ public class OrdenInitializer {
                 executor.shutdownNow();
             }
         }, 2, TimeUnit.MINUTES);
-
     }
 
     private Callable<Boolean> ejecutarOrdenes(){
@@ -67,10 +66,10 @@ public class OrdenInitializer {
             List<Producto> productos = new ArrayList<>(productoService.getAll());
             List<Inventario> inventario = new ArrayList<>(inventarioService.getAll());
 
-            if (clientes.size() < cantClientes || productos.size() < cantProductos || inventario.size() < cantProductos) {
+            if (clientes.size() < CANT_CLIENTES || productos.size() < CANT_PRODUCTOS || inventario.size() < CANT_PRODUCTOS) {
                 log.error("Reintento #{}, Cantidad de Clientes: {}, " +
                                 "Cantidad de Productos: {}, Cantidad de Inventarios: {}",
-                        intentos.addAndGet(1), clientes.size(), productos.size(), inventario.size());
+                        INTENTOS.addAndGet(1), clientes.size(), productos.size(), inventario.size());
                 return false;
             }
 

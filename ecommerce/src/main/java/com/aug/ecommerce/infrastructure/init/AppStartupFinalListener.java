@@ -44,7 +44,7 @@ public class AppStartupFinalListener {
         clienteInitializer.run();
         productoInitializer.run();
         ordenInitializer.run();
-//        pagoInitializer.run();
+        pagoInitializer.run();
     }
 
     private void startApplicationEvent() {
