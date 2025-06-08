@@ -2,6 +2,8 @@ package com.aug.ecommerce.domain.model.cliente;
 
 import com.aug.ecommerce.domain.util.ValidadorDominio;
 
+import java.util.Objects;
+
 public final class Direccion {
     private final Long id;
     private String calle;
@@ -28,9 +30,9 @@ public final class Direccion {
 
     // Solo modificable desde Cliente
     void actualizar(String nuevaCalle, String nuevaCiudad, String nuevoPais, String nuevoCodigoPostal) {
-        this.calle = ValidadorDominio.validarCampoObligatorio(nuevaCalle);
-        this.ciudad = ValidadorDominio.validarCampoObligatorio(nuevaCiudad);
-        this.pais = ValidadorDominio.validarCampoObligatorio(nuevoPais);
-        this.codigoPostal = ValidadorDominio.validarCampoObligatorio(nuevoCodigoPostal);
+        this.calle = Objects.requireNonNull(nuevaCalle, "La calle no puede ser null");
+        this.ciudad = Objects.requireNonNull(nuevaCiudad, "La ciudad no puede ser null");
+        this.pais = Objects.requireNonNull(nuevoPais, "El pais no puede ser null");
+        this.codigoPostal = Objects.requireNonNull(nuevoCodigoPostal, "El codigoPostal no puede ser null");
     }
 }

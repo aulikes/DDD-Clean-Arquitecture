@@ -29,11 +29,11 @@ public class Producto {
     public Long getCategoriaId() { return categoriaId; }
 
     public void setNombre(String nuevoNombre) {
-        this.nombre = ValidadorDominio.validarCampoObligatorio(nuevoNombre);
+        this.nombre = Objects.requireNonNull(nuevoNombre, "El nombre no puede ser null");
     }
 
     public void setDescripcion(String nuevaDescripcion) {
-        this.descripcion = ValidadorDominio.validarCampoObligatorio(nuevaDescripcion);
+        this.descripcion = Objects.requireNonNull(nuevaDescripcion, "La descripción no puede ser null");
     }
 
     public void setPrecio(Double nuevoPrecio) {
@@ -43,7 +43,7 @@ public class Producto {
     }
 
     public void setImagenUrl(String nuevaImagenUrl) {
-        this.imagenUrl = ValidadorDominio.validarCampoObligatorio(nuevaImagenUrl);
+        this.imagenUrl =Objects.requireNonNull(nuevaImagenUrl, "La imagenUrl no puede ser null");
     }
 
     public void setCategoriaId(Long categoriaId) {
