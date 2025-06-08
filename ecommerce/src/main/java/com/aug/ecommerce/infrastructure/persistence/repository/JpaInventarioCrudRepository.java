@@ -1,4 +1,4 @@
-package com.aug.ecommerce.infrastructure.persistence.repository.contract;
+package com.aug.ecommerce.infrastructure.persistence.repository;
 
 import com.aug.ecommerce.infrastructure.persistence.entity.InventarioEntity;
 import org.springframework.data.jpa.repository.JpaRepository;

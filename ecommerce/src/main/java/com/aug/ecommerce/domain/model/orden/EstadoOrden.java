@@ -46,7 +46,7 @@ public final class EstadoOrden {
         registrar(Tipo.PAGO_RECHAZADO, List.of(Tipo.PAGO_EN_PROCESO, Tipo.CANCELADA));
         registrar(Tipo.PAGADA, List.of(Tipo.ENVIO_CONFIRMADO, Tipo.ENVIO_NO_CONFIRMADO, Tipo.CANCELADA));
         registrar(Tipo.ENVIO_CONFIRMADO, List.of(Tipo.ENVIADA));
-        registrar(Tipo.ENVIO_NO_CONFIRMADO, List.of(Tipo.ENVIO_CONFIRMADO));
+        registrar(Tipo.ENVIO_NO_CONFIRMADO, List.of(Tipo.ENVIO_CONFIRMADO, Tipo.ENVIO_NO_CONFIRMADO));
         registrar(Tipo.ENVIADA, List.of(Tipo.ENTREGADA));
         registrar(Tipo.ENTREGADA, List.of());
         registrar(Tipo.CANCELADA, List.of());

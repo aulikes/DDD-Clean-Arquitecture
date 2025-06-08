@@ -7,7 +7,6 @@ import com.aug.ecommerce.infrastructure.config.AppProperties;
 import com.aug.ecommerce.infrastructure.queue.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -30,11 +29,11 @@ public class ProductoKafkaListener {
     public void validarProductoCreacionOrden(String payload) { //Valida si el producto existe
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("orden.multicast.creada".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), OrdenCreadaEvent.class);
+            if ("orden.multicast.creada".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), OrdenCreadaEvent.class);
                 productoValidacionService.validarProductoCreacionOrden(event.ordenId(), event.items());
             } else
-                log.warn("### validarProductoCreacionOrden -> Evento de producto no reconocido: {}", wrapper.getEventType());
+                log.warn("### validarProductoCreacionOrden -> Evento de producto no reconocido: {}", wrapper.eventType());
         } catch (Exception e) {
             log.error("Error en ProductoKafkaListener", e);
         }

@@ -3,7 +3,6 @@ package com.aug.ecommerce.infrastructure.listener.kafkalistener;
 
 import com.aug.ecommerce.application.event.OrdenPagadaEvent;
 import com.aug.ecommerce.application.service.EnvioService;
-import com.aug.ecommerce.infrastructure.config.AppProperties;
 import com.aug.ecommerce.infrastructure.queue.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -30,12 +29,12 @@ public class EnvioKafkaListener {
     public void prepararEnvio(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("orden.envio.preparar".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), OrdenPagadaEvent.class);
+            if ("orden.envio.preparar".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), OrdenPagadaEvent.class);
                 log.debug("---> Entrando a EnvioKafkaListener - onOrdenPagada {}", event.ordenId());
                 service.crearEnvio(event.ordenId(), event.direccionEnvio());
             } else
-                log.warn("### prepararEnvio -> Evento de envio no reconocido: {}", wrapper.getEventType());
+                log.warn("### prepararEnvio -> Evento de envio no reconocido: {}", wrapper.eventType());
         } catch (Exception e) {
             log.error("Error en EnvioKafkaListener", e);
         }

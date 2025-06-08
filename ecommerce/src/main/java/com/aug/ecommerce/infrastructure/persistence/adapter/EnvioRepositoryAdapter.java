@@ -1,4 +1,4 @@
-package com.aug.ecommerce.infrastructure.persistence.repository.impl;
+package com.aug.ecommerce.infrastructure.persistence.adapter;
 
 import com.aug.ecommerce.domain.model.envio.Envio;
 import com.aug.ecommerce.domain.model.envio.EstadoEnvio;
@@ -6,7 +6,7 @@ import com.aug.ecommerce.domain.repository.EnvioRepository;
 import com.aug.ecommerce.infrastructure.persistence.entity.EnvioEntity;
 import com.aug.ecommerce.infrastructure.persistence.entity.enums.EstadoEnvioEntity;
 import com.aug.ecommerce.infrastructure.persistence.mapper.EnvioMapper;
-import com.aug.ecommerce.infrastructure.persistence.repository.contract.JpaEnvioCrudRepository;
+import com.aug.ecommerce.infrastructure.persistence.repository.JpaEnvioCrudRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class EnvioRepositoryImp implements EnvioRepository {
+public class EnvioRepositoryAdapter implements EnvioRepository {
 
     private final JpaEnvioCrudRepository jpa;
 
@@ -47,6 +47,8 @@ public class EnvioRepositoryImp implements EnvioRepository {
     @Override
     public List<Envio> findByEstado(EstadoEnvio estadoEnvio, int maxIntentos) {
         var entityEstado = EstadoEnvioEntity.valueOf(estadoEnvio.name());
-        return jpa.findByEstado(entityEstado, maxIntentos).stream().map(EnvioMapper::toDomain).toList();
+        List<EnvioEntity> listEnvEnt = jpa.findByEstado(entityEstado, maxIntentos);
+        return jpa.findByEstado(entityEstado, maxIntentos)
+                .stream().map(EnvioMapper::toDomainWithHistorial).toList();
     }
 }

@@ -29,11 +29,11 @@ public class OrdenKafkaListener {
     public void clienteValidado(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("cliente.orden.valido".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), ClienteValidadoEvent.class);
+            if ("cliente.orden.valido".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), ClienteValidadoEvent.class);
                 ordenValidacionService.registrarValidacionExitosa(event.ordenId(), ValidacionCrearOrden.CLIENTE);
             } else
-                log.warn("### clienteValidado -> Evento de cliente no reconocido: {}", wrapper.getEventType());
+                log.warn("### clienteValidado -> Evento de cliente no reconocido: {}", wrapper.eventType());
         } catch (Exception e) {
             log.error("Error procesando evento de cliente", e);
         }
@@ -44,11 +44,11 @@ public class OrdenKafkaListener {
     public void clienteNoValidado(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("cliente.orden.no-valido".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), ClienteNoValidadoEvent.class);
+            if ("cliente.orden.no-valido".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), ClienteNoValidadoEvent.class);
                 ordenValidacionService.registrarValidacionFallida(event.ordenId(), ValidacionCrearOrden.CLIENTE);
             } else
-                log.warn("### clienteNoValidado -> Evento de cliente no reconocido: {}", wrapper.getEventType());
+                log.warn("### clienteNoValidado -> Evento de cliente no reconocido: {}", wrapper.eventType());
         } catch (Exception e) {
             log.error("Error procesando evento de cliente", e);
         }
@@ -59,11 +59,11 @@ public class OrdenKafkaListener {
     public void productoValidado(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("producto.orden.valido".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), ProductoValidadoEvent.class);
+            if ("producto.orden.valido".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), ProductoValidadoEvent.class);
                 ordenValidacionService.registrarValidacionExitosa(event.ordenId(), ValidacionCrearOrden.PRODUCTO);
             } else
-                log.warn("Evento de producto no reconocido: {}", wrapper.getEventType());
+                log.warn("Evento de producto no reconocido: {}", wrapper.eventType());
         } catch (Exception e) {
             log.error("Error procesando evento de producto", e);
         }
@@ -74,11 +74,11 @@ public class OrdenKafkaListener {
     public void productoNoValidado(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("producto.orden.no-valido".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), ProductoNoValidadoEvent.class);
+            if ("producto.orden.no-valido".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), ProductoNoValidadoEvent.class);
                 ordenValidacionService.registrarValidacionFallida(event.ordenId(), ValidacionCrearOrden.PRODUCTO);
             } else
-                log.warn("Evento de producto no reconocido: {}", wrapper.getEventType());
+                log.warn("Evento de producto no reconocido: {}", wrapper.eventType());
         } catch (Exception e) {
             log.error("Error procesando evento de producto", e);
         }
@@ -89,11 +89,11 @@ public class OrdenKafkaListener {
     public void inventarioDisponible(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("inventario.orden.disponible".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), InventarioValidadoEvent.class);
+            if ("inventario.orden.disponible".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), InventarioValidadoEvent.class);
                 ordenValidacionService.registrarValidacionExitosa(event.ordenId(), ValidacionCrearOrden.STOCK);
             } else
-                log.warn("Evento de inventario no reconocido: {}", wrapper.getEventType());
+                log.warn("Evento de inventario no reconocido: {}", wrapper.eventType());
         } catch (Exception e) {
             log.error("Error procesando evento de inventario", e);
         }
@@ -104,11 +104,11 @@ public class OrdenKafkaListener {
     public void inventarioNoDisponible(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("inventario.orden.no-disponible".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), InventarioNoValidadoEvent.class);
+            if ("inventario.orden.no-disponible".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), InventarioNoValidadoEvent.class);
                 ordenValidacionService.registrarValidacionFallida(event.ordenId(), ValidacionCrearOrden.STOCK);
             } else
-                log.warn("Evento de inventario no reconocido: {}", wrapper.getEventType());
+                log.warn("Evento de inventario no reconocido: {}", wrapper.eventType());
         } catch (Exception e) {
             log.error("Error procesando evento de inventario", e);
         }
@@ -119,11 +119,11 @@ public class OrdenKafkaListener {
     public void pagoRealizado(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("pago.orden.confirmado".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), PagoConfirmadoEvent.class);
+            if ("pago.orden.confirmado".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), PagoConfirmadoEvent.class);
                 ordenValidacionService.gestionarInformacionPago(event);
             } else {
-                log.warn("Evento de pago no reconocido: {}", wrapper.getEventType());
+                log.warn("Evento de pago no reconocido: {}", wrapper.eventType());
             }
         } catch (Exception e) {
             log.error("Error procesando evento de pago", e);
@@ -135,11 +135,11 @@ public class OrdenKafkaListener {
     public void envioPreparado(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("envio.orden.preparado".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), EnvioPreparadoEvent.class);
+            if ("envio.orden.preparado".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), EnvioPreparadoEvent.class);
                 ordenValidacionService.gestionarInformacionEnvio(event);
             } else {
-                log.warn("Evento de envío no reconocido: {}", wrapper.getEventType());
+                log.warn("Evento de envío no reconocido: {}", wrapper.eventType());
             }
         } catch (Exception e) {
             log.error("Error procesando evento de envío", e);

@@ -30,11 +30,11 @@ public class ProductoRabbitListener {
     public void validarProductoCreacionOrden(String payload) { //Valida si el producto existe
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("orden.multicast.creada".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), OrdenCreadaEvent.class);
+            if ("orden.multicast.creada".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), OrdenCreadaEvent.class);
                 productoValidacionService.validarProductoCreacionOrden(event.ordenId(), event.items());
             } else
-                log.warn("### validarProductoCreacionOrden -> Evento de producto no reconocido: {}", wrapper.getEventType());
+                log.warn("### validarProductoCreacionOrden -> Evento de producto no reconocido: {}", wrapper.eventType());
         } catch (Exception e) {
             log.error("Error en ProductoRabbitListener", e);
         }

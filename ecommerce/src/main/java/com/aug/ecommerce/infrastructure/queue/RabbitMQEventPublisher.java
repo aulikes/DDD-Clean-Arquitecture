@@ -42,7 +42,7 @@ public class RabbitMQEventPublisher {
                     eventType,
                     event.getVersion(),
                     event.getTraceId(),
-                    event.getTimestamp().toString(),
+                    event.getTimestamp(),
                     event
             );
 
@@ -80,10 +80,10 @@ public class RabbitMQEventPublisher {
     private Message buildMessage(IntegrationEventWrapper<?> wrapper, byte[] body) {
         MessageProperties props = new MessageProperties();
         props.setContentType(MessageProperties.CONTENT_TYPE_JSON);
-        props.setHeader("x-event-timestamp", wrapper.getTimestamp());
-        props.setHeader("x-event-type", wrapper.getEventType());
-        props.setHeader("x-event-version", wrapper.getVersion());
-        props.setHeader("x-trace-id", wrapper.getTraceId());
+        props.setHeader("x-event-timestamp", wrapper.timestamp());
+        props.setHeader("x-event-type", wrapper.eventType());
+        props.setHeader("x-event-version", wrapper.version());
+        props.setHeader("x-trace-id", wrapper.traceId());
         return new Message(body, props);
     }
 }

@@ -18,9 +18,9 @@ public class EnvioRetryScheduler {
     /**
      * Ejecuta cada 3 minutos y reintenta enviar aquellos envíos pendientes.
      */
-    @Scheduled(fixedDelay = 180000)
+    @Scheduled(cron = "0 */5 * * * *")
     @Transactional
     public void reintentarEnviosPendientes() {
-//        service.reintentarEnvios();
+        service.reintentarEnvios();
     }
 }

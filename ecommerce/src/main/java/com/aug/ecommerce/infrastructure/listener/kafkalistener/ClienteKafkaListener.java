@@ -3,7 +3,6 @@ package com.aug.ecommerce.infrastructure.listener.kafkalistener;
 
 import com.aug.ecommerce.application.event.OrdenCreadaEvent;
 import com.aug.ecommerce.application.service.ClienteValidacionService;
-import com.aug.ecommerce.infrastructure.config.AppProperties;
 import com.aug.ecommerce.infrastructure.queue.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -30,12 +29,12 @@ public class ClienteKafkaListener {
     public void validarCliente(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("orden.multicast.creada".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), OrdenCreadaEvent.class);
+            if ("orden.multicast.creada".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), OrdenCreadaEvent.class);
                 log.debug("---> Entrando a ClienteKafkaListener - OrdenCreadaEvent {}", event.ordenId());
                 service.validarClienteCreacionOrden(event.ordenId(), event.clienteId());
             } else
-                log.warn("### validarCliente -> Evento de cliente no reconocido: {}", wrapper.getEventType());
+                log.warn("### validarCliente -> Evento de cliente no reconocido: {}", wrapper.eventType());
 
         } catch (Exception e) {
             log.error("Error procesando mensaje en ClienteKafkaListener", e);

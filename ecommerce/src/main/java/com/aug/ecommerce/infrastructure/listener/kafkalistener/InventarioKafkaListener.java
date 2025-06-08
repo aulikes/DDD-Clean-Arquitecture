@@ -6,11 +6,9 @@ import com.aug.ecommerce.application.event.OrdenCreadaEvent;
 import com.aug.ecommerce.application.event.ProductoCreadoEvent;
 import com.aug.ecommerce.application.service.InventarioService;
 import com.aug.ecommerce.application.service.InventarioValidacionService;
-import com.aug.ecommerce.infrastructure.config.AppProperties;
 import com.aug.ecommerce.infrastructure.queue.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -37,12 +35,12 @@ public class InventarioKafkaListener {
     public void validarInventario(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("orden.multicast.creada".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), OrdenCreadaEvent.class);
+            if ("orden.multicast.creada".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), OrdenCreadaEvent.class);
                 log.debug("---> Entrando a InventarioKafkaListener - validarInventario, orden: {}", event.ordenId());
                 inventarioValidacionService.validarInventarioCreacionOrden(event.ordenId(), event.items());
             } else
-                log.warn("### validarInventario -> Evento de orden no reconocido: {}", wrapper.getEventType());
+                log.warn("### validarInventario -> Evento de orden no reconocido: {}", wrapper.eventType());
 
         } catch (Exception e) {
             log.error("Error en InventarioKafkaListener", e);
@@ -54,12 +52,12 @@ public class InventarioKafkaListener {
     public void crearInventario(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("producto.inventario.crear".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), ProductoCreadoEvent.class);
+            if ("producto.inventario.crear".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), ProductoCreadoEvent.class);
                 log.debug("---> Entrando a InventarioKafkaListener - crearInventario, producto: {}", event.productoId());
                 inventarioService.crearInvenario(new CrearInventarioCommand(event.productoId(), event.cantidad()));
             } else
-                log.warn("### crearInventario -> Evento de producto no reconocido: {}", wrapper.getEventType());
+                log.warn("### crearInventario -> Evento de producto no reconocido: {}", wrapper.eventType());
 
         } catch (Exception e) {
             log.error("Error en InventarioKafkaListener", e);

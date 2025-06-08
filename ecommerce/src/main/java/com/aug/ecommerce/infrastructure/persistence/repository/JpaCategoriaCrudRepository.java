@@ -1,4 +1,4 @@
-package com.aug.ecommerce.infrastructure.persistence.repository.contract;
+package com.aug.ecommerce.infrastructure.persistence.repository;
 
 import com.aug.ecommerce.domain.model.categoria.Categoria;
 import com.aug.ecommerce.infrastructure.persistence.entity.CategoriaEntity;
@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface JpaCategoriaCrudRepository extends JpaRepository<CategoriaEntity, Long> {
 

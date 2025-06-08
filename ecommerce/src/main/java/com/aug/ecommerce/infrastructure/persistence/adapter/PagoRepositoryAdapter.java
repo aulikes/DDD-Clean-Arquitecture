@@ -1,10 +1,10 @@
-package com.aug.ecommerce.infrastructure.persistence.repository.impl;
+package com.aug.ecommerce.infrastructure.persistence.adapter;
 
 import com.aug.ecommerce.domain.model.pago.Pago;
 import com.aug.ecommerce.domain.repository.PagoRepository;
 import com.aug.ecommerce.infrastructure.persistence.entity.PagoEntity;
 import com.aug.ecommerce.infrastructure.persistence.mapper.PagoMapper;
-import com.aug.ecommerce.infrastructure.persistence.repository.contract.JpaPagoCrudRepository;
+import com.aug.ecommerce.infrastructure.persistence.repository.JpaPagoCrudRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -13,7 +13,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
-public class PagoRepositoryImp implements PagoRepository {
+public class PagoRepositoryAdapter implements PagoRepository {
 
     private final JpaPagoCrudRepository jpa;
 

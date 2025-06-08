@@ -1,4 +1,4 @@
-package com.aug.ecommerce.infrastructure.persistence.repository.contract;
+package com.aug.ecommerce.infrastructure.persistence.repository;
 
 import com.aug.ecommerce.infrastructure.persistence.entity.EnvioEntity;
 import com.aug.ecommerce.infrastructure.persistence.entity.enums.EstadoEnvioEntity;
@@ -12,7 +12,7 @@ import java.util.Optional;
 public interface JpaEnvioCrudRepository extends JpaRepository<EnvioEntity, Long> {
     List<EnvioEntity> findByOrdenId(Long ordenId);
 
-    @Query("select e from EnvioEntity e where e.estado = :estado and e.intentos <= :intentos")
+    @Query("SELECT e FROM EnvioEntity e LEFT JOIN FETCH e.historial WHERE e.estado = :estado and e.intentos < :intentos")
     List<EnvioEntity> findByEstado (@Param("estado") EstadoEnvioEntity estado, @Param("intentos") int intentos);
 
     @Query("SELECT e FROM EnvioEntity e LEFT JOIN FETCH e.historial WHERE e.id = :id")

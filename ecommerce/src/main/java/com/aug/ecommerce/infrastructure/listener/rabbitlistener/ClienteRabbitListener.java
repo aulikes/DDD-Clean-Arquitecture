@@ -29,12 +29,12 @@ public class ClienteRabbitListener {
     public void validarCliente(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("orden.multicast.creada".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), OrdenCreadaEvent.class);
+            if ("orden.multicast.creada".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), OrdenCreadaEvent.class);
                 log.debug("---> Entrando al RabbitListener ClienteRabbitListener - OrdenCreadaEvent {}", event.ordenId());
                 clienteValidacionService.validarClienteCreacionOrden(event.ordenId(), event.clienteId());
             } else
-                log.warn("### validarCliente -> Evento de orden no reconocido: {}", wrapper.getEventType());
+                log.warn("### validarCliente -> Evento de orden no reconocido: {}", wrapper.eventType());
 
         } catch (Exception e) {
             log.error("Error procesando mensaje en ClienteRabbitListener", e);

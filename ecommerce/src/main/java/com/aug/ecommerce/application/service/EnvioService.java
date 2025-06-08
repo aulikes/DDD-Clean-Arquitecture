@@ -5,6 +5,7 @@ import com.aug.ecommerce.application.event.EnvioPreparadoEvent;
 import com.aug.ecommerce.application.gateway.ProveedorEnvioClient;
 import com.aug.ecommerce.application.publisher.EnvioEventPublisher;
 import com.aug.ecommerce.domain.model.envio.Envio;
+import com.aug.ecommerce.domain.model.envio.EstadoEnvio;
 import com.aug.ecommerce.domain.repository.EnvioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,8 +51,11 @@ public class EnvioService {
         } else{
             log.error("Error al reenviar envío ID {}: {}", envio.getId(), resultadoEnvio.mensaje());
             envio.incrementarReintentos(); // se debe persistir este conteo
-            if (envio.getIntentos() > MAX_REINTENTOS) {
+            if (envio.getIntentos() >= MAX_REINTENTOS) {
                 envio.marcarComoFallido("Excedido número máximo de reintentos.");
+            }
+            else{
+                envio.marcarComoPendiente(resultadoEnvio.mensaje());
             }
         }
         envio = envioRepository.saveWithHistorial(envio);

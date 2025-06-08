@@ -35,6 +35,8 @@ public class AppProperties {
 
     @Data
     public static class Kafka {
+        private String bootstrapServers;
+        private String ordenConsumerGroup;
         private Producer producer;
         private Consumer consumer;
 

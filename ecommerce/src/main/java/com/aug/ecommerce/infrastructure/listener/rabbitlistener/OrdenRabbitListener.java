@@ -35,16 +35,16 @@ public class OrdenRabbitListener {
     public void recibirDesdeClienteQueue(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            switch (wrapper.getEventType()) {
+            switch (wrapper.eventType()) {
                 case "cliente.orden.valido" -> {
-                    var event = objectMapper.convertValue(wrapper.getData(), ClienteValidadoEvent.class);
+                    var event = objectMapper.convertValue(wrapper.data(), ClienteValidadoEvent.class);
                     ordenValidacionService.registrarValidacionExitosa(event.ordenId(), ValidacionCrearOrden.CLIENTE);
                 }
                 case "cliente.orden.no-valido" -> {
-                    var event = objectMapper.convertValue(wrapper.getData(), ClienteNoValidadoEvent.class);
+                    var event = objectMapper.convertValue(wrapper.data(), ClienteNoValidadoEvent.class);
                     ordenValidacionService.registrarValidacionFallida(event.ordenId(), ValidacionCrearOrden.CLIENTE);
                 }
-                default -> log.warn("Evento de cliente no reconocido: {}", wrapper.getEventType());
+                default -> log.warn("Evento de cliente no reconocido: {}", wrapper.eventType());
             }
         } catch (Exception e) {
             log.error("Error procesando evento de cliente", e);
@@ -55,16 +55,16 @@ public class OrdenRabbitListener {
     public void recibirDesdeProductoQueue(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            switch (wrapper.getEventType()) {
+            switch (wrapper.eventType()) {
                 case "producto.orden.valido" -> {
-                    var event = objectMapper.convertValue(wrapper.getData(), ProductoValidadoEvent.class);
+                    var event = objectMapper.convertValue(wrapper.data(), ProductoValidadoEvent.class);
                     ordenValidacionService.registrarValidacionExitosa(event.ordenId(), ValidacionCrearOrden.PRODUCTO);
                 }
                 case "producto.orden.no-valido" -> {
-                    var event = objectMapper.convertValue(wrapper.getData(), ProductoNoValidadoEvent.class);
+                    var event = objectMapper.convertValue(wrapper.data(), ProductoNoValidadoEvent.class);
                     ordenValidacionService.registrarValidacionFallida(event.ordenId(), ValidacionCrearOrden.PRODUCTO);
                 }
-                default -> log.warn("Evento de producto no reconocido: {}", wrapper.getEventType());
+                default -> log.warn("Evento de producto no reconocido: {}", wrapper.eventType());
             }
         } catch (Exception e) {
             log.error("Error procesando evento de producto", e);
@@ -75,16 +75,16 @@ public class OrdenRabbitListener {
     public void recibirDesdeInventarioQueue(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            switch (wrapper.getEventType()) {
+            switch (wrapper.eventType()) {
                 case "inventario.orden.disponible" -> {
-                    var event = objectMapper.convertValue(wrapper.getData(), InventarioValidadoEvent.class);
+                    var event = objectMapper.convertValue(wrapper.data(), InventarioValidadoEvent.class);
                     ordenValidacionService.registrarValidacionExitosa(event.ordenId(), ValidacionCrearOrden.STOCK);
                 }
                 case "inventario.orden.no-disponible" -> {
-                    var event = objectMapper.convertValue(wrapper.getData(), InventarioNoValidadoEvent.class);
+                    var event = objectMapper.convertValue(wrapper.data(), InventarioNoValidadoEvent.class);
                     ordenValidacionService.registrarValidacionFallida(event.ordenId(), ValidacionCrearOrden.STOCK);
                 }
-                default -> log.warn("Evento de inventario no reconocido: {}", wrapper.getEventType());
+                default -> log.warn("Evento de inventario no reconocido: {}", wrapper.eventType());
             }
         } catch (Exception e) {
             log.error("Error procesando evento de inventario", e);
@@ -95,11 +95,11 @@ public class OrdenRabbitListener {
     public void recibirDesdePagoQueue(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("pago.orden.confirmado".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), PagoConfirmadoEvent.class);
+            if ("pago.orden.confirmado".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), PagoConfirmadoEvent.class);
                 ordenValidacionService.gestionarInformacionPago(event);
             } else {
-                log.warn("Evento de pago no reconocido: {}", wrapper.getEventType());
+                log.warn("Evento de pago no reconocido: {}", wrapper.eventType());
             }
         } catch (Exception e) {
             log.error("Error procesando evento de pago", e);
@@ -110,11 +110,11 @@ public class OrdenRabbitListener {
     public void recibirDesdeEnvioQueue(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("envio.orden.preparado".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), EnvioPreparadoEvent.class);
+            if ("envio.orden.preparado".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), EnvioPreparadoEvent.class);
                 ordenValidacionService.gestionarInformacionEnvio(event);
             } else {
-                log.warn("Evento de envío no reconocido: {}", wrapper.getEventType());
+                log.warn("Evento de envío no reconocido: {}", wrapper.eventType());
             }
         } catch (Exception e) {
             log.error("Error procesando evento de envío", e);

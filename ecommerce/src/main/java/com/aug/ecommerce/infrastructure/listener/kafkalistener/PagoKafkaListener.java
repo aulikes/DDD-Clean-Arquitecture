@@ -29,12 +29,12 @@ public class PagoKafkaListener {
     public void realizarPagoDeOrden(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("orden.pago.solicitar".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), OrdenPreparadaParaPagoEvent.class);
+            if ("orden.pago.solicitar".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), OrdenPreparadaParaPagoEvent.class);
                 log.debug("---> Entrando a PagoKafkaListener - realizarPagoDeOrden {}", event.ordenId());
                 pagoService.realizarPago(event);
             } else
-                log.warn("### realizarPagoDeOrden -> Evento de orden no reconocido: {}", wrapper.getEventType());
+                log.warn("### realizarPagoDeOrden -> Evento de orden no reconocido: {}", wrapper.eventType());
         } catch (Exception e) {
             log.error("Error en PagoRabbitListener", e);
         }

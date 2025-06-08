@@ -1,9 +1,9 @@
-package com.aug.ecommerce.infrastructure.persistence.repository.impl;
+package com.aug.ecommerce.infrastructure.persistence.adapter;
 
 import com.aug.ecommerce.domain.model.cliente.Cliente;
 import com.aug.ecommerce.domain.repository.ClienteRepository;
 import com.aug.ecommerce.infrastructure.persistence.mapper.ClienteMapper;
-import com.aug.ecommerce.infrastructure.persistence.repository.contract.JpaClienteCrudRepository;
+import com.aug.ecommerce.infrastructure.persistence.repository.JpaClienteCrudRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
-public class ClienteRepositoryImp implements ClienteRepository {
+public class ClienteRepositoryAdapter implements ClienteRepository {
 
     private final JpaClienteCrudRepository jpa;
 

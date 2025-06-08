@@ -29,11 +29,11 @@ public class KafkaEventPublisher {
                     eventType,
                     event.getVersion(),
                     event.getTraceId(),
-                    event.getTimestamp().toString(),
+                    event.getTimestamp(),
                     event
             );
             String mensaje = objectMapper.writeValueAsString(wrapper);
-            kafkaTemplate.send(topic, mensaje);
+            kafkaTemplate.send(topic, event.getTraceId(), mensaje);
             log.info("Kafka - Evento publicado en [{}]: {}", topic, mensaje);
         } catch (Exception e) {
             log.error("Error al publicar evento en Kafka", e);

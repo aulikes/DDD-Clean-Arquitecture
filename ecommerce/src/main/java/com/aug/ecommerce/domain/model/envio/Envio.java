@@ -71,7 +71,6 @@ public class Envio {
             throw new IllegalStateException("Solo puede preparar un envío que está pendiente");
         this.trackingNumber = Objects.requireNonNull(trackingNumber, "El número de seguimiento no puede ser nulo");
         this.razonFallo = null;
-        this.intentos = 0;
         agregarNuevoEstado(EstadoEnvio.PREPARANDO, null);
     }
 
@@ -89,14 +88,11 @@ public class Envio {
         agregarNuevoEstado(EstadoEnvio.FALLIDO, razon);
     }
 
-    //Obtiene el último estado con fecha registrada, si no hay devuelve el estado que no tiene fecha
-    public EnvioEstadoHistorial getUltimoEstadoHistorial() {
-        validarUnicoEstadoConFechaNula();
-
-        return historial.stream()
-                .filter(h -> h.getFechaCambio() != null)
-                .max(Comparator.comparing(EnvioEstadoHistorial::getFechaCambio))
-                .orElseGet(historial::getLast);
+    public void marcarComoPendiente(String razon) {
+        if (estado != EstadoEnvio.PENDIENTE)
+            throw new IllegalStateException("Solo puede preparar un envío que está pendiente");
+        this.razonFallo = razon;
+        agregarNuevoEstado(EstadoEnvio.PENDIENTE, razon);
     }
 
     public void agregarNuevoEstado(EstadoEnvio nuevoEstado, String observacion) {
@@ -117,5 +113,15 @@ public class Envio {
         if (sinFecha > 1) {
             throw new IllegalStateException("Solo puede haber un estado en historial sin fecha de cambio.");
         }
+    }
+
+    //Obtiene el último estado con fecha registrada, si no hay devuelve el estado que no tiene fecha
+    public EnvioEstadoHistorial getUltimoEstadoHistorial() {
+        validarUnicoEstadoConFechaNula();
+
+        return historial.stream()
+                .filter(h -> h.getFechaCambio() != null)
+                .max(Comparator.comparing(EnvioEstadoHistorial::getFechaCambio))
+                .orElseGet(historial::getLast);
     }
 }

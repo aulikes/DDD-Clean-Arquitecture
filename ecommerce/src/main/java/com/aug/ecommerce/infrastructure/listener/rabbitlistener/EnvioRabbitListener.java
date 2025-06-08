@@ -29,12 +29,12 @@ public class EnvioRabbitListener {
     public void prepararEnvio(String payload) {
         try {
             var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("orden.envio.preparar".equals(wrapper.getEventType())) {
-                var event = objectMapper.convertValue(wrapper.getData(), OrdenPagadaEvent.class);
+            if ("orden.envio.preparar".equals(wrapper.eventType())) {
+                var event = objectMapper.convertValue(wrapper.data(), OrdenPagadaEvent.class);
                 log.debug("---> Entrando al RabbitListener EnvioRabbitListener - onOrdenPagada {}", event.ordenId());
                 envioService.crearEnvio(event.ordenId(), event.direccionEnvio());
             } else
-                log.warn("### prepararEnvio -> Evento de orden no reconocido: {}", wrapper.getEventType());
+                log.warn("### prepararEnvio -> Evento de orden no reconocido: {}", wrapper.eventType());
         } catch (Exception e) {
             log.error("Error en EnvioRabbitListener", e);
         }

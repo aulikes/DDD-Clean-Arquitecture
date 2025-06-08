@@ -1,9 +1,9 @@
-package com.aug.ecommerce.infrastructure.persistence.repository.impl;
+package com.aug.ecommerce.infrastructure.persistence.adapter;
 
 import com.aug.ecommerce.domain.model.categoria.Categoria;
 import com.aug.ecommerce.domain.repository.CategoriaRepository;
 import com.aug.ecommerce.infrastructure.persistence.mapper.CategoriaMapper;
-import com.aug.ecommerce.infrastructure.persistence.repository.contract.JpaCategoriaCrudRepository;
+import com.aug.ecommerce.infrastructure.persistence.repository.JpaCategoriaCrudRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Repository
-public class CategoriaRepositoryImp implements CategoriaRepository {
+public class CategoriaRepositoryAdapter implements CategoriaRepository {
 
     private final JpaCategoriaCrudRepository jpa;
 
