@@ -1,7 +1,5 @@
 package com.aug.ecommerce.domain.model.cliente;
 
-import com.aug.ecommerce.domain.util.ValidadorDominio;
-
 import java.util.*;
 
 public class Cliente {

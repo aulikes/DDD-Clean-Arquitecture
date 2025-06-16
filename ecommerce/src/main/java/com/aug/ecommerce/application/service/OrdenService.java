@@ -109,7 +109,7 @@ public class OrdenService {
                 .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
         orden.registrarPagoFallido();
         ordenRepository.save(orden);
-        log.debug("Orden {} pasó a estado PAGO_RECHAZADO", ordenId);
+        log.debug("Orden {} pasa a estado PAGO_RECHAZADO", ordenId);
     }
 
     @Transactional
@@ -118,7 +118,7 @@ public class OrdenService {
                 .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
         orden.confirmarEnvio();
         ordenRepository.save(orden);
-        log.debug("Orden {} pasó a estado INICIANDO_ENVIO", ordenId);
+        log.debug("Orden {} pasa a estado INICIANDO_ENVIO", ordenId);
     }
 
     @Transactional
@@ -127,7 +127,7 @@ public class OrdenService {
                 .orElseThrow(() -> new IllegalArgumentException("Orden no encontrada: " + ordenId));
         orden.errorEnvio();
         ordenRepository.save(orden);
-        log.debug("Orden {} pasó a estado NO_CONFIRMADO_ENVIO", ordenId);
+        log.debug("Orden {} pasa a estado NO_CONFIRMADO_ENVIO", ordenId);
     }
 
     private void guardarYEnviarAValidarOrden(Orden orden) {

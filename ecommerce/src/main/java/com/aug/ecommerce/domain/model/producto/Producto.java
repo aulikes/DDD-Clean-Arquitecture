@@ -1,6 +1,5 @@
 package com.aug.ecommerce.domain.model.producto;
 
-import com.aug.ecommerce.domain.util.ValidadorDominio;
 import java.util.*;
 
 public class Producto {
