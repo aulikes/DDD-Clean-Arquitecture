@@ -6,34 +6,31 @@ import com.aug.ecommerce.application.service.ProductoValidacionService;
 import com.aug.ecommerce.infrastructure.config.AppProperties;
 import com.aug.ecommerce.infrastructure.messaging.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 @Profile("kafka")
 public class ProductoKafkaListener {
 
     private final ProductoValidacionService productoValidacionService;
     private final ObjectMapper objectMapper;
 
-    public ProductoKafkaListener(ProductoValidacionService productoValidacionService, ObjectMapper objectMapper, AppProperties appProperties) {
-        this.productoValidacionService = productoValidacionService;
-        this.objectMapper = objectMapper;
-    }
-
     @KafkaListener(topics = "#{@producerKafka.ordenCreadaTopic}",
-            groupId = "#{@consumerKafka.ordenProductoValidarGroupId}")
-    public void validarProductoCreacionOrden(String payload) { //Valida si el producto existe
+            groupId = "#{@consumerKafka.ordenProductoValidarGroupId}",
+            containerFactory = "kafkaListenerContainerFactory" // Esto debe estar definido en KafkaConfig
+    )
+    public void onMessage(ConsumerRecord<String, IntegrationEventWrapper<OrdenCreadaEvent>> payload) {
         try {
-            var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("orden.multicast.creada".equals(wrapper.eventType())) {
-                var event = objectMapper.convertValue(wrapper.data(), OrdenCreadaEvent.class);
-                productoValidacionService.validarProductoCreacionOrden(event.ordenId(), event.items());
-            } else
-                log.warn("### validarProductoCreacionOrden -> Evento de producto no reconocido: {}", wrapper.eventType());
+            IntegrationEventWrapper<OrdenCreadaEvent> wrapper = payload.value();
+            OrdenCreadaEvent event = objectMapper.convertValue(wrapper.data(), OrdenCreadaEvent.class);
+            productoValidacionService.validarProductoCreacionOrden(event.ordenId(), event.items());
         } catch (Exception e) {
             log.error("Error en ProductoKafkaListener", e);
         }

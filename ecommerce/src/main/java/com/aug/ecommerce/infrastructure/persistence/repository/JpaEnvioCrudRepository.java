@@ -12,8 +12,8 @@ import java.util.Optional;
 public interface JpaEnvioCrudRepository extends JpaRepository<EnvioEntity, Long> {
     List<EnvioEntity> findByOrdenId(Long ordenId);
 
-    @Query("SELECT e FROM EnvioEntity e LEFT JOIN FETCH e.historial WHERE e.estado = :estado and e.intentos < :intentos")
-    List<EnvioEntity> findByEstado (@Param("estado") EstadoEnvioEntity estado, @Param("intentos") int intentos);
+    @Query("SELECT e FROM EnvioEntity e LEFT JOIN FETCH e.historial WHERE e.estado = :estado")
+    List<EnvioEntity> findByEstado (@Param("estado") EstadoEnvioEntity estado);
 
     @Query("SELECT e FROM EnvioEntity e LEFT JOIN FETCH e.historial WHERE e.id = :id")
     Optional<EnvioEntity> findByIdWithHistorial(@Param("id") Long id);

@@ -23,8 +23,8 @@ public class ClienteKafkaEventPublisherImp implements ClienteEventPublisher {
 
     @Override
     public void publishClienteValido(IntegrationEvent event) {
-        if (event instanceof ClienteValidadoEvent clienteValido) {
-            if (clienteValido.ordenId() != 5L) {
+        if (event instanceof ClienteValidadoEvent(Long ordenId)) {
+            if (ordenId != 5L) {
                 kafkaEventPublisher.publicar(producer.getClienteValidadoTopic(), event);
             }
         }

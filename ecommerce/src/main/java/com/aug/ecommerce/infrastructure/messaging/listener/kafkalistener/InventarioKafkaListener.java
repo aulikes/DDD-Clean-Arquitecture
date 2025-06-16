@@ -8,13 +8,16 @@ import com.aug.ecommerce.application.service.InventarioService;
 import com.aug.ecommerce.application.service.InventarioValidacionService;
 import com.aug.ecommerce.infrastructure.messaging.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 @Profile("kafka")
 public class InventarioKafkaListener {
 
@@ -22,43 +25,31 @@ public class InventarioKafkaListener {
     private final InventarioValidacionService inventarioValidacionService;
     private final ObjectMapper objectMapper;
 
-    public InventarioKafkaListener(InventarioService inventarioService,
-                                    InventarioValidacionService inventarioValidacionService,
-                                    ObjectMapper objectMapper) {
-        this.inventarioService = inventarioService;
-        this.inventarioValidacionService = inventarioValidacionService;
-        this.objectMapper = objectMapper;
-    }
-
     @KafkaListener(topics = "#{@producerKafka.ordenCreadaTopic}",
-            groupId = "#{@consumerKafka.ordenInventarioValidarGroupId}")
-    public void validarInventario(String payload) {
+            groupId = "#{@consumerKafka.ordenInventarioValidarGroupId}",
+            containerFactory = "kafkaListenerContainerFactory" // Esto debe estar definido en KafkaConfig
+    )
+    public void onMessageOrdenCreada(ConsumerRecord<String, IntegrationEventWrapper<OrdenCreadaEvent>> payload) {
         try {
-            var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("orden.multicast.creada".equals(wrapper.eventType())) {
-                var event = objectMapper.convertValue(wrapper.data(), OrdenCreadaEvent.class);
-                log.debug("---> Entrando a InventarioKafkaListener - validarInventario, orden: {}", event.ordenId());
-                inventarioValidacionService.validarInventarioCreacionOrden(event.ordenId(), event.items());
-            } else
-                log.warn("### validarInventario -> Evento de orden no reconocido: {}", wrapper.eventType());
-
+            IntegrationEventWrapper<OrdenCreadaEvent> wrapper = payload.value();
+            OrdenCreadaEvent event = objectMapper.convertValue(wrapper.data(), OrdenCreadaEvent.class);
+            log.debug("---> Entrando a InventarioKafkaListener - validarInventario, orden: {}", event.ordenId());
+            inventarioValidacionService.validarInventarioCreacionOrden(event.ordenId(), event.items());
         } catch (Exception e) {
             log.error("Error en InventarioKafkaListener", e);
         }
     }
 
     @KafkaListener(topics = "#{@producerKafka.productoCreadoTopic}",
-            groupId = "#{@consumerKafka.productoInventarioCrearGroupId}")
-    public void crearInventario(String payload) {
+            groupId = "#{@consumerKafka.productoInventarioCrearGroupId}",
+            containerFactory = "kafkaListenerContainerFactory" // Esto debe estar definido en KafkaConfig
+    )
+    public void onMessageProductoCreado(ConsumerRecord<String, IntegrationEventWrapper<ProductoCreadoEvent>> payload) {
         try {
-            var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("producto.inventario.crear".equals(wrapper.eventType())) {
-                var event = objectMapper.convertValue(wrapper.data(), ProductoCreadoEvent.class);
-                log.debug("---> Entrando a InventarioKafkaListener - crearInventario, producto: {}", event.productoId());
-                inventarioService.crearInvenario(new CrearInventarioCommand(event.productoId(), event.cantidad()));
-            } else
-                log.warn("### crearInventario -> Evento de producto no reconocido: {}", wrapper.eventType());
-
+            IntegrationEventWrapper<ProductoCreadoEvent> wrapper = payload.value();
+            ProductoCreadoEvent event = objectMapper.convertValue(wrapper.data(), ProductoCreadoEvent.class);
+            log.debug("---> Entrando a InventarioKafkaListener - crearInventario, producto: {}", event.productoId());
+            inventarioService.crearInvenario(new CrearInventarioCommand(event.productoId(), event.cantidad()));
         } catch (Exception e) {
             log.error("Error en InventarioKafkaListener", e);
         }

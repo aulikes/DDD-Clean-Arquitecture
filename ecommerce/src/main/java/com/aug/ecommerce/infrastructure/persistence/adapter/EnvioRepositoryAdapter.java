@@ -45,10 +45,9 @@ public class EnvioRepositoryAdapter implements EnvioRepository {
     }
 
     @Override
-    public List<Envio> findByEstado(EstadoEnvio estadoEnvio, int maxIntentos) {
+    public List<Envio> findByEstado(EstadoEnvio estadoEnvio) {
         var entityEstado = EstadoEnvioEntity.valueOf(estadoEnvio.name());
-        List<EnvioEntity> listEnvEnt = jpa.findByEstado(entityEstado, maxIntentos);
-        return jpa.findByEstado(entityEstado, maxIntentos)
-                .stream().map(EnvioMapper::toDomainWithHistorial).toList();
+        List<EnvioEntity> listEnvEnt = jpa.findByEstado(entityEstado);
+        return listEnvEnt.stream().map(EnvioMapper::toDomainWithHistorial).toList();
     }
 }

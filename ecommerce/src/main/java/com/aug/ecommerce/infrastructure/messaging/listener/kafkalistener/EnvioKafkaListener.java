@@ -1,40 +1,36 @@
 
 package com.aug.ecommerce.infrastructure.messaging.listener.kafkalistener;
 
+import com.aug.ecommerce.application.event.OrdenCreadaEvent;
 import com.aug.ecommerce.application.event.OrdenPagadaEvent;
 import com.aug.ecommerce.application.service.EnvioService;
 import com.aug.ecommerce.infrastructure.messaging.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.context.annotation.Profile;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 @Profile("kafka")
 public class EnvioKafkaListener {
 
     private final EnvioService service;
     private final ObjectMapper objectMapper;
 
-    public EnvioKafkaListener(EnvioService service,
-                                ObjectMapper objectMapper) {
-        this.service = service;
-        this.objectMapper = objectMapper;
-    }
-
     @KafkaListener(topics = "#{@producerKafka.ordenPagadaTopic}",
-            groupId = "#{@consumerKafka.ordenEnvioPrepararGroupId}")
-    public void prepararEnvio(String payload) {
+            groupId = "#{@consumerKafka.ordenEnvioPrepararGroupId}",
+            containerFactory = "kafkaListenerContainerFactory" // Esto debe estar definido en KafkaConfig
+    )
+    public void onMessage(ConsumerRecord<String, IntegrationEventWrapper<OrdenPagadaEvent>> payload) {
         try {
-            var wrapper = objectMapper.readValue(payload, IntegrationEventWrapper.class);
-            if ("orden.envio.preparar".equals(wrapper.eventType())) {
-                var event = objectMapper.convertValue(wrapper.data(), OrdenPagadaEvent.class);
-                log.debug("---> Entrando a EnvioKafkaListener - onOrdenPagada {}", event.ordenId());
-                service.crearEnvio(event.ordenId(), event.direccionEnvio());
-            } else
-                log.warn("### prepararEnvio -> Evento de envio no reconocido: {}", wrapper.eventType());
+            IntegrationEventWrapper<OrdenPagadaEvent> wrapper = payload.value();
+            OrdenPagadaEvent event = objectMapper.convertValue(wrapper.data(), OrdenPagadaEvent.class);
+            service.crearEnvio(event.ordenId(), event.direccionEnvio());
         } catch (Exception e) {
             log.error("Error en EnvioKafkaListener", e);
         }
