@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 @Service
 @RequiredArgsConstructor
@@ -31,31 +32,39 @@ public class EnvioService {
         Envio envio = Envio.create(ordenId, direccionEntrega);
         // Guardar Envío en BD
         envio = envioRepository.saveWithHistorial(envio);
-        return realizarEnvio(envio);
-    }
-
-    public void reintentarEnvios(){
-        List<Envio> pendientes = envioRepository.findByEstado(Envio.getEstadoInicial(), MAX_REINTENTOS);
-        for (Envio envio : pendientes) {
-            this.realizarEnvio(envio);
-        }
+        return realizarEnvio(envio,
+                (e, r) -> e.marcarErrorPendiente(r.mensaje()));
     }
 
     @Transactional
-    private Envio realizarEnvio(Envio envio){
+    public void reintentarEnvios(){
+        List<Envio> pendientes = envioRepository.findByEstado(Envio.getEstadoInicial());
+        for (Envio envio : pendientes) {
+            this.realizarEnvio(envio,
+                    (e, r) -> e.agregarEstadoPendiente(r.mensaje()));
+        }
+    }
+
+    /**
+     * Utilizamos Lambda Consumer para ejecutar la función adecuada con base al método que lo llama
+     * - Si viene de crearEnvio, NO se debe agregar nuevo estado, ya se agregó es esa función
+     * - Si viene de reintentarEnvios, se debe agregar nuevo estado
+     */
+    @Transactional
+    private Envio realizarEnvio(Envio envio, BiConsumer<Envio, ResultadoEnvioDTO> onError){
         // Invocar sistema externo para ejecutar el envío
         ResultadoEnvioDTO resultadoEnvio = proveedorEnvioClient.prepararEnvio(envio);
+        envio.incrementarReintentos(); // se adiciona el intento de realizar el envío
         // Si fue exitoso, actualizar estado a ENVIADO
         if (resultadoEnvio.exitoso()) {
             envio.iniciarPreparacionEnvio(resultadoEnvio.trackingNumber());
         } else{
             log.error("Error al reenviar envío ID {}: {}", envio.getId(), resultadoEnvio.mensaje());
-            envio.incrementarReintentos(); // se debe persistir este conteo
             if (envio.getIntentos() >= MAX_REINTENTOS) {
-                envio.marcarComoFallido("Excedido número máximo de reintentos.");
+                envio.agregarEstadoFallido("Excedido número máximo de reintentos.");
             }
-            else{
-                envio.marcarComoPendiente(resultadoEnvio.mensaje());
+            else{// Llama al lambda
+                onError.accept(envio, resultadoEnvio);
             }
         }
         envio = envioRepository.saveWithHistorial(envio);

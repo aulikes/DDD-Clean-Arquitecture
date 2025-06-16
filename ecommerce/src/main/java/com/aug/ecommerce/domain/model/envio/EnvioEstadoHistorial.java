@@ -6,8 +6,8 @@ import java.util.Objects;
 public class EnvioEstadoHistorial {
     private final Long id;
     private final EstadoEnvio estadoEnvio;
-    private final String observacion;
-    private final Instant fechaCambio;
+    private String observacion;
+    private Instant fechaCambio;
 
     //EnvioEstadoHistorial Nuevo
     static EnvioEstadoHistorial create(EstadoEnvio estadoEnvio) {
@@ -31,6 +31,11 @@ public class EnvioEstadoHistorial {
         this.estadoEnvio = Objects.requireNonNull(estadoEnvio, "El estado no puede ser nulo");
         this.observacion = observacion;
         this.fechaCambio = fechaCambio;
+    }
+
+    protected void adicionarObservacion(String obs){
+        this.observacion = obs;
+        this.fechaCambio = Instant.now();
     }
 
     public Long getId() {

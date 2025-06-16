@@ -82,17 +82,24 @@ public class Envio {
         }
     }
 
-    public void marcarComoFallido(String razon) {
+    public void agregarEstadoFallido(String razon) {
         this.estado = EstadoEnvio.FALLIDO;
         this.razonFallo = razon;
         agregarNuevoEstado(EstadoEnvio.FALLIDO, razon);
     }
 
-    public void marcarComoPendiente(String razon) {
+    public void agregarEstadoPendiente(String razon) {
         if (estado != EstadoEnvio.PENDIENTE)
             throw new IllegalStateException("Solo puede preparar un envío que está pendiente");
         this.razonFallo = razon;
         agregarNuevoEstado(EstadoEnvio.PENDIENTE, razon);
+    }
+
+    public void marcarErrorPendiente(String razon) {
+        if (estado != EstadoEnvio.PENDIENTE)
+            throw new IllegalStateException("Solo puede preparar un envío que está pendiente");
+        this.razonFallo = razon;
+        marcarErrorUltimoEstadoHistorial(razon);
     }
 
     public void agregarNuevoEstado(EstadoEnvio nuevoEstado, String observacion) {
@@ -116,12 +123,20 @@ public class Envio {
     }
 
     //Obtiene el último estado con fecha registrada, si no hay devuelve el estado que no tiene fecha
-    public EnvioEstadoHistorial getUltimoEstadoHistorial() {
+    private void marcarErrorUltimoEstadoHistorial(String error) {
         validarUnicoEstadoConFechaNula();
 
-        return historial.stream()
-                .filter(h -> h.getFechaCambio() != null)
-                .max(Comparator.comparing(EnvioEstadoHistorial::getFechaCambio))
-                .orElseGet(historial::getLast);
+        // Busca el primero con fechaCambio == null, si no existe, busca el más reciente
+        EnvioEstadoHistorial target = historial.stream()
+            .filter(h -> h.getFechaCambio() == null)
+            .findFirst()
+            .orElseGet(() ->
+                historial.stream()
+                    .filter(h -> h.getFechaCambio() != null)
+                    .max(Comparator.comparing(EnvioEstadoHistorial::getFechaCambio))
+                    .orElseGet(historial::getLast)
+            );
+
+        target.adicionarObservacion(error);
     }
 }

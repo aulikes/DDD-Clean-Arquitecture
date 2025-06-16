@@ -11,5 +11,5 @@ public interface EnvioRepository {
     Optional<Envio> findById(Long id);
     Optional<Envio> findByIdWithHistorial(Long id);
     List<Envio> findByOrdenId(Long ordenId);
-    List<Envio> findByEstado(EstadoEnvio estadoEnvio, int maxIntentos);
+    List<Envio> findByEstado(EstadoEnvio estadoEnvio);
 }
