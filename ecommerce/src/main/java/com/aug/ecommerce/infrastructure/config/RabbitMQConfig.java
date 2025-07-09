@@ -50,7 +50,7 @@ public class RabbitMQConfig {
     }
 
     /**=========================================================
-     * Colas específicas que escuchan fanout de orden.creada.v1
+     * Colas específicas que escuchan fanout de orden.multicast.creada.v1
      * =========================================================*/
 
     // Cliente -> Orden, para OBTENER la validación de Cliente cuando se va a crear una nueva orden

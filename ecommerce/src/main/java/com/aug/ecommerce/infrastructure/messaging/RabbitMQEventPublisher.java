@@ -53,16 +53,24 @@ public class RabbitMQEventPublisher {
             // Log de auditoría
             log.info("[RabbitMQ] Publicando evento '{}', routingKey '{}'", eventType, routingKey);
 
-            // Callback si no se enruta
+            // necesario para activar returns
             rabbitTemplate.setMandatory(true);
+            // Confirm callback (ACK/NACK)
+            rabbitTemplate.setConfirmCallback((correlationData, ack, cause) -> {
+                if (ack) {
+                    log.info("Message confirmed by broker");
+                } else {
+                    log.error("Message NOT confirmed: {}", cause);
+                }
+            });
             rabbitTemplate.setReturnsCallback(returned -> {
                 log.error("[RabbitMQ] Mensaje NO enrutado:");
-                log.error("  → Routing Key: {}", returned.getRoutingKey());
-                log.error("  → Reply Text : {}", returned.getReplyText());
+                log.error("  -> Routing Key: {}", returned.getRoutingKey());
+                log.error("  -> Reply Text : {}", returned.getReplyText());
             });
 
             // Publicar al exchange tipo topic
-            rabbitTemplate.send(eventRabbitMQ.getExchangeTopic(), routingKey, message);
+            rabbitTemplate.convertAndSend(eventRabbitMQ.getExchangeTopic(), routingKey, message);
 
         } catch (Exception e) {
             log.error("Error al publicar evento en RabbitMQ", e);

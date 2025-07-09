@@ -28,6 +28,8 @@ spring:
     port: 5672
     username: guest
     password: guest
+    publisher-confirm-type: correlated  # o simple para confirmaciones básicas
+    publisher-returns: true
 
   kafka:
     bootstrap-servers: localhost:9092 # Dirección del broker de Kafka al que se conectará la aplicación
