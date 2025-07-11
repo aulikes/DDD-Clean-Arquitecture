@@ -1,6 +1,6 @@
 package com.aug.ecommerce.adapters.rest.mapper;
 
-import com.aug.ecommerce.adapters.rest.dto.CrearProductoRequestDTO;
+import com.aug.ecommerce.adapters.rest.dtos.CrearProductoRequestDTO;
 import com.aug.ecommerce.application.commands.CrearProductoCommand;
 import org.mapstruct.Mapper;
 
