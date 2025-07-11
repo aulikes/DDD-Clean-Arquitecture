@@ -1,6 +1,6 @@
 package com.aug.ecommerce.application.service;
 
-import com.aug.ecommerce.application.command.CrearClienteCommand;
+import com.aug.ecommerce.application.commands.CrearClienteCommand;
 import com.aug.ecommerce.domain.model.cliente.Cliente;
 import com.aug.ecommerce.domain.model.cliente.Direccion;
 import com.aug.ecommerce.domain.repository.ClienteRepository;

@@ -1,7 +1,7 @@
 package com.aug.ecommerce.application.service;
 
-import com.aug.ecommerce.application.command.RealizarOrdenCommand;
-import com.aug.ecommerce.application.command.RealizarPagoCommand;
+import com.aug.ecommerce.application.commands.RealizarOrdenCommand;
+import com.aug.ecommerce.application.commands.RealizarPagoCommand;
 import com.aug.ecommerce.application.event.OrdenPagadaEvent;
 import com.aug.ecommerce.application.event.OrdenCreadaEvent;
 import com.aug.ecommerce.application.event.OrdenPreparadaParaPagoEvent;

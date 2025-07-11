@@ -1,6 +1,6 @@
 package com.aug.ecommerce.application.service;
 
-import com.aug.ecommerce.application.command.CrearInventarioCommand;
+import com.aug.ecommerce.application.commands.CrearInventarioCommand;
 import com.aug.ecommerce.domain.model.inventario.Inventario;
 import com.aug.ecommerce.domain.repository.InventarioRepository;
 import lombok.RequiredArgsConstructor;

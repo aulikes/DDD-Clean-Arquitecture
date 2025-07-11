@@ -1,6 +1,6 @@
 package com.aug.ecommerce.infrastructure.init;
 
-import com.aug.ecommerce.application.command.RealizarPagoCommand;
+import com.aug.ecommerce.application.commands.RealizarPagoCommand;
 import com.aug.ecommerce.application.service.OrdenService;
 import com.aug.ecommerce.domain.model.orden.EstadoOrden;
 import com.aug.ecommerce.domain.model.orden.Orden;

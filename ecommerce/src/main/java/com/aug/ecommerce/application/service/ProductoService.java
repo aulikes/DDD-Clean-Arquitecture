@@ -1,6 +1,6 @@
 package com.aug.ecommerce.application.service;
 
-import com.aug.ecommerce.application.command.CrearProductoCommand;
+import com.aug.ecommerce.application.commands.CrearProductoCommand;
 import com.aug.ecommerce.application.event.ProductoCreadoEvent;
 import com.aug.ecommerce.application.publisher.ProductoEventPublisher;
 import com.aug.ecommerce.domain.model.categoria.Categoria;

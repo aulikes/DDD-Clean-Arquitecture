@@ -1,4 +1,4 @@
-package com.aug.ecommerce.application.command;
+package com.aug.ecommerce.application.commands;
 
 public record CrearProductoCommand(
         String nombre,

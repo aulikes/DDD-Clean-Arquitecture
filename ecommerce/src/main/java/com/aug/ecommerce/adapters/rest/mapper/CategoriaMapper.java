@@ -1,7 +1,7 @@
 package com.aug.ecommerce.adapters.rest.mapper;
 
 import com.aug.ecommerce.adapters.rest.dto.CrearCategoriaRequestDTO;
-import com.aug.ecommerce.application.command.CrearCategoriaCommand;
+import com.aug.ecommerce.application.commands.CrearCategoriaCommand;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

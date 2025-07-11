@@ -1,6 +1,6 @@
 package com.aug.ecommerce.infrastructure.messaging.listener.rabbitlistener;
 
-import com.aug.ecommerce.application.command.CrearInventarioCommand;
+import com.aug.ecommerce.application.commands.CrearInventarioCommand;
 import com.aug.ecommerce.application.event.*;
 import com.aug.ecommerce.application.service.InventarioService;
 import com.aug.ecommerce.application.service.InventarioValidacionService;
