@@ -1,4 +1,4 @@
-package com.aug.ecommerce.application.dto;
+package com.aug.ecommerce.application.dtos;
 
 public record ResultadoEnvioDTO(
         boolean exitoso,

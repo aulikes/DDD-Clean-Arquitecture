@@ -1,6 +1,6 @@
 package com.aug.ecommerce.infrastructure.external.pago;
 
-import com.aug.ecommerce.application.dto.ResultadoPagoDTO;
+import com.aug.ecommerce.application.dtos.ResultadoPagoDTO;
 import com.aug.ecommerce.application.gateway.PasarelaPagoClient;
 import com.aug.ecommerce.domain.model.pago.Pago;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
@@ -10,12 +10,8 @@ import io.github.resilience4j.retry.RetryRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Map;
-import java.util.Optional;
 import java.util.Random;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
 
 @Slf4j

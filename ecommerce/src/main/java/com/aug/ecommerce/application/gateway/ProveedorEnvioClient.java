@@ -1,6 +1,6 @@
 package com.aug.ecommerce.application.gateway;
 
-import com.aug.ecommerce.application.dto.ResultadoEnvioDTO;
+import com.aug.ecommerce.application.dtos.ResultadoEnvioDTO;
 import com.aug.ecommerce.domain.model.envio.Envio;
 
 /**

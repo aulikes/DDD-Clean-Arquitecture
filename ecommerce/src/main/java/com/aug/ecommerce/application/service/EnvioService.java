@@ -1,11 +1,10 @@
 package com.aug.ecommerce.application.service;
 
-import com.aug.ecommerce.application.dto.ResultadoEnvioDTO;
+import com.aug.ecommerce.application.dtos.ResultadoEnvioDTO;
 import com.aug.ecommerce.application.event.EnvioPreparadoEvent;
 import com.aug.ecommerce.application.gateway.ProveedorEnvioClient;
 import com.aug.ecommerce.application.publisher.EnvioEventPublisher;
 import com.aug.ecommerce.domain.model.envio.Envio;
-import com.aug.ecommerce.domain.model.envio.EstadoEnvio;
 import com.aug.ecommerce.domain.repository.EnvioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

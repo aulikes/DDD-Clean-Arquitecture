@@ -1,6 +1,6 @@
 package com.aug.ecommerce.application.service;
 
-import com.aug.ecommerce.application.dto.ResultadoPagoDTO;
+import com.aug.ecommerce.application.dtos.ResultadoPagoDTO;
 import com.aug.ecommerce.application.event.OrdenPreparadaParaPagoEvent;
 import com.aug.ecommerce.application.event.PagoConfirmadoEvent;
 import com.aug.ecommerce.application.publisher.PagoEventPublisher;
