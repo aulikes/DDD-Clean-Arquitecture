@@ -1,4 +1,4 @@
-package com.aug.ecommerce.adapters.rest.mapper;
+package com.aug.ecommerce.adapters.rest.mappers;
 
 import com.aug.ecommerce.adapters.rest.dtos.RealizarOrdenRequestDTO;
 import com.aug.ecommerce.application.commands.RealizarOrdenCommand;

@@ -1,7 +1,7 @@
 package com.aug.ecommerce.infrastructure.init;
 
 import com.aug.ecommerce.adapters.rest.dtos.CrearClienteRequestDTO;
-import com.aug.ecommerce.adapters.rest.mapper.ClienteMapper;
+import com.aug.ecommerce.adapters.rest.mappers.ClienteMapper;
 import com.aug.ecommerce.application.services.ClienteService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
