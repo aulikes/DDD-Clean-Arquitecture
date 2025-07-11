@@ -1,7 +1,7 @@
 package com.aug.ecommerce.infrastructure.persistence.adapter;
 
-import com.aug.ecommerce.domain.model.cliente.Cliente;
-import com.aug.ecommerce.domain.repository.ClienteRepository;
+import com.aug.ecommerce.domain.models.cliente.Cliente;
+import com.aug.ecommerce.domain.repositories.ClienteRepository;
 import com.aug.ecommerce.infrastructure.persistence.mapper.ClienteMapper;
 import com.aug.ecommerce.infrastructure.persistence.repository.JpaClienteCrudRepository;
 import lombok.RequiredArgsConstructor;

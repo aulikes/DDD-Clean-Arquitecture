@@ -1,7 +1,7 @@
 package com.aug.ecommerce.infrastructure.persistence.adapter;
 
-import com.aug.ecommerce.domain.model.producto.Producto;
-import com.aug.ecommerce.domain.repository.ProductoRepository;
+import com.aug.ecommerce.domain.models.producto.Producto;
+import com.aug.ecommerce.domain.repositories.ProductoRepository;
 import com.aug.ecommerce.infrastructure.persistence.mapper.ProductoMapper;
 import com.aug.ecommerce.infrastructure.persistence.repository.JpaProductoCrudRepository;
 import lombok.RequiredArgsConstructor;

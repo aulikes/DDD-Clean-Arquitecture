@@ -1,7 +1,7 @@
 package com.aug.ecommerce.infrastructure.persistence.mapper;
 
-import com.aug.ecommerce.domain.model.orden.EstadoOrden;
-import com.aug.ecommerce.domain.model.orden.Orden;
+import com.aug.ecommerce.domain.models.orden.EstadoOrden;
+import com.aug.ecommerce.domain.models.orden.Orden;
 import com.aug.ecommerce.infrastructure.persistence.entity.ItemOrdenEntity;
 import com.aug.ecommerce.infrastructure.persistence.entity.OrdenEntity;
 

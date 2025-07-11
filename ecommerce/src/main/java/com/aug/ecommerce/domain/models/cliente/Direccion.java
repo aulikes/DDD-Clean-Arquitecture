@@ -1,4 +1,4 @@
-package com.aug.ecommerce.domain.model.cliente;
+package com.aug.ecommerce.domain.models.cliente;
 
 import java.util.Objects;
 

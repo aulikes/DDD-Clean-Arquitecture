@@ -1,7 +1,7 @@
 package com.aug.ecommerce.infrastructure.persistence.mapper;
 
-import com.aug.ecommerce.domain.model.pago.EstadoPago;
-import com.aug.ecommerce.domain.model.pago.Pago;
+import com.aug.ecommerce.domain.models.pago.EstadoPago;
+import com.aug.ecommerce.domain.models.pago.Pago;
 import com.aug.ecommerce.infrastructure.persistence.entity.PagoEntity;
 
 public class PagoMapper {

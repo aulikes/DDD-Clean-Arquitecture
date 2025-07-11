@@ -1,4 +1,4 @@
-package com.aug.ecommerce.domain.model.orden;
+package com.aug.ecommerce.domain.models.orden;
 
 import java.util.*;
 

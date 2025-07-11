@@ -1,8 +1,8 @@
 package com.aug.ecommerce.infrastructure.persistence.adapter;
 
-import com.aug.ecommerce.domain.model.envio.Envio;
-import com.aug.ecommerce.domain.model.envio.EstadoEnvio;
-import com.aug.ecommerce.domain.repository.EnvioRepository;
+import com.aug.ecommerce.domain.models.envio.Envio;
+import com.aug.ecommerce.domain.models.envio.EstadoEnvio;
+import com.aug.ecommerce.domain.repositories.EnvioRepository;
 import com.aug.ecommerce.infrastructure.persistence.entity.EnvioEntity;
 import com.aug.ecommerce.infrastructure.persistence.entity.enums.EstadoEnvioEntity;
 import com.aug.ecommerce.infrastructure.persistence.mapper.EnvioMapper;

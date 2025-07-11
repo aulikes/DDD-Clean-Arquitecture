@@ -1,4 +1,4 @@
-package com.aug.ecommerce.domain.model.envio;
+package com.aug.ecommerce.domain.models.envio;
 
 public enum EstadoEnvio {
 

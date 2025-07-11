@@ -1,4 +1,4 @@
-package com.aug.ecommerce.domain.model.envio;
+package com.aug.ecommerce.domain.models.envio;
 
 import java.time.Instant;
 import java.util.*;

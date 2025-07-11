@@ -1,4 +1,4 @@
-package com.aug.ecommerce.domain.model.pago;
+package com.aug.ecommerce.domain.models.pago;
 
 import java.util.Objects;
 

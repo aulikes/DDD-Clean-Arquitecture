@@ -1,9 +1,9 @@
 package com.aug.ecommerce.application.services;
 
 import com.aug.ecommerce.application.commands.CrearClienteCommand;
-import com.aug.ecommerce.domain.model.cliente.Cliente;
-import com.aug.ecommerce.domain.model.cliente.Direccion;
-import com.aug.ecommerce.domain.repository.ClienteRepository;
+import com.aug.ecommerce.domain.models.cliente.Cliente;
+import com.aug.ecommerce.domain.models.cliente.Direccion;
+import com.aug.ecommerce.domain.repositories.ClienteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

@@ -1,9 +1,8 @@
-package com.aug.ecommerce.domain.repository;
+package com.aug.ecommerce.domain.repositories;
 
-import com.aug.ecommerce.domain.model.producto.Producto;
+import com.aug.ecommerce.domain.models.producto.Producto;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface ProductoRepository {
     Producto save(Producto producto);

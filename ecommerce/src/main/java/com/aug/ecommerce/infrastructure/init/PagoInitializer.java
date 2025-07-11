@@ -2,8 +2,8 @@ package com.aug.ecommerce.infrastructure.init;
 
 import com.aug.ecommerce.application.commands.RealizarPagoCommand;
 import com.aug.ecommerce.application.services.OrdenService;
-import com.aug.ecommerce.domain.model.orden.EstadoOrden;
-import com.aug.ecommerce.domain.model.orden.Orden;
+import com.aug.ecommerce.domain.models.orden.EstadoOrden;
+import com.aug.ecommerce.domain.models.orden.Orden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

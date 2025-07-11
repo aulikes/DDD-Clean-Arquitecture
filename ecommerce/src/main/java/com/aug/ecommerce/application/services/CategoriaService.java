@@ -1,8 +1,8 @@
 package com.aug.ecommerce.application.services;
 
 import com.aug.ecommerce.application.commands.CrearCategoriaCommand;
-import com.aug.ecommerce.domain.model.categoria.Categoria;
-import com.aug.ecommerce.domain.repository.CategoriaRepository;
+import com.aug.ecommerce.domain.models.categoria.Categoria;
+import com.aug.ecommerce.domain.repositories.CategoriaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

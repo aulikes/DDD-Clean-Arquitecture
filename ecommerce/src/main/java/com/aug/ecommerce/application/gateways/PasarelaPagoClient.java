@@ -1,7 +1,7 @@
 package com.aug.ecommerce.application.gateways;
 
 import com.aug.ecommerce.application.dtos.ResultadoPagoDTO;
-import com.aug.ecommerce.domain.model.pago.Pago;
+import com.aug.ecommerce.domain.models.pago.Pago;
 
 import java.util.concurrent.TimeoutException;
 

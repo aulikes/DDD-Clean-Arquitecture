@@ -1,7 +1,7 @@
 package com.aug.ecommerce.infrastructure.persistence.adapter;
 
-import com.aug.ecommerce.domain.model.inventario.Inventario;
-import com.aug.ecommerce.domain.repository.InventarioRepository;
+import com.aug.ecommerce.domain.models.inventario.Inventario;
+import com.aug.ecommerce.domain.repositories.InventarioRepository;
 import com.aug.ecommerce.infrastructure.persistence.mapper.InventarioMapper;
 import com.aug.ecommerce.infrastructure.persistence.repository.JpaInventarioCrudRepository;
 import lombok.RequiredArgsConstructor;

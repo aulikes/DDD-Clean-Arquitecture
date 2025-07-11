@@ -1,6 +1,6 @@
 package com.aug.ecommerce.infrastructure.persistence.repository;
 
-import com.aug.ecommerce.domain.model.categoria.Categoria;
+import com.aug.ecommerce.domain.models.categoria.Categoria;
 import com.aug.ecommerce.infrastructure.persistence.entity.CategoriaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

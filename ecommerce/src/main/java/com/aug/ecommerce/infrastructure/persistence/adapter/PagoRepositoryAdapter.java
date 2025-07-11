@@ -1,7 +1,7 @@
 package com.aug.ecommerce.infrastructure.persistence.adapter;
 
-import com.aug.ecommerce.domain.model.pago.Pago;
-import com.aug.ecommerce.domain.repository.PagoRepository;
+import com.aug.ecommerce.domain.models.pago.Pago;
+import com.aug.ecommerce.domain.repositories.PagoRepository;
 import com.aug.ecommerce.infrastructure.persistence.entity.PagoEntity;
 import com.aug.ecommerce.infrastructure.persistence.mapper.PagoMapper;
 import com.aug.ecommerce.infrastructure.persistence.repository.JpaPagoCrudRepository;

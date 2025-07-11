@@ -1,7 +1,7 @@
-package com.aug.ecommerce.domain.repository;
+package com.aug.ecommerce.domain.repositories;
 
-import com.aug.ecommerce.domain.model.envio.Envio;
-import com.aug.ecommerce.domain.model.envio.EstadoEnvio;
+import com.aug.ecommerce.domain.models.envio.Envio;
+import com.aug.ecommerce.domain.models.envio.EstadoEnvio;
 
 import java.util.List;
 import java.util.Optional;

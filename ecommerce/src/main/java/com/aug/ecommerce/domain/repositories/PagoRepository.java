@@ -1,6 +1,6 @@
-package com.aug.ecommerce.domain.repository;
+package com.aug.ecommerce.domain.repositories;
 
-import com.aug.ecommerce.domain.model.pago.Pago;
+import com.aug.ecommerce.domain.models.pago.Pago;
 import java.util.List;
 import java.util.Optional;
 

@@ -1,6 +1,6 @@
 package com.aug.ecommerce.infrastructure.persistence.mapper;
 
-import com.aug.ecommerce.domain.model.cliente.Cliente;
+import com.aug.ecommerce.domain.models.cliente.Cliente;
 import com.aug.ecommerce.infrastructure.persistence.entity.ClienteEntity;
 import com.aug.ecommerce.infrastructure.persistence.entity.DireccionEntity;
 

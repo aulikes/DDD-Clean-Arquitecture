@@ -1,6 +1,6 @@
-package com.aug.ecommerce.domain.repository;
+package com.aug.ecommerce.domain.repositories;
 
-import com.aug.ecommerce.domain.model.inventario.Inventario;
+import com.aug.ecommerce.domain.models.inventario.Inventario;
 import java.util.List;
 import java.util.Optional;
 

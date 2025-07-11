@@ -1,6 +1,6 @@
 package com.aug.ecommerce.infrastructure.persistence.mapper;
 
-import com.aug.ecommerce.domain.model.producto.Producto;
+import com.aug.ecommerce.domain.models.producto.Producto;
 import com.aug.ecommerce.infrastructure.persistence.entity.ProductoEntity;
 
 public class ProductoMapper {

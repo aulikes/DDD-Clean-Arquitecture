@@ -1,9 +1,8 @@
-package com.aug.ecommerce.domain.repository;
+package com.aug.ecommerce.domain.repositories;
 
-import com.aug.ecommerce.domain.model.categoria.Categoria;
+import com.aug.ecommerce.domain.models.categoria.Categoria;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 public interface CategoriaRepository {
     void save(Categoria categoria);

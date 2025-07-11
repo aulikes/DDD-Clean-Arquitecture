@@ -1,8 +1,8 @@
 package com.aug.ecommerce.application.services;
 
 import com.aug.ecommerce.application.commands.CrearInventarioCommand;
-import com.aug.ecommerce.domain.model.inventario.Inventario;
-import com.aug.ecommerce.domain.repository.InventarioRepository;
+import com.aug.ecommerce.domain.models.inventario.Inventario;
+import com.aug.ecommerce.domain.repositories.InventarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

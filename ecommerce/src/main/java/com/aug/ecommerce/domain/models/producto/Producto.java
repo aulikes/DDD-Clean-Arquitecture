@@ -1,4 +1,4 @@
-package com.aug.ecommerce.domain.model.producto;
+package com.aug.ecommerce.domain.models.producto;
 
 import java.util.*;
 

@@ -2,7 +2,7 @@ package com.aug.ecommerce.application.services;
 
 import com.aug.ecommerce.application.events.*;
 import com.aug.ecommerce.application.publishers.InventarioEventPublisher;
-import com.aug.ecommerce.domain.repository.InventarioRepository;
+import com.aug.ecommerce.domain.repositories.InventarioRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

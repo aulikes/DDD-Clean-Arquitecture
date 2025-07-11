@@ -1,6 +1,6 @@
 package com.aug.ecommerce.infrastructure.persistence.mapper;
 
-import com.aug.ecommerce.domain.model.inventario.Inventario;
+import com.aug.ecommerce.domain.models.inventario.Inventario;
 import com.aug.ecommerce.infrastructure.persistence.entity.InventarioEntity;
 
 public class InventarioMapper {

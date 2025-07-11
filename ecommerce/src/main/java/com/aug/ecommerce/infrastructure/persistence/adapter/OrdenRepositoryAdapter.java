@@ -1,7 +1,7 @@
 package com.aug.ecommerce.infrastructure.persistence.adapter;
 
-import com.aug.ecommerce.domain.model.orden.Orden;
-import com.aug.ecommerce.domain.repository.OrdenRepository;
+import com.aug.ecommerce.domain.models.orden.Orden;
+import com.aug.ecommerce.domain.repositories.OrdenRepository;
 import com.aug.ecommerce.infrastructure.persistence.mapper.OrdenMapper;
 import com.aug.ecommerce.infrastructure.persistence.repository.JpaOrdenCrudRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package com.aug.ecommerce.domain.model.inventario;
+package com.aug.ecommerce.domain.models.inventario;
 
 import java.util.Objects;
 

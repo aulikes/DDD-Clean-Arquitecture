@@ -1,4 +1,4 @@
-package com.aug.ecommerce.domain.model.categoria;
+package com.aug.ecommerce.domain.models.categoria;
 
 import java.util.Objects;
 

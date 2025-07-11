@@ -1,6 +1,6 @@
 package com.aug.ecommerce.infrastructure.persistence.mapper;
 
-import com.aug.ecommerce.domain.model.categoria.Categoria;
+import com.aug.ecommerce.domain.models.categoria.Categoria;
 import com.aug.ecommerce.infrastructure.persistence.entity.CategoriaEntity;
 
 public class CategoriaMapper {

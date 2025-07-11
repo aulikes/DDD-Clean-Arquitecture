@@ -1,6 +1,6 @@
-package com.aug.ecommerce.domain.repository;
+package com.aug.ecommerce.domain.repositories;
 
-import com.aug.ecommerce.domain.model.orden.Orden;
+import com.aug.ecommerce.domain.models.orden.Orden;
 import java.util.List;
 import java.util.Optional;
 

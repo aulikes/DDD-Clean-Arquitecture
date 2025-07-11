@@ -3,10 +3,10 @@ package com.aug.ecommerce.application.services;
 import com.aug.ecommerce.application.commands.CrearProductoCommand;
 import com.aug.ecommerce.application.events.ProductoCreadoEvent;
 import com.aug.ecommerce.application.publishers.ProductoEventPublisher;
-import com.aug.ecommerce.domain.model.categoria.Categoria;
-import com.aug.ecommerce.domain.model.producto.Producto;
-import com.aug.ecommerce.domain.repository.CategoriaRepository;
-import com.aug.ecommerce.domain.repository.ProductoRepository;
+import com.aug.ecommerce.domain.models.categoria.Categoria;
+import com.aug.ecommerce.domain.models.producto.Producto;
+import com.aug.ecommerce.domain.repositories.CategoriaRepository;
+import com.aug.ecommerce.domain.repositories.ProductoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

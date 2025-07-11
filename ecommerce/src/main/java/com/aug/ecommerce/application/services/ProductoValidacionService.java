@@ -4,7 +4,7 @@ import com.aug.ecommerce.application.events.OrdenCreadaEvent;
 import com.aug.ecommerce.application.events.ProductoNoValidadoEvent;
 import com.aug.ecommerce.application.events.ProductoValidadoEvent;
 import com.aug.ecommerce.application.publishers.ProductoEventPublisher;
-import com.aug.ecommerce.domain.repository.ProductoRepository;
+import com.aug.ecommerce.domain.repositories.ProductoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
