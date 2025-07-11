@@ -1,8 +1,8 @@
 package com.aug.ecommerce.infrastructure.init;
 
-import com.aug.ecommerce.adapters.rest.dto.CrearProductoRequestDTO;
+import com.aug.ecommerce.adapters.rest.dtos.CrearProductoRequestDTO;
 import com.aug.ecommerce.adapters.rest.mapper.ProductoMapper;
-import com.aug.ecommerce.application.service.ProductoService;
+import com.aug.ecommerce.application.services.ProductoService;
 import com.aug.ecommerce.domain.model.categoria.Categoria;
 import com.aug.ecommerce.domain.repository.CategoriaRepository;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.aug.ecommerce.infrastructure.messaging.publisher.eventpublisher;
 
-import com.aug.ecommerce.application.event.*;
-import com.aug.ecommerce.application.publisher.OrdenEventPublisher;
+import com.aug.ecommerce.application.events.*;
+import com.aug.ecommerce.application.publishers.OrdenEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;

@@ -1,7 +1,7 @@
 
 package com.aug.ecommerce.infrastructure.messaging;
 
-import com.aug.ecommerce.application.event.IntegrationEvent;
+import com.aug.ecommerce.application.events.IntegrationEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Profile;

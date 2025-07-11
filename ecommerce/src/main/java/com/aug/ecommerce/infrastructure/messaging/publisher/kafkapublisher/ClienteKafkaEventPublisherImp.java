@@ -1,9 +1,9 @@
 
 package com.aug.ecommerce.infrastructure.messaging.publisher.kafkapublisher;
 
-import com.aug.ecommerce.application.event.ClienteValidadoEvent;
-import com.aug.ecommerce.application.event.IntegrationEvent;
-import com.aug.ecommerce.application.publisher.ClienteEventPublisher;
+import com.aug.ecommerce.application.events.ClienteValidadoEvent;
+import com.aug.ecommerce.application.events.IntegrationEvent;
+import com.aug.ecommerce.application.publishers.ClienteEventPublisher;
 import com.aug.ecommerce.infrastructure.config.AppProperties;
 import com.aug.ecommerce.infrastructure.messaging.KafkaEventPublisher;
 import org.springframework.context.annotation.Profile;

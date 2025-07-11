@@ -1,8 +1,8 @@
 package com.aug.ecommerce.infrastructure.init;
 
-import com.aug.ecommerce.adapters.rest.dto.CrearCategoriaRequestDTO;
+import com.aug.ecommerce.adapters.rest.dtos.CrearCategoriaRequestDTO;
 import com.aug.ecommerce.adapters.rest.mapper.CategoriaMapper;
-import com.aug.ecommerce.application.service.CategoriaService;
+import com.aug.ecommerce.application.services.CategoriaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

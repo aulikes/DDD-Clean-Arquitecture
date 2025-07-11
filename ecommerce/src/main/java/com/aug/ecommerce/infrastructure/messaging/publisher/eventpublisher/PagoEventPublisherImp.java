@@ -1,9 +1,8 @@
 package com.aug.ecommerce.infrastructure.messaging.publisher.eventpublisher;
 
-import com.aug.ecommerce.application.event.IntegrationEvent;
-import com.aug.ecommerce.application.event.OrdenPreparadaParaPagoEvent;
-import com.aug.ecommerce.application.event.PagoConfirmadoEvent;
-import com.aug.ecommerce.application.publisher.PagoEventPublisher;
+import com.aug.ecommerce.application.events.IntegrationEvent;
+import com.aug.ecommerce.application.events.PagoConfirmadoEvent;
+import com.aug.ecommerce.application.publishers.PagoEventPublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;

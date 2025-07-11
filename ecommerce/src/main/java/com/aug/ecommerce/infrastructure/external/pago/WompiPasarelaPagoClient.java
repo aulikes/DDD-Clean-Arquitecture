@@ -1,7 +1,7 @@
 package com.aug.ecommerce.infrastructure.external.pago;
 
 import com.aug.ecommerce.application.dtos.ResultadoPagoDTO;
-import com.aug.ecommerce.application.gateway.PasarelaPagoClient;
+import com.aug.ecommerce.application.gateways.PasarelaPagoClient;
 import com.aug.ecommerce.domain.model.pago.Pago;
 import io.github.resilience4j.circuitbreaker.CircuitBreaker;
 import io.github.resilience4j.circuitbreaker.CircuitBreakerRegistry;

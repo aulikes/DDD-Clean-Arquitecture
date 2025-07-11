@@ -1,6 +1,6 @@
 package com.aug.ecommerce.infrastructure.messaging;
 
-import com.aug.ecommerce.application.event.*;
+import com.aug.ecommerce.application.events.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

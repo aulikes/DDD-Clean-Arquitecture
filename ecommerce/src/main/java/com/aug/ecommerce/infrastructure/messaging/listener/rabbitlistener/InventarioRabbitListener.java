@@ -1,9 +1,9 @@
 package com.aug.ecommerce.infrastructure.messaging.listener.rabbitlistener;
 
 import com.aug.ecommerce.application.commands.CrearInventarioCommand;
-import com.aug.ecommerce.application.event.*;
-import com.aug.ecommerce.application.service.InventarioService;
-import com.aug.ecommerce.application.service.InventarioValidacionService;
+import com.aug.ecommerce.application.events.*;
+import com.aug.ecommerce.application.services.InventarioService;
+import com.aug.ecommerce.application.services.InventarioValidacionService;
 import com.aug.ecommerce.infrastructure.config.AppProperties;
 import com.aug.ecommerce.infrastructure.messaging.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;

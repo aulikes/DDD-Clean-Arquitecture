@@ -1,7 +1,7 @@
 
 package com.aug.ecommerce.infrastructure.scheduler;
 
-import com.aug.ecommerce.application.service.EnvioService;
+import com.aug.ecommerce.application.services.EnvioService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

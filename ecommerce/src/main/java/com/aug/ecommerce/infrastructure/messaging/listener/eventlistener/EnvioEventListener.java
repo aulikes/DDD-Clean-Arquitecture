@@ -1,7 +1,7 @@
 package com.aug.ecommerce.infrastructure.messaging.listener.eventlistener;
 
-import com.aug.ecommerce.application.event.OrdenPagadaEvent;
-import com.aug.ecommerce.application.service.EnvioService;
+import com.aug.ecommerce.application.events.OrdenPagadaEvent;
+import com.aug.ecommerce.application.services.EnvioService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

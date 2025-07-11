@@ -1,8 +1,8 @@
 package com.aug.ecommerce.infrastructure.messaging.listener.eventlistener;
 
-import com.aug.ecommerce.application.event.*;
-import com.aug.ecommerce.application.service.OrdenValidacionService;
-import com.aug.ecommerce.application.service.ValidacionCrearOrden;
+import com.aug.ecommerce.application.events.*;
+import com.aug.ecommerce.application.services.OrdenValidacionService;
+import com.aug.ecommerce.application.services.ValidacionCrearOrden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

@@ -1,7 +1,7 @@
 package com.aug.ecommerce.infrastructure.messaging.publisher.rabbitpublisher;
 
-import com.aug.ecommerce.application.event.IntegrationEvent;
-import com.aug.ecommerce.application.publisher.ProductoEventPublisher;
+import com.aug.ecommerce.application.events.IntegrationEvent;
+import com.aug.ecommerce.application.publishers.ProductoEventPublisher;
 import com.aug.ecommerce.infrastructure.messaging.RabbitMQEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;

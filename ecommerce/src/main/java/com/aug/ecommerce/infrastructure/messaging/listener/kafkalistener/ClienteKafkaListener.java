@@ -1,9 +1,8 @@
 
 package com.aug.ecommerce.infrastructure.messaging.listener.kafkalistener;
 
-import com.aug.ecommerce.application.event.OrdenCreadaEvent;
-import com.aug.ecommerce.application.event.ProductoCreadoEvent;
-import com.aug.ecommerce.application.service.ClienteValidacionService;
+import com.aug.ecommerce.application.events.OrdenCreadaEvent;
+import com.aug.ecommerce.application.services.ClienteValidacionService;
 import com.aug.ecommerce.infrastructure.messaging.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

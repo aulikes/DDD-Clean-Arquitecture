@@ -1,6 +1,6 @@
 package com.aug.ecommerce.infrastructure.messaging;
 
-import com.aug.ecommerce.application.event.IntegrationEvent;
+import com.aug.ecommerce.application.events.IntegrationEvent;
 import com.aug.ecommerce.infrastructure.config.AppProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;

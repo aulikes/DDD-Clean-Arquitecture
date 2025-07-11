@@ -1,11 +1,11 @@
 package com.aug.ecommerce.infrastructure.init;
 
-import com.aug.ecommerce.adapters.rest.dto.RealizarOrdenRequestDTO;
+import com.aug.ecommerce.adapters.rest.dtos.RealizarOrdenRequestDTO;
 import com.aug.ecommerce.adapters.rest.mapper.OrdenMapper;
-import com.aug.ecommerce.application.service.ClienteService;
-import com.aug.ecommerce.application.service.InventarioService;
-import com.aug.ecommerce.application.service.OrdenService;
-import com.aug.ecommerce.application.service.ProductoService;
+import com.aug.ecommerce.application.services.ClienteService;
+import com.aug.ecommerce.application.services.InventarioService;
+import com.aug.ecommerce.application.services.OrdenService;
+import com.aug.ecommerce.application.services.ProductoService;
 import com.aug.ecommerce.domain.model.cliente.Cliente;
 import com.aug.ecommerce.domain.model.inventario.Inventario;
 import com.aug.ecommerce.domain.model.producto.Producto;

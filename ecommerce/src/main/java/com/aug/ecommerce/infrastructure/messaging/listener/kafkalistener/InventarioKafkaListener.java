@@ -2,10 +2,10 @@
 package com.aug.ecommerce.infrastructure.messaging.listener.kafkalistener;
 
 import com.aug.ecommerce.application.commands.CrearInventarioCommand;
-import com.aug.ecommerce.application.event.OrdenCreadaEvent;
-import com.aug.ecommerce.application.event.ProductoCreadoEvent;
-import com.aug.ecommerce.application.service.InventarioService;
-import com.aug.ecommerce.application.service.InventarioValidacionService;
+import com.aug.ecommerce.application.events.OrdenCreadaEvent;
+import com.aug.ecommerce.application.events.ProductoCreadoEvent;
+import com.aug.ecommerce.application.services.InventarioService;
+import com.aug.ecommerce.application.services.InventarioValidacionService;
 import com.aug.ecommerce.infrastructure.messaging.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

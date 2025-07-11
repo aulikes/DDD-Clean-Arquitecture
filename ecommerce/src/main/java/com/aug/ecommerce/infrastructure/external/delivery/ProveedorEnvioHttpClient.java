@@ -1,7 +1,7 @@
 package com.aug.ecommerce.infrastructure.external.delivery;
 
 import com.aug.ecommerce.application.dtos.ResultadoEnvioDTO;
-import com.aug.ecommerce.application.gateway.ProveedorEnvioClient;
+import com.aug.ecommerce.application.gateways.ProveedorEnvioClient;
 import com.aug.ecommerce.domain.model.envio.Envio;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

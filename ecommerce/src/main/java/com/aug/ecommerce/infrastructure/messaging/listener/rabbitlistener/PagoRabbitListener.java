@@ -1,7 +1,7 @@
 package com.aug.ecommerce.infrastructure.messaging.listener.rabbitlistener;
 
-import com.aug.ecommerce.application.event.OrdenPreparadaParaPagoEvent;
-import com.aug.ecommerce.application.service.PagoService;
+import com.aug.ecommerce.application.events.OrdenPreparadaParaPagoEvent;
+import com.aug.ecommerce.application.services.PagoService;
 import com.aug.ecommerce.infrastructure.config.AppProperties;
 import com.aug.ecommerce.infrastructure.messaging.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;

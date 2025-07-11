@@ -1,9 +1,9 @@
 package com.aug.ecommerce.infrastructure.messaging.publisher.eventpublisher;
 
-import com.aug.ecommerce.application.event.ClienteNoValidadoEvent;
-import com.aug.ecommerce.application.event.ClienteValidadoEvent;
-import com.aug.ecommerce.application.event.IntegrationEvent;
-import com.aug.ecommerce.application.publisher.ClienteEventPublisher;
+import com.aug.ecommerce.application.events.ClienteNoValidadoEvent;
+import com.aug.ecommerce.application.events.ClienteValidadoEvent;
+import com.aug.ecommerce.application.events.IntegrationEvent;
+import com.aug.ecommerce.application.publishers.ClienteEventPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Profile;

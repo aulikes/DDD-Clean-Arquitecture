@@ -1,6 +1,6 @@
 package com.aug.ecommerce.adapters.rest.mapper;
 
-import com.aug.ecommerce.adapters.rest.dto.RealizarOrdenRequestDTO;
+import com.aug.ecommerce.adapters.rest.dtos.RealizarOrdenRequestDTO;
 import com.aug.ecommerce.application.commands.RealizarOrdenCommand;
 import org.mapstruct.Mapper;
 
