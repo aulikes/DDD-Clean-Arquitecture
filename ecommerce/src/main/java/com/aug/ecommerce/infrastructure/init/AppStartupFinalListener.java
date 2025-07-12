@@ -1,5 +1,7 @@
 package com.aug.ecommerce.infrastructure.init;
 
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.admin.AdminClient;
@@ -19,14 +21,20 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class AppStartupFinalListener {
 
-    @Value("${spring.kafka.bootstrap-servers:localhost:9092}")
+    @Value("${spring.kafka.bootstrap-servers}")
     private String kafkaBootstrapServers;
 
-    @Value("${spring.rabbitmq.host:localhost}")
+    @Value("${spring.rabbitmq.host}")
     private String rabbitHost;
 
-    @Value("${spring.rabbitmq.port:5672}")
+    @Value("${spring.rabbitmq.port}")
     private int rabbitPort;
+
+    @Value("${spring.rabbitmq.username}")
+    private String rabbitUsr;
+
+    @Value("${spring.rabbitmq.password}")
+    private String rabbitPsw;
 
     private final CategoriaInitializer categoriaInitializer;
     private final ClienteInitializer clienteInitializer;
@@ -49,7 +57,7 @@ public class AppStartupFinalListener {
 
     private void startApplicationEvent() {
         String profile = String.join(",", env.getActiveProfiles()).toLowerCase();
-        log.info("[AppStartupFinalListener] Esperando readiness de infraestructura para perfil: " + profile);
+        log.info("[AppStartupFinalListener] Esperando readiness de infraestructura para perfil: {}", profile);
 
         try {
             if (profile.contains("kafka")) {
@@ -58,7 +66,7 @@ public class AppStartupFinalListener {
                 esperarRabbitListo();
             }
         } catch (Exception e) {
-            log.error("Error al esperar infraestructura: " + e.getMessage());
+            log.error("Error al esperar infraestructura: {}", e.getMessage());
             return;
         }
 
@@ -88,10 +96,17 @@ public class AppStartupFinalListener {
         int intentos = 0;
         while (intentos < 60) {
             try {
-                CachingConnectionFactory factory = new CachingConnectionFactory(rabbitHost, rabbitPort);
-                factory.createConnection().close();
-                log.info("RabbitMQ está listo");
-                return;
+                ConnectionFactory factory = new ConnectionFactory();
+                factory.setHost(rabbitHost);
+                factory.setPort(rabbitPort);
+                factory.setUsername(rabbitUsr);
+                factory.setPassword(rabbitPsw);
+                factory.setConnectionTimeout(2000);
+
+                try (Connection connection = factory.newConnection()) {
+                    log.info("RabbitMQ está listo");
+                    return;
+                }
             } catch (Exception e) {
                 Thread.sleep(1000);
                 intentos++;

@@ -4,7 +4,7 @@ debug: false
 
 spring:
   profiles:
-    active: dev #dev rabbit kafka
+    active: kafka #dev rabbit kafka
 
   datasource:
     url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
@@ -26,8 +26,8 @@ spring:
   rabbitmq:
     host: localhost
     port: 5672
-    username: guest
-    password: guest
+    username: admin
+    password: admin
     publisher-confirm-type: correlated  # o simple para confirmaciones básicas
     publisher-returns: true
 
