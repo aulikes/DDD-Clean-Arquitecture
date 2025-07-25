@@ -74,3 +74,41 @@ services:
     ports:
       - "6379:6379"
 
+  # ---------------------------------------------------
+  # PostgreSQL (base de datos principal del sistema)
+  # ---------------------------------------------------
+  postgres:
+    image: postgres:15                             # Imagen oficial de PostgreSQL
+    container_name: postgres-ecom
+    ports:
+      - "5433:5432"                                # Puerto por defecto de PostgreSQL
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ecommerce
+    volumes:
+      - postgres_data:/var/lib/postgresql/data     # Persistencia de datos
+
+  # ---------------------------------------------------
+  # ecommerce-api: Tu aplicación Spring Boot
+  # ---------------------------------------------------
+  ecommerce-api:
+    build:
+      context: .             # Ruta donde está el Dockerfile de e-commerce
+      dockerfile: Dockerfile
+    container_name: ecommerce-api-ecom
+    depends_on:
+      - rabbitmq
+      - kafka
+      - redis
+      - postgres
+    ports:
+      - "8093:8093"
+    environment:
+      SPRING_PROFILE: rabbit # Selección del archivo application-rabbit.yml
+
+# ---------------------------------------------------
+# Volúmenes persistentes
+# ---------------------------------------------------
+volumes:
+  postgres_data:
