@@ -44,7 +44,7 @@ public class AppStartupFinalListener {
 
     @EventListener(ApplicationReadyEvent.class)
     public void onApplicationReady() {
-        log.info("[AppStartupFinalListener] La aplicación está completamente lista.");
+        log.info("[AppStartupFinalListener] La aplicación está CASI completamente lista.");
 
         startApplicationEvent();
         categoriaInitializer.run();
@@ -77,7 +77,7 @@ public class AppStartupFinalListener {
         props.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaBootstrapServers);
         try (AdminClient client = AdminClient.create(props)) {
             int intentos = 0;
-            while (intentos < 60) {
+            while (intentos < 5) {
                 try {
                     client.listTopics().names().get(1, TimeUnit.SECONDS);
                     log.info("Kafka está listo");
@@ -93,7 +93,7 @@ public class AppStartupFinalListener {
 
     private void esperarRabbitListo() throws Exception {
         int intentos = 0;
-        while (intentos < 60) {
+        while (intentos < 10) {
             try {
                 ConnectionFactory factory = new ConnectionFactory();
                 factory.setHost(rabbitHost);

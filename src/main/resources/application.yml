@@ -33,6 +33,8 @@ spring:
 
   kafka:
     bootstrap-servers: localhost:9092 # Dirección del broker de Kafka al que se conectará la aplicación
+    admin:
+      fail-fast: true                 # Esto hace que Spring cree KafkaAdmin y falle al instante si no hay broker
     consumer:
       auto-offset-reset: earliest # Si no hay offset guardado, empieza a consumir desde el primer mensaje del topic
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer # Deserializador para la clave del mensaje recibido
