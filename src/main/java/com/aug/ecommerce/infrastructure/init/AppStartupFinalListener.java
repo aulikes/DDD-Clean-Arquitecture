@@ -66,7 +66,7 @@ public class AppStartupFinalListener {
             }
         } catch (Exception e) {
             log.error("Error al esperar infraestructura: {}", e.getMessage());
-            return;
+            System.exit(1);
         }
 
         log.info("[AppStartupFinalListener] Infraestructura lista. Ejecutando carga inicial...");
