@@ -29,6 +29,9 @@ pipeline {
 
     stage('Build & Test') {
       steps {
+        // Limpia posibles daemons colgados
+        sh 'pkill -f gradle || true'
+        // Luego build
         sh './gradlew clean build jacocoTestReport --no-daemon'
       }
     }
