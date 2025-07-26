@@ -29,6 +29,8 @@ pipeline {
 
     stage('Build & Test') {
       steps {
+        // Forzar liberación del lock
+        sh 'rm -rf /root/.gradle/daemon/8.5/registry.bin.lock || true'
         // Limpia posibles daemons colgados
         sh 'pkill -f gradle || true'
         // Luego build
