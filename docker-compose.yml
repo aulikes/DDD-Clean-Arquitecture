@@ -13,6 +13,8 @@ services:
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181                  # Puerto que escucha Zookeeper
       ZOOKEEPER_TICK_TIME: 2000                    # Intervalo base de sincronización
+    networks:
+      - ecommerce-net
 
   # ---------------------------------------------------
   # Servicio Kafka (broker de eventos)
@@ -33,6 +35,8 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,DOCKER:PLAINTEXT
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - ecommerce-net
 
   # ---------------------------------------------------
   # AKHQ (interfaz web para monitorear Kafka)
@@ -51,6 +55,8 @@ services:
                 bootstrap.servers: "kafka:9093"    # Comunicación interna entre contenedores
     depends_on:
       - kafka
+    networks:
+      - ecommerce-net
 
   # ---------------------------------------------------
   # RabbitMQ (broker de colas) con UI web
@@ -64,6 +70,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: admin
       RABBITMQ_DEFAULT_PASS: admin
+    networks:
+      - ecommerce-net
 
   # ---------------------------------------------------
   # Redis (almacenamiento en memoria - usado como cache o cola ligera)
@@ -73,6 +81,8 @@ services:
     container_name: redis-ecom
     ports:
       - "6379:6379"
+    networks:
+      - ecommerce-net
 
   # ---------------------------------------------------
   # PostgreSQL (base de datos principal del sistema)
@@ -88,27 +98,33 @@ services:
       POSTGRES_DB: ecommerce
     volumes:
       - postgres_data:/var/lib/postgresql/data     # Persistencia de datos
+    networks:
+      - ecommerce-net
 
   # ---------------------------------------------------
   # ecommerce-api: Tu aplicación Spring Boot
   # ---------------------------------------------------
-  ecommerce-api:
-    build:
-      context: .             # Ruta donde está el Dockerfile de e-commerce
-      dockerfile: Dockerfile
-    container_name: ecommerce-api-ecom
-    depends_on:
-      - rabbitmq
-      - kafka
-      - redis
-      - postgres
-    ports:
-      - "8093:8093"
-    environment:
-      SPRING_PROFILE: rabbit # Selección del archivo application-rabbit.yml
+#  ecommerce-api:
+#    build:
+#      context: .             # Ruta donde está el Dockerfile de e-commerce
+#      dockerfile: Dockerfile
+#    container_name: ecommerce-api-ecom
+#    depends_on:
+#      - rabbitmq
+#      - kafka
+#      - redis
+#      - postgres
+#    ports:
+#      - "8093:8093"
+#    environment:
+#      SPRING_PROFILE: rabbit # Selección del archivo application-rabbit.yml
 
 # ---------------------------------------------------
 # Volúmenes persistentes
 # ---------------------------------------------------
 volumes:
   postgres_data:
+
+networks:
+  ecommerce-net:
+    name: ecommerce-net
