@@ -3,11 +3,9 @@ pipeline {
 
   environment {
     // Variables necesarias para Sonar y Gradle
-    SONAR_HOST_URL = 'http://sonarqube:9000'
-    SONAR_SCANNER_OPTS = "-Dsonar.projectKey=ecommerce-api"
     DOCKER_IMAGE = 'ecommerce-api'
     DOCKER_PORT = '8093'
-    SPRING_PROFILE = 'dev'
+    SPRING_PROFILE = 'rabbit'
   }
 
   stages {
