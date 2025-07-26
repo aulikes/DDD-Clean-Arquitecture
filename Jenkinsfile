@@ -16,6 +16,17 @@ pipeline {
       }
     }
 
+//     stage('Checkout') {
+//       steps {
+//         checkout([
+//           $class: 'GitSCM',
+//           branches: [[name: 'main']],
+//           userRemoteConfigs: [[url: 'https://github.com/aulikes/DDD-Clean-Arquitecture.git']],
+//           extensions: [[$class: 'CloneOption', noTags: false, shallow: false, depth: 0]]
+//         ])
+//       }
+//     }
+
     stage('Build & Test') {
       steps {
         sh './gradlew clean build jacocoTestReport --no-daemon'
@@ -46,7 +57,8 @@ pipeline {
           // Stop previous container if running
           sh "docker rm -f ${DOCKER_IMAGE} || true"
           // Run new container on port 8090
-          sh "docker run -d -e SPRING_PROFILE=${SPRING_PROFILE} -p ${DOCKER_PORT}:${DOCKER_PORT} --name ${DOCKER_IMAGE} ${DOCKER_IMAGE}"
+          sh "docker run -d -e SPRING_PROFILE=${SPRING_PROFILE} -p ${DOCKER_PORT}:${DOCKER_PORT}
+          --name ${DOCKER_IMAGE} ${DOCKER_IMAGE} -Dsonar.scm.disabled=true"
         }
       }
     }
