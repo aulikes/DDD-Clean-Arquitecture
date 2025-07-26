@@ -16,24 +16,18 @@ pipeline {
       }
     }
 
-//     stage('Checkout') {
-//       steps {
-//         checkout([
-//           $class: 'GitSCM',
-//           branches: [[name: 'main']],
-//           userRemoteConfigs: [[url: 'https://github.com/aulikes/DDD-Clean-Arquitecture.git']],
-//           extensions: [[$class: 'CloneOption', noTags: false, shallow: false, depth: 0]]
-//         ])
-//       }
-//     }
+    stage('Cleanup Gradle Locks') {
+      steps {
+        // Libera posibles procesos o locks que bloquean Gradle
+        sh 'rm -rf /root/.gradle/caches/journal-1/journal-1.lock || true'
+        sh 'rm -rf /root/.gradle/daemon/8.5/registry.bin.lock || true'
+        sh 'pkill -f gradle || true'
+        sh 'pkill -f java || true'
+      }
+    }
 
     stage('Build & Test') {
       steps {
-        // Forzar liberación del lock
-        sh 'rm -rf /root/.gradle/daemon/8.5/registry.bin.lock || true'
-        // Limpia posibles daemons colgados
-        sh 'pkill -f gradle || true'
-        // Luego build
         sh './gradlew clean build jacocoTestReport --no-daemon'
       }
     }
