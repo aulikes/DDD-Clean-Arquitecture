@@ -102,7 +102,7 @@ services:
       - ecommerce-net
 
   # ---------------------------------------------------
-  # ecommerce-api: Tu aplicación Spring Boot
+  # ecommerce-api: Aplicación Spring Boot
   # ---------------------------------------------------
 #  ecommerce-api:
 #    build:
@@ -118,6 +118,8 @@ services:
 #      - "8093:8093"
 #    environment:
 #      SPRING_PROFILE: rabbit # Selección del archivo application-rabbit.yml
+#    networks:
+#      - ecommerce-net
 
 # ---------------------------------------------------
 # Volúmenes persistentes

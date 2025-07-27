@@ -91,7 +91,7 @@ jacocoTestReport {
 
 sonar {
 	properties {
-		property "sonar.projectKey", "intcomex-api"
+		property "sonar.projectKey", "ecommerce-api"
 		property "sonar.host.url", "http://sonarqube:9000"
 		property "sonar.java.binaries", "build/classes/java/main"
 	}
