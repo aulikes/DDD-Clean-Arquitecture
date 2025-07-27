@@ -64,10 +64,6 @@ dependencies {
 	testAnnotationProcessor "org.mapstruct:mapstruct-processor:1.5.5.Final"
 }
 
-//tasks.named('test') {
-//	useJUnitPlatform()
-//}
-
 // Plataforma de pruebas
 tasks.named('test') {
 	useJUnitPlatform()
