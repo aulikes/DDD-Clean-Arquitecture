@@ -82,7 +82,7 @@ class InventarioValidacionServiceTest {
                 new OrdenCreadaEvent.ItemOrdenCreada(11L, 1)    // suficiente
         );
 
-        when(inventarioRepository.findById(10L)).thenReturn(Optional.of(new Inventario(10L, 1L))); 
+        when(inventarioRepository.findById(10L)).thenReturn(Optional.of(new Inventario(10L, 1L)));
 
         inventarioValidacionService.validarInventarioCreacionOrden(ordenId, items);
 
