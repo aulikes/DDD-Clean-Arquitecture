@@ -6,6 +6,8 @@ import com.aug.ecommerce.infrastructure.persistence.entity.PagoEntity;
 
 public class PagoMapper {
 
+    private PagoMapper() {}
+
     public static PagoEntity toEntity(Pago pago) {
         PagoEntity entity = new PagoEntity();
         entity.setId(pago.getId());

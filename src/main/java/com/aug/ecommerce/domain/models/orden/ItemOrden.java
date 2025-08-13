@@ -9,12 +9,12 @@ public final class ItemOrden {
     private final double precioUnitario;
 
     //Item Nuevo
-    static ItemOrden create(Long productoId, int cantidad, double precioUnitario) {
+    public static ItemOrden create(Long productoId, int cantidad, double precioUnitario) {
         return new ItemOrden(null, productoId, cantidad, precioUnitario);
     }
 
     //Item seteado desde BD
-    static ItemOrden fromPersistence(Long itemId, Long productoId, int cantidad, double precioUnitario) {
+    public static ItemOrden fromPersistence(Long itemId, Long productoId, int cantidad, double precioUnitario) {
         if (itemId == null) throw new IllegalArgumentException("El itemId no puede ser nulo");
         return new ItemOrden(itemId, productoId, cantidad, precioUnitario);
     }
