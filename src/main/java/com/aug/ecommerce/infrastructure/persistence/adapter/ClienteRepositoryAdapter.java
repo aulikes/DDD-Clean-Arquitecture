@@ -17,8 +17,8 @@ public class ClienteRepositoryAdapter implements ClienteRepository {
     private final JpaClienteCrudRepository jpa;
 
     @Override
-    public void save(Cliente cliente) {
-        jpa.save(ClienteMapper.toEntity(cliente));
+    public Cliente save(Cliente cliente) {
+        return ClienteMapper.toDomain(jpa.save(ClienteMapper.toEntity(cliente)));
     }
 
     @Override

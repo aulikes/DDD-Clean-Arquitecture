@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ClienteRepository {
-    void save(Cliente cliente);
+    Cliente save(Cliente cliente);
     Optional<Cliente> findById(Long id);
     List<Cliente> findAll();
 
