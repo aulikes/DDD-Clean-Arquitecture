@@ -49,7 +49,6 @@ public class EnvioService {
      * - Si viene de crearEnvio, NO se debe agregar nuevo estado, ya se agregó es esa función
      * - Si viene de reintentarEnvios, se debe agregar nuevo estado
      */
-    @Transactional
     private Envio realizarEnvio(Envio envio, BiConsumer<Envio, ResultadoEnvioDTO> onError){
         // Invocar sistema externo para ejecutar el envío
         ResultadoEnvioDTO resultadoEnvio = proveedorEnvioClient.prepararEnvio(envio);

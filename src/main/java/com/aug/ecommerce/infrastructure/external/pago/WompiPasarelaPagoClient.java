@@ -39,7 +39,7 @@ public class WompiPasarelaPagoClient implements PasarelaPagoClient {
             else{
                 try {
                     // Simula latencia entre 1 y 3 segundos
-                    Thread.sleep(random.nextInt(2000) + 1000);
+                    Thread.sleep(random.nextInt(2000) + 1000L);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     throw new RuntimeException("Error de latencia simulada", e);

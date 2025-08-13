@@ -31,7 +31,7 @@ public class ProveedorEnvioHttpClient implements ProveedorEnvioClient {
         else{
             try {
                 // Simula latencia entre 1 y 3 segundos
-                Thread.sleep(random.nextInt(2000) + 1000);
+                Thread.sleep(random.nextInt(2000) + 1000L);
 
                 if (probabilidad > 50) {
                     result = new ResultadoEnvioDTO(

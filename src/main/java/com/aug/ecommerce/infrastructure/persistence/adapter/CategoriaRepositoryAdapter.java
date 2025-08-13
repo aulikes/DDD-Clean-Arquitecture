@@ -2,7 +2,6 @@ package com.aug.ecommerce.infrastructure.persistence.adapter;
 
 import com.aug.ecommerce.domain.models.categoria.Categoria;
 import com.aug.ecommerce.domain.repositories.CategoriaRepository;
-import com.aug.ecommerce.infrastructure.persistence.entity.CategoriaEntity;
 import com.aug.ecommerce.infrastructure.persistence.mapper.CategoriaMapper;
 import com.aug.ecommerce.infrastructure.persistence.repository.JpaCategoriaCrudRepository;
 import lombok.RequiredArgsConstructor;
