@@ -2,6 +2,7 @@ package com.aug.ecommerce.infrastructure.persistence.adapter;
 
 import com.aug.ecommerce.domain.models.categoria.Categoria;
 import com.aug.ecommerce.domain.repositories.CategoriaRepository;
+import com.aug.ecommerce.infrastructure.persistence.entity.CategoriaEntity;
 import com.aug.ecommerce.infrastructure.persistence.mapper.CategoriaMapper;
 import com.aug.ecommerce.infrastructure.persistence.repository.JpaCategoriaCrudRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,8 +18,8 @@ public class CategoriaRepositoryAdapter implements CategoriaRepository {
     private final JpaCategoriaCrudRepository jpa;
 
     @Override
-    public void save(Categoria categoria) {
-        jpa.save(CategoriaMapper.toEntity(categoria));
+    public Categoria save(Categoria categoria) {
+        return CategoriaMapper.toDomain(jpa.save(CategoriaMapper.toEntity(categoria)));
     }
 
     @Override

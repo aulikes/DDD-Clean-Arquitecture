@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CategoriaRepository {
-    void save(Categoria categoria);
+    Categoria save(Categoria categoria);
     Optional<Categoria> findById(Long id);
     List<Categoria> findAll();
     void deleteById(Long id);
