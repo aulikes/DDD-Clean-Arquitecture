@@ -85,10 +85,11 @@ jacocoTestReport {
 	}
 }
 
+def sonarProps = new Properties()
+file("sonar-project.properties").withReader { sonarProps.load(it) }
+
 sonar {
 	properties {
-		property "sonar.projectKey", "ecommerce-api"
-		property "sonar.host.url", "http://sonarqube:9000"
-		property "sonar.java.binaries", "build/classes/java/main"
+		sonarProps.each { k, v -> property(k, v) }
 	}
 }
