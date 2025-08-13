@@ -1,4 +1,3 @@
-
 package com.aug.ecommerce.infrastructure.messaging.publisher.kafkapublisher;
 
 import com.aug.ecommerce.application.events.ClienteValidadoEvent;

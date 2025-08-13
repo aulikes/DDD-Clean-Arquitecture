@@ -4,9 +4,9 @@ import com.aug.ecommerce.application.commands.CrearInventarioCommand;
 import com.aug.ecommerce.application.events.*;
 import com.aug.ecommerce.application.services.InventarioService;
 import com.aug.ecommerce.application.services.InventarioValidacionService;
-import com.aug.ecommerce.infrastructure.config.AppProperties;
 import com.aug.ecommerce.infrastructure.messaging.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Profile;
@@ -14,22 +14,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 @Profile("rabbit")
 public class InventarioRabbitListener {
 
     private final InventarioService inventarioService;
     private final InventarioValidacionService inventarioValidacionService;
     private final ObjectMapper objectMapper;
-    private final AppProperties appProperties;
-
-    public InventarioRabbitListener(InventarioService inventarioService,
-                                    InventarioValidacionService inventarioValidacionService,
-                                    ObjectMapper objectMapper, AppProperties appProperties) {
-        this.inventarioService = inventarioService;
-        this.inventarioValidacionService = inventarioValidacionService;
-        this.objectMapper = objectMapper;
-        this.appProperties = appProperties;
-    }
 
     @RabbitListener(queues = "orden.inventario.validar.v1.queue")
     public void validarInventario(String payload) {

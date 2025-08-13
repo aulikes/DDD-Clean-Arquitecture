@@ -2,9 +2,9 @@ package com.aug.ecommerce.infrastructure.messaging.listener.rabbitlistener;
 
 import com.aug.ecommerce.application.events.OrdenCreadaEvent;
 import com.aug.ecommerce.application.services.ProductoValidacionService;
-import com.aug.ecommerce.infrastructure.config.AppProperties;
 import com.aug.ecommerce.infrastructure.messaging.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Profile;
@@ -12,19 +12,12 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 @Profile("rabbit")
 public class ProductoRabbitListener {
 
     private final ProductoValidacionService productoValidacionService;
     private final ObjectMapper objectMapper;
-    private final AppProperties appProperties;
-
-    public ProductoRabbitListener(ProductoValidacionService productoValidacionService, ObjectMapper objectMapper,
-                                  AppProperties appProperties) {
-        this.productoValidacionService = productoValidacionService;
-        this.objectMapper = objectMapper;
-        this.appProperties = appProperties;
-    }
 
     @RabbitListener(queues = "orden.producto.validar.v1.queue")
     public void validarProductoCreacionOrden(String payload) { //Valida si el producto existe

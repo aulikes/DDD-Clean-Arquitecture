@@ -6,6 +6,7 @@ import com.aug.ecommerce.infrastructure.config.AppProperties;
 import com.aug.ecommerce.application.services.ValidacionCrearOrden;
 import com.aug.ecommerce.infrastructure.messaging.IntegrationEventWrapper;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.context.annotation.Profile;
@@ -17,19 +18,12 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Slf4j
+@RequiredArgsConstructor
 @Profile("rabbit")
 public class OrdenRabbitListener {
 
     private final ObjectMapper objectMapper;
     private final OrdenValidacionService ordenValidacionService;
-    private final AppProperties appProperties;
-
-    public OrdenRabbitListener(ObjectMapper objectMapper, OrdenValidacionService ordenValidacionService,
-                               AppProperties appProperties) {
-        this.objectMapper = objectMapper;
-        this.ordenValidacionService = ordenValidacionService;
-        this.appProperties = appProperties;
-    }
 
     @RabbitListener(queues = "cliente.orden.validado.v1.queue")
     public void recibirDesdeClienteQueue(String payload) {
