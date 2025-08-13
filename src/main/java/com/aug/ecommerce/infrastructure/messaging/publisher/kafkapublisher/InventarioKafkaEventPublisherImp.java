@@ -12,10 +12,11 @@ import org.springframework.stereotype.Component;
 @Profile("kafka")
 public class InventarioKafkaEventPublisherImp implements InventarioEventPublisher {
 
-    private final KafkaEventPublisher kafkaEventPublisher;
+    private final KafkaEventPublisher<IntegrationEvent> kafkaEventPublisher;
     private final AppProperties.Kafka.Producer producer;
 
-    public InventarioKafkaEventPublisherImp(KafkaEventPublisher kafkaEventPublisher, AppProperties appProperties) {
+    public InventarioKafkaEventPublisherImp(
+            KafkaEventPublisher<IntegrationEvent> kafkaEventPublisher, AppProperties appProperties) {
         this.kafkaEventPublisher = kafkaEventPublisher;
         this.producer = appProperties.getKafka().getProducer();
     }

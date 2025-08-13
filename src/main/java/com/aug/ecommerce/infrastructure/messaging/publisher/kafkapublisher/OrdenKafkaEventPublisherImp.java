@@ -12,10 +12,11 @@ import org.springframework.stereotype.Component;
 @Profile("kafka")
 public class OrdenKafkaEventPublisherImp implements OrdenEventPublisher {
 
-    private final KafkaEventPublisher kafkaEventPublisher;
+    private final KafkaEventPublisher<IntegrationEvent> kafkaEventPublisher;
     private final AppProperties.Kafka.Producer producer;
 
-    public OrdenKafkaEventPublisherImp(KafkaEventPublisher kafkaEventPublisher, AppProperties appProperties) {
+    public OrdenKafkaEventPublisherImp(
+            KafkaEventPublisher<IntegrationEvent> kafkaEventPublisher, AppProperties appProperties) {
         this.kafkaEventPublisher = kafkaEventPublisher;
         this.producer = appProperties.getKafka().getProducer();
     }

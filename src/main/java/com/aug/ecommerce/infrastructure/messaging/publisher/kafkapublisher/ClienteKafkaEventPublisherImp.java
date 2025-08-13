@@ -12,10 +12,11 @@ import org.springframework.stereotype.Component;
 @Profile("kafka")
 public class ClienteKafkaEventPublisherImp implements ClienteEventPublisher {
 
-    private final KafkaEventPublisher kafkaEventPublisher;
+    private final KafkaEventPublisher<IntegrationEvent> kafkaEventPublisher;
     private final AppProperties.Kafka.Producer producer;
 
-    public ClienteKafkaEventPublisherImp(KafkaEventPublisher kafkaEventPublisher, AppProperties appProperties) {
+    public ClienteKafkaEventPublisherImp(
+            KafkaEventPublisher<IntegrationEvent> kafkaEventPublisher, AppProperties appProperties) {
         this.kafkaEventPublisher = kafkaEventPublisher;
         this.producer = appProperties.getKafka().getProducer();
     }
@@ -23,9 +24,9 @@ public class ClienteKafkaEventPublisherImp implements ClienteEventPublisher {
     @Override
     public void publishClienteValido(IntegrationEvent event) {
         if (event instanceof ClienteValidadoEvent(Long ordenId)) {
-            if (ordenId != 5L) {
+//            if (ordenId != 5L) {
                 kafkaEventPublisher.publicar(producer.getClienteValidadoTopic(), event);
-            }
+//            }
         }
     }
 
