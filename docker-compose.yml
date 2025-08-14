@@ -104,22 +104,22 @@ services:
   # ---------------------------------------------------
   # ecommerce-api: Aplicación Spring Boot
   # ---------------------------------------------------
-#  ecommerce-api:
-#    build:
-#      context: .             # Ruta donde está el Dockerfile de e-commerce
-#      dockerfile: Dockerfile
-#    container_name: ecommerce-api-ecom
-#    depends_on:
-#      - rabbitmq
-#      - kafka
-#      - redis
-#      - postgres
-#    ports:
-#      - "8093:8093"
-#    environment:
-#      SPRING_PROFILE: rabbit # Selección del archivo application-rabbit.yml
-#    networks:
-#      - ecommerce-net
+  ecommerce-api:
+    build:
+      context: .             # Ruta donde está el Dockerfile de e-commerce
+      dockerfile: Dockerfile
+    container_name: ecommerce-api-ecom
+    depends_on:
+      - rabbitmq
+      - kafka
+      - redis
+      - postgres
+    ports:
+      - "8093:8093"
+    environment:
+      SPRING_PROFILE: rabbit # Selección del archivo application-rabbit.yml
+    networks:
+      - ecommerce-net
 
 # ---------------------------------------------------
 # Volúmenes persistentes
