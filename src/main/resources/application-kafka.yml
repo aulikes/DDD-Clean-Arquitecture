@@ -1,0 +1,100 @@
+debug: false
+
+---
+
+spring:
+  datasource:
+    url: jdbc:postgresql://postgres:5432/ecommerce
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+
+  kafka:
+    bootstrap-servers: localhost:9092 # Dirección del broker de Kafka al que se conectará la aplicación
+    admin:
+      fail-fast: true                 # Esto hace que Spring cree KafkaAdmin y falle al instante si no hay broker
+    consumer:
+      auto-offset-reset: earliest # Si no hay offset guardado, empieza a consumir desde el primer mensaje del topic
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer # Deserializador para la clave del mensaje recibido
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer # Deserializador para el valor del mensaje recibido
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer # Serializador para la clave del mensaje que se va a enviar
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer # Serializador para el valor del mensaje que se va a enviar
+
+---
+
+server:
+  port: 8093
+
+---
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        registerHealthIndicator: true  # Enables Circuit Breaker health status to be available through Actuator
+        slidingWindowSize: 10  # Number of calls that the Circuit Breaker will evaluate to calculate the failure rate (sliding window)
+        minimumNumberOfCalls: 5  # Minimum number of calls required before the Circuit Breaker in state closed evaluates whether to open or not
+        failureRateThreshold: 30  # Failure rate percentage that triggers the transition from CLOSED to OPEN
+        permittedNumberOfCallsInHalfOpenState: 3  # Number of calls allowed while in HALF_OPEN state to test if the service has recovered
+        automaticTransitionFromOpenToHalfOpenEnabled: true  # If enabled, the Circuit Breaker will automatically move from OPEN to HALF_OPEN after the configured time
+        waitDurationInOpenState: 35s  # Duration the Circuit Breaker remains in OPEN state before transitioning to HALF_OPEN
+        eventConsumerBufferSize: 10  # Size of the event buffer used to publish events to consumers (such as logs, metrics, etc.)
+        recordExceptions:
+          - java.util.concurrent.TimeoutException
+          - java.lang.RuntimeException
+  #        ignoreExceptions:
+  #          - com.aug.ecommerce.domain.exception.ErrorNegocioException
+  retry:
+    instances:
+      processPaymentWompiRetry:  # Put this in the method configured
+        maxAttempts: 3           # Total attempts: 1 original + 2 retries
+        waitDuration: 1s         # Wait time of 1 second between attempts
+        retryExceptions:
+          - java.util.concurrent.TimeoutException
+          - java.lang.RuntimeException
+#        ignoreExceptions:
+#          - com.aug.ecommerce.domain.exception.ErrorNegocioException
+
+---
+
+app:
+  kafka:
+    bootstrap-servers: localhost:9092 # Dirección del broker de Kafka al que se conectará la aplicación
+    orden-consumer-group: orden-consumer-group
+
+    producer: # Un topic por cada evento
+      cliente-validado-topic: cliente.validado
+      cliente-no-validado-topic: cliente.novalidado
+      envio-preparado-topic: envio.preparado
+      inventario-validado-topic: inventario.validado
+      inventario-no-validado-topic: inventario.novalidado
+      orden-creada-topic: orden.creada
+      orden-preparada-pago-topic: orden.preparada.pago
+      orden-pagada-topic: orden.pagada
+      pago-realizado-topic: pago.realizado
+      producto-creado-topic: producto.creado
+      producto-validado-topic: producto.validado
+      producto-no-validado-topic: producto.novalidado
+
+    consumer:
+      orden-cliente-validar-groupId: orden-cliente-validar
+      orden-inventario.validar-groupId: orden-inventario-validar
+      orden-producto-validar-groupId: orden-producto-validar
+      orden-envio-preparar-groupId: orden-envio-preparar
+      producto-inventario-crear-groupId: producto-inventario-crear
+      cliente-orden-validado-groupId: cliente-orden-validado
+      cliente-orden-no-validado-groupId: cliente-orden-validado
+      producto-orden-validado-groupId: producto-orden-validado
+      producto-orden-no-validado-groupId: producto-orden-validado
+      inventario-orden-validado-groupId: inventario-orden-validado
+      inventario-orden-no-validado-groupId: inventario-orden-no-validado
+      pago-orden-validado-groupId: pago-orden-validado
+      envio-orden-preparado-groupId: envio-orden-preparado
+      orden-pago-solicitar-groupId: orden.pago.solicitar
