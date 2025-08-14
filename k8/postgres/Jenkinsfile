@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+
+    environment {
+        NAMESPACE = "ecommerce-dev"
+    }
+
+    stages {
+        stage('Crear namespace si no existe') {
+            steps {
+                withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
+                    sh '''
+                    if ! kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
+                      kubectl create namespace "$NAMESPACE"
+                    fi
+                    '''
+                }
+            }
+        }
+
+        stage('Aplicar manifiestos') {
+            steps {
+                withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
+                    dir('k8/postgres') {
+                        sh '''
+                        kubectl apply -f 0-pv-postgres.yaml
+                        kubectl apply -f 1-pvc-postgres.yaml -n "$NAMESPACE"
+                        kubectl apply -f 2-secret-postgres.yaml -n "$NAMESPACE"
+                        kubectl apply -f 3-configmap-postgres.yaml -n "$NAMESPACE"
+                        kubectl apply -f 4-deployment-postgres.yaml -n "$NAMESPACE"
+                        kubectl apply -f 5-service-postgres.yaml -n "$NAMESPACE"
+                        '''
+                    }
+                }
+            }
+        }
+    }
+}
