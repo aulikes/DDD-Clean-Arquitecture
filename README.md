@@ -1,135 +1,177 @@
-# Ecommerce - Arquitectura de Dominio y Aplicación (DDD)
+# 🛒 E-Commerce – Clean/DDD, Event-Driven (Rabbit/Kafka)
 
-Este proyecto modela un sistema e-commerce completo bajo los principios de Domain-Driven Design (DDD). Se ha implementado de forma estructurada la capa de dominio y la capa de aplicación, cada una con sus respectivas responsabilidades bien separadas.
+## 🌟 Visión general
+Este proyecto modela un sistema **e-commerce orientado a eventos** y diseñado bajo los principios de **Domain-Driven Design (DDD) + Clean Architecture**. 
 
----
+Cubre el flujo central del dominio: **creación de órdenes**, **validaciones por bounded contexts** (cliente, producto, inventario), **pago** y **preparación de envío**; todo desacoplado mediante **eventos versionados** y wrappers de integración.
 
-## 1. Capa de Dominio
-Contiene toda la lógica del negocio expresada a través de aggregates, entidades, objetos de valor, eventos de dominio y servicios de dominio.
-
-### Aggregates Root modelados:
-- `Orden`: ciclo de vida de la compra (creación, pago, envío, entrega, cancelación)
-- `Pago`: estado del pago (pendiente, confirmado, fallido)
-- `Envio`: proceso logístico (preparando, despachado, entregado)
-- `Inventario`: stock disponible de productos
-- `Notificacion`: mensajes generados hacia el cliente
-- `Cliente`: datos del usuario y sus direcciones
-- `Producto` y `Categoria`: referencia a catálogo de productos
-
-### Objetos de valor:
-- `EstadoOrden`: controla transiciones válidas de estado en una orden
-- `Direccion`: entidad embebida dentro de cliente, controlada solo desde el agregado
-
-### Servicios de dominio:
-- `ProcesadorDePago`
-- `ProcesadorDeEnvio`
-- `ProcesadorDeEntrega`
-- `ProcesadorDeCancelacion`
-
-### Eventos de dominio:
-- `OrdenPagada`
-- `OrdenEnviada`
-- `OrdenEntregada`
-- `OrdenCancelada`
-
----
-
-## 2. Capa de Aplicación
-Contiene servicios que orquestan los casos de uso del sistema. No contiene lógica de negocio propia, solo delega a la capa de dominio y coordina la ejecución de los procesos.
-
-### Servicios de aplicación:
-
-#### `ServicioAplicacionPago`
-- Ejecuta confirmación de pagos
-- Llama a `ProcesadorDePago`
-- Devuelve `OrdenPagada`
-
-#### `ServicioAplicacionOrden`
-- Crear orden
-- Agregar/remover/cambiar ítems
-- Calcular total
-- Cancelar orden (devuelve `OrdenCancelada`)
-
-#### `ServicioAplicacionEnvio`
-- Despachar orden (tracking) y devolver `OrdenEnviada`
-- Entregar orden y devolver `OrdenEntregada`
-
-#### `ServicioAplicacionInventario`
-- Reservar stock
-- Liberar stock
-- Consultar disponibilidad
-
-#### `ServicioAplicacionNotificacion`
-- Crear notificación pendiente
-- Marcar como enviada
-
-#### `ServicioAplicacionCliente`
-- Crear cliente
-- Actualizar nombre y email
-- Agregar/actualizar/eliminar direcciones
-
----
-
-## 3. Principios aplicados
-- Separación de responsabilidades clara entre dominio y aplicación
-- Eventos de dominio generados **solo como resultado de una acción del negocio**
-- No hay lógica de infraestructura en ninguna de las capas modeladas hasta ahora
-- Los servicios de dominio **no publican eventos**, solo modifican el estado del modelo
-- La aplicación genera los eventos cuando corresponde
-
----
+El objetivo es mostrar **cómo orquestar servicios mediante eventos** con perfiles intercambiables de **RabbitMQ** o **Kafka**, aplicando buenas prácticas de arquitectura y pruebas.
 
 > Este sistema está diseñado para crecer hacia infraestructura, APIs REST, mensajería o persistencia sin afectar la lógica del negocio. Todo se basa en un modelo rico, autocontenido y coherente con las reglas del negocio.
+
 ---
 
-## 4. Extensión hacia arquitectura resiliente y eventos (SAGA + Circuit Breaker + Retry)
+## ⚙️ Tecnologías clave
+- **Java 21**, **Spring Boot 3.5**
+- **Clean Architecture + DDD**
+- **Spring Data JPA**
+  - **H2** en memoria (dev)
+  - **PostgreSQL** (perfil `rabbit/docker`)
+- **Mensajería**:
+  - **RabbitMQ** (`@Profile("rabbit")`)
+  - **Kafka** (`@Profile("kafka")`)
+- **Jackson** (`ObjectMapper`) para (de)serialización
+- **Lombok**
+- **JaCoCo** + **SonarQube** (calidad)
+- **Docker Compose** para dependencias (Zookeeper/Kafka, RabbitMQ, Postgres, etc.)
 
-Este proyecto ha sido extendido para incluir una arquitectura basada en eventos internos, comunicación desacoplada entre componentes y tolerancia a fallos mediante resiliencia.
+---
 
-### Eventos de aplicación
-- Se utiliza `ApplicationEventPublisher` para emitir eventos como `OrdenCreadaEvent`, `OrderPaymentRequestedEvent` o `PagoConfirmadoEvent`.
-- Cada componente escucha y responde a los eventos según su responsabilidad, facilitando la implementación del patrón SAGA (coreografía).
+## 🔍 Principios y buenas prácticas
+- **Eventos versionados** y trazables (`traceId`, `timestamp`).
+- **IntegrationEventWrapper** como contrato de publicación.
+- No se usan eventos genéricos universales.
+- Dominios inmutables, controlados mediante **máquina de estados**.
+- Separación completa entre **infraestructura, aplicación y dominio**.
+- **Value Objects** y entidades con responsabilidad encapsulada.
+- **Publishers** y **listeners** por contexto:
+  - `publisher/*` (Rabbit/Kafka/ApplicationEvent)
+  - `listener/*` (Rabbit/Kafka/In-Memory via `ApplicationEventPublisher`)
+- **Máquinas de estados** en dominio (p. ej. `EstadoOrden`, `EstadoEnvio`).
+- **Mapper de persistencia** (Entidad ↔ Dominio).
+- DTOs de entrada y salida separados, mapeados con MapStruct.
+- Configuración externalizada con AppProperties y @ConfigurationProperties.
+- TTL en Redis como estrategia de expiración distribuida.
+- Resultados ricos con clases, evitando tipos primitivos.
+- **Perfiles** activables para cambiar el “bus” de eventos.
 
-### Validación distribuida de orden
-- Cuando una orden es creada, se dispara `OrdenCreadaEvent`.
-- Servicios internos responden con: `ClienteValidoEvent`, `ProductoValidoEvent`, `StockDisponibleEvent`.
-- `OrdenValidacionService` acumula estas validaciones en memoria y marca la orden como `LISTA_PARA_PAGO` si todas llegan exitosamente.
-- En caso de falla o timeout, la orden se cancela automáticamente.
+---
 
-### Flujo de pago
-- El usuario inicia manualmente el pago (no automático tras la validación).
-- Se publica `OrderPaymentRequestedEvent`, escuchado por `PagoEventListener`.
-- `PagoService` ejecuta la lógica real, integrando:
+## 🧠 Enfoque Arquitectónico
 
-```java
-@Retry(name = "pasarelaPago")
-@CircuitBreaker(name = "pasarelaPago", fallbackMethod = "fallbackPago")
-public ResultadoPagoDTO realizarPago(Pago pago) { ... }
+### ✅ Clean Architecture + DDD
+
+**Capas:**
+- **domain**: entidades, VOs, estados, reglas (sin dependencias externas).
+- **application**: servicios de orquestación, comandos y eventos.
+- **infrastructure**: persistencia (JPA), mensajería (Rabbit/Kafka), configuración, etc.
+- **adapters**: adaptadores web.
+
+### 🗃️ Persistencia y mapeo
+- **JPA Entities** en `infrastructure.persistence.entity`.
+- **Mappers** en `infrastructure.persistence.mapper` (ej.: `OrdenMapper`, `EnvioMapper`, `PagoMapper`…).
+- **DB**:
+  - **Dev** (por defecto): `H2` en memoria (ver `application.yml`).
+  - **Docker / Rabbit**: `PostgreSQL` (ver `application-rabbit.yml`, `application-rabbit.yml`).
+
+---
+
+## 🐳 Instalación con Docker Compose
+
+Este proyecto puede ejecutarse de forma completa con **Docker Compose** incluyendo sus dependencias como PostgreSQL, Rabbit y Kafka.
+
+### 🔧 Requisitos
+
+- Docker
+- Docker Compose
+
+### ▶️ Comandos para ejecutar
+
+```bash
+# Situarse dentro de la carpeta del proyecto y ejecutar
+docker compose -p ecommerce up -d
+
+# Una vez ejecutado el comando anterior, se puede verificar con
+docker ps
 ```
 
-- Si el pago es exitoso o fallido, se emite `PagoConfirmadoEvent`.
+### 🧪 Verificación
 
-### Resilience4j configurado
-```yaml
-resilience4j:
-  retry:
-    instances:
-      pasarelaPago:
-        maxAttempts: 3
-        waitDuration: 1s
-  circuitbreaker:
-    instances:
-      pasarelaPago:
-        failureRateThreshold: 50
-        waitDurationInOpenState: 10s
-        recordExceptions:
-          - java.util.concurrent.TimeoutException
-          - java.lang.RuntimeException
+Una vez iniciado el entorno, accede a:
+
+- API: [http://localhost:8095/api/flight](http://localhost:8095/api/flight)
+- Swagger: [http://localhost:8095/swagger-ui.html](http://localhost:8095/swagger-ui.html)
+
+---
+
+## 📨 Mensajería y perfiles
+
+### RabbitMQ (`@Profile("rabbit")`)
+- **Publisher**: `RabbitMQEventPublisher`.
+- **Listeners**: `.../rabbitlistener/*`.
+- Config externo en `application-rabbit.yml`.
+
+### Kafka (`@Profile("kafka")`)
+- **Publisher**: `KafkaEventPublisher`.
+- **Listeners**: `.../kafkalistener/*`.
+- Config en `KafkaConfig`/`KafkaTopicConfig`.
+- Config externo en `application-kafka.yml`.
+
+> Cambia el bus activando el perfil correspondiente. Los nombres de colas/tópicos/grupos están externalizados en `AppProperties`.
+
+
+
+### 🧩 Diagrama de flujo
+
+```mermaid
+flowchart TD
+%% =========================
+%% Bootstrap de catálogos
+%% =========================
+  subgraph Bootstrap
+    CATS[Crear Categorías] --> CATS_DONE[(Categorías creadas)]
+    CLIENTS[Crear Clientes] --> CLIENTS_DONE[(Clientes creados)]
+  end
+
+%% =========================
+%% Ciclo de Producto -> Inventario
+%% =========================
+  subgraph ProductoInventory
+    PROD[Crear Producto] --> E_PROD[Publicar evento ProductoCreado<br/>producto.creado / producto.inventario.crear]
+    E_PROD --> INV_LISTENER[InventarioListener]
+    INV_LISTENER -->|crea o adiciona stock| INV_UPD[(Inventario actualizado)]
+  end
+
+  CATS_DONE --> PROD
+  CLIENTS_DONE --> PROD
+
+%% =========================
+%% Ciclo de Orden con validaciones ALL-OF + TTL
+%% =========================
+  subgraph Orden
+    O_CREATE[Crear Orden] --> E_ORDEN[Publicar orden.multicast.creada]
+    E_ORDEN --> L_CLIENTE[ClienteListener valida CLIENTE]
+    E_ORDEN --> L_PRODUCTO[ProductoListener valida PRODUCTO]
+    E_ORDEN --> L_STOCK[InventarioListener valida STOCK]
+
+    L_CLIENTE -->|cliente.orden.valido| OK_C
+    L_PRODUCTO -->|producto.orden.valido| OK_P
+    L_STOCK -->|inventario.orden.disponible| OK_S
+
+    L_CLIENTE -->|cliente.orden.no-valido| KO
+    L_PRODUCTO -->|producto.orden.no-valido| KO
+    L_STOCK -->|inventario.orden.no-disponible| KO
+
+    OK_C --> AND_JOIN
+    OK_P --> AND_JOIN
+    OK_S --> AND_JOIN
+
+    TTL(((TTL))) -. expira .-> TIMEOUT
+
+    AND_JOIN{{Llegaron los 3 OK<br/>antes del TTL}} -->|Sí| PAGO_REQ[Publicar orden.pago.solicitar]
+    AND_JOIN -->|No| ORDEN_FAIL[(Orden fallida)]
+
+    KO --> ORDEN_FAIL
+    TIMEOUT --> ORDEN_FAIL
+  end
+
 ```
 
-### Preparación para infraestructura externa
-- Listo para integrar con:
-  - **RabbitMQ / Kafka** para mensajería entre microservicios reales.
-  - **Redis** para cache distribuido y coordinación de estado entre pods.
-  - **DHL** como proveedor externo de envíos, vía API o webhook.
+
+```mermaid
+
+
+```
+
+---
 
