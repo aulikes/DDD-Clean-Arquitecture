@@ -4,7 +4,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: postgres-service
+  name: postgres-service-ecommerce
 spec:
   selector:
     app: postgres                         # Conecta con los pods que tienen esta etiqueta

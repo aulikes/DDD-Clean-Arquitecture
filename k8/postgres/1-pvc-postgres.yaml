@@ -6,7 +6,7 @@
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: postgres-pvc                        # Nombre del PVC
+  name: postgres-pvc-ecommerce                        # Nombre del PVC
 spec:
   accessModes:
     - ReadWriteOnce                         # Mismo modo que el PV
