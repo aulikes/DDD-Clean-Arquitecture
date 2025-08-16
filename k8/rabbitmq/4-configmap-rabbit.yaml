@@ -1,0 +1,28 @@
+# ConfigMap para definir la configuración de RabbitMQ
+# Este archivo define las variables de entorno que se usarán en el Deployment
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-config-ecommerce                 # Nombre del ConfigMap
+data:
+  RABBITMQ_DEFAULT_VHOST: "/"           # Vhost por defecto
+
+  # Archivo /etc/rabbitmq/enabled_plugins
+  # Activa el plugin de descubrimiento en Kubernetes (clusterización) y la consola web de gestión.
+  # Lista de plugins habilitados (termina en punto)
+  enabled_plugins: |
+    [rabbitmq_management, rabbitmq_peer_discovery_k8s].
+
+  # Archivo /etc/rabbitmq/rabbitmq.conf (formato sysctl-like)
+  # Contenido principal de configuración de RabbitMQ (multilínea)
+  rabbitmq.conf: |         
+    listeners.tcp.default = 5672
+    management.tcp.port = 15672
+    loopback_users.guest = false
+    cluster_formation.peer_discovery_backend = k8s
+    cluster_formation.k8s.address_type = hostname
+    cluster_formation.k8s.service_name = rabbitmq-headless-ecommerce
+    cluster_formation.k8s.hostname_suffix = .rabbitmq-headless-ecommerce.ecommerce-dev.svc.cluster.local
+    cluster_partition_handling = autoheal
+   
+
