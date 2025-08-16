@@ -22,9 +22,9 @@ echo ""
 echo "Aplicando archivos YAML..."
 kubectl apply -f 3-secret-rabbit.yaml -n "$NAMESPACE"
 kubectl apply -f 4-configmap-rabbit.yaml -n "$NAMESPACE"
-kubectl apply -f 5-rabbitmq-headless.yaml -n "$NAMESPACE"
+kubectl apply -f 5-headless-rabbitmq.yaml -n "$NAMESPACE"
 kubectl apply -f 6-service-rabbit.yaml -n "$NAMESPACE"
-kubectl apply -f 7-rabbitmq-statefulset.yaml -n "$NAMESPACE"
+kubectl apply -f 7-statefulset-rabbitmq.yaml -n "$NAMESPACE"
 #kubectl rollout status sts/rabbitmq-ecommerce -n "$NAMESPACE" --timeout=180s
 
 echo ""
