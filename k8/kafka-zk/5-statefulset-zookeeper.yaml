@@ -1,10 +1,9 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: zookeeper
-  namespace: ecommerce-dev
+  name: zookeeper-ecommerce
 spec:
-  serviceName: zookeeper-headless
+  serviceName: zookeeper-headless-ecommerce
   replicas: 1
   selector:
     matchLabels: { app: zookeeper }
@@ -12,13 +11,13 @@ spec:
     metadata:
       labels: { app: zookeeper }
     spec:
-      securityContext:
-        fsGroup: 1000
-        runAsUser: 1000
       containers:
         - name: zookeeper
           image: confluentinc/cp-zookeeper:7.4.0
-          ports: [{ name: client, containerPort: 2181 }]
+          ports:
+            - { name: client,   containerPort: 2181 }  # clientes
+            - { name: peer,     containerPort: 2888 }  # quorum (peers)
+            - { name: election, containerPort: 3888 }  # elección de líder
           env:
             - { name: ZOOKEEPER_CLIENT_PORT, value: "2181" }
             - { name: ZOOKEEPER_TICK_TIME,   value: "2000" }

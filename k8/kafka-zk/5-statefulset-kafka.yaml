@@ -1,10 +1,9 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: kafka
-  namespace: ecommerce-dev
+  name: kafka-ecommerce
 spec:
-  serviceName: kafka-headless
+  serviceName: kafka-headless-ecommerce
   replicas: 1
   selector:
     matchLabels:
@@ -29,7 +28,7 @@ spec:
           # Mantén tu ConfigMap
           envFrom:
             - configMapRef:
-                name: kafka-config
+                name: kafka-config-ecommerce
 
           # Estas vars SOBRESCRIBEN lo del ConfigMap (orden importa)
           env:
@@ -53,7 +52,8 @@ spec:
 
             # 5) **advertised**: externo por Service, interno por POD (headless + POD_NAME)
             - name: KAFKA_ADVERTISED_LISTENERS
-              value: "PLAINTEXT://kafka-service:9094,DOCKER://$(POD_NAME).kafka-headless.ecommerce-dev.svc.cluster.local:9093"
+              # externo por Service; interno por FQDN del POD 0 (válido para 1 réplica)
+              value: "PLAINTEXT://kafka-service:9094,DOCKER://$(POD_NAME).kafka-headless-ecommerce.ecommerce-dev.svc.cluster.local:9093"
 
           readinessProbe:
             tcpSocket: { port: 9094 }

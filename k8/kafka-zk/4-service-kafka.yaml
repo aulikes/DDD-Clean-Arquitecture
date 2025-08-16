@@ -6,13 +6,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kafka-service
+  name: kafka-service-ecommerce
 spec:
   selector:
-    app: kafka                           # Debe coincidir con el label del Deployment
-  type: ClusterIP                         # Para exponer el servicio fuera del clúster (local)
+    app: kafka                           # Debe coincidir con el label del StatefulSet
   ports:
-    - name: plaintext                    # Canal para clientes externos (host)
+    - name: plaintext                    # Canal para clientes externos (apps)
       protocol: TCP
       port: 9094                         # Puerto expuesto dentro del clúster
       targetPort: 9094                   # Puerto del contenedor
@@ -21,3 +20,4 @@ spec:
       protocol: TCP
       port: 9093                         # Puerto interno del clúster
       targetPort: 9093                   # Puerto del contenedor
+  type: ClusterIP                        # Acceso interno al clúster
