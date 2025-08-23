@@ -1,0 +1,20 @@
+# Service headless para Postgres
+# - Este Service NO asigna una IP de clúster (clusterIP: None). En su lugar, crea entradas DNS por Pod.
+# - Es requerido por StatefulSet para ofrecer nombres DNS estables como:
+#   postgres-0.postgres.svc.cluster.local
+# - No expone el servicio hacia afuera; solo sirve para la resolución interna y el descubrimiento de endpoints.
+# - Es portable: funciona igual en on-prem y en cloud.
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-headless-ecommerce                  # Debe coincidir con spec.serviceName del StatefulSet
+  labels:
+    app: postgres                 # Etiqueta que usaremos para seleccionar los Pods del StatefulSet
+spec:
+  clusterIP: None                 # "Headless": no hay IP de Service, solo endpoints por Pod
+  selector:
+    app: postgres                 # Debe empatar con labels del Pod template en el StatefulSet
+  ports:
+    - name: pg                    # Nombre lógico del puerto (puede usarse para referenciar en probes)
+      port: 5432                  # Puerto dentro del clúster (lo que otros Pods usarán para conectarse)
+      targetPort: 5432            # Puerto expuesto por el contenedor Postgres

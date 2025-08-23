@@ -8,7 +8,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: postgres-deployment
+  name: postgres-deployment-ecommerce
 spec:
   replicas: 1                               # Una sola instancia de PostgreSQL
                                             # En producción usar StatefulSet si se requiere persistencia garantizada
@@ -29,22 +29,22 @@ spec:
             - name: POSTGRES_USER
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: postgres-secret-ecommerce
                   key: postgres-user
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: postgres-secret
+                  name: postgres-secret-ecommerce
                   key: postgres-password
             - name: POSTGRES_DB
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-config
+                  name: postgres-config-ecommerce
                   key: DB_NAME
             - name: PGPORT
               valueFrom:
                 configMapKeyRef:
-                  name: postgres-config
+                  name: postgres-config-ecommerce
                   key: DB_PORT
           volumeMounts:
             - name: postgres-storage

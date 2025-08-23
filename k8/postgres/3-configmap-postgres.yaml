@@ -6,7 +6,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: postgres-config                 # Nombre del ConfigMap
+  name: postgres-config-ecommerce                 # Nombre del ConfigMap
 data:
   DB_NAME: ecommerce                # Nombre de la base de datos
   DB_PORT: "5432"                       # Puerto de conexión a PostgreSQL (valor por defecto)

@@ -1,0 +1,17 @@
+# Service externo para acceder a Postgres desde fuera del clúster.
+# En on-prem (Minikube/bare metal): NodePort establece un puerto fijo del nodo.
+# En cloud: se puede cambiar a 'LoadBalancer' sin tocar nada más.
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-external-ecommerce
+  labels:
+    app: postgres              # Debe coincidir con los labels de los Pods (StatefulSet)
+spec:
+  type: LoadBalancer
+  selector:
+    app: postgres
+  ports:
+    - name: pg
+      port: 5432               # Puerto del Service dentro del clúster
+      targetPort: 5432         # Puerto del contenedor

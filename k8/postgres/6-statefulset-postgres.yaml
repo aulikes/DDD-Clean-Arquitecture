@@ -1,0 +1,100 @@
+# StatefulSet para Postgres
+# - Se usa StatefulSet para asociar un PVC estable por réplica (data-postgres-0), preservando datos entre redeploys.
+# - El PVC se genera dinámicamente mediante volumeClaimTemplates y la StorageClass por defecto del clúster.
+# - No se especifica namespace aquí porque se aplicará con: -n ecommerce-dev
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres                                  # Nombre lógico del StatefulSet
+spec:
+  serviceName: postgres-headless-ecommerce        # Debe coincidir con el Service headless (resolución DNS estable)
+  replicas: 1                                     # Una réplica es suficiente para una base de datos primaria simple
+  selector:
+    matchLabels:
+      app: postgres                               # Debe coincidir con labels del Pod para que el Service seleccione los endpoints
+  template:
+    metadata:
+      labels:
+        app: postgres                             # Etiqueta usada por los Services (headless y externo) para enrutar tráfico
+    spec:
+      # Se establece fsGroup para garantizar permisos de escritura del proceso 'postgres' sobre el volumen montado
+      securityContext:
+        fsGroup: 999
+      containers:
+        - name: postgres
+          image: postgres:15                      # Imagen oficial de Postgres (versión 15)
+          imagePullPolicy: IfNotPresent           # Evita pulls innecesarios en entornos de desarrollo
+          ports:
+            - name: pg
+              containerPort: 5432                 # Puerto TCP expuesto por el contenedor
+          env:
+            # Usuario de Postgres: se obtiene desde Secret para no exponer credenciales en texto plano
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret-ecommerce
+                  key: postgres-user
+            # Contraseña de Postgres: se obtiene desde Secret
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-secret-ecommerce
+                  key: postgres-password
+            # Base de datos inicial: se obtiene desde ConfigMap (no sensible)
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-ecommerce
+                  key: DB_NAME
+            # Puerto interno de Postgres: se obtiene desde ConfigMap para mantener consistencia
+            - name: PGPORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-ecommerce
+                  key: DB_PORT
+            # Directorio de datos: se usa subcarpeta 'pgdata' para evitar advertencias del entrypoint
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data # Punto de montaje del volumen de datos
+          # La sonda de readiness verifica disponibilidad antes de recibir tráfico
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U "$POSTGRES_USER" -p "$PGPORT" -d "$POSTGRES_DB"
+            initialDelaySeconds: 15               # Se otorga tiempo para la inicialización de Postgres
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          # La sonda de liveness verifica que el proceso siga saludable; reinicia el contenedor si falla repetidamente
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - pg_isready -U "$POSTGRES_USER" -p "$PGPORT" -d "$POSTGRES_DB"
+            initialDelaySeconds: 30               # Se espera un poco más para no reiniciar durante el arranque
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 6
+          # Solicitudes y límites de recursos razonables para desarrollo; pueden ajustarse en producción
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+  volumeClaimTemplates:
+    - metadata:
+        name: data                                # Prefijo del PVC generado (p. ej., data-postgres-0)
+      spec:
+        accessModes:
+          - ReadWriteOnce                         # Acceso de lectura/escritura por un solo nodo (típico para discos locales/EBS)
+        resources:
+          requests:
+            storage: 5Gi                          # Tamaño inicial del volumen; ampliable si la StorageClass lo permite
+        # storageClassName se omite para usar la StorageClass por defecto del clúster (p. ej., 'standard' en Minikube)
