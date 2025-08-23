@@ -1,38 +1,117 @@
 pipeline {
-    agent any
+  agent any
 
-    environment {
-        NAMESPACE = "ecommerce-dev"
+  environment {
+    NAMESPACE    = "ecommerce-dev"
+    MANIFEST_DIR = "k8/postgres"   // Directorio donde viven los YAML
+  }
+
+  stages {
+
+    stage('Crear namespace si no existe') {
+      steps {
+        // Se inyecta el kubeconfig y se crea el namespace solo si no existe
+        withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
+          sh '''
+            set -eu
+            kubectl get namespace "$NAMESPACE" >/dev/null 2>&1 || kubectl create namespace "$NAMESPACE"
+            '''
+        }
+      }
     }
 
-    stages {
-        stage('Crear namespace si no existe') {
-            steps {
-                withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
-                    sh '''
-                    if ! kubectl get namespace "$NAMESPACE" >/dev/null 2>&1; then
-                      kubectl create namespace "$NAMESPACE"
-                    fi
-                    '''
-                }
-            }
+    stage('Aplicar manifiestos base') {
+      steps {
+        // Se aplican Secret, ConfigMap, Service headless y StatefulSet en ese orden
+        withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
+          dir(env.MANIFEST_DIR) {
+            sh '''
+            set -eu
+            kubectl apply -f 2-secret-postgres.yaml -n "$NAMESPACE"
+            kubectl apply -f 3-configmap-postgres.yaml -n "$NAMESPACE"
+            kubectl apply -f 4-service-headless-postgres.yaml -n "$NAMESPACE"
+            kubectl apply -f 6-statefulset-postgres.yaml -n "$NAMESPACE"
+            '''
+          }
         }
-
-        stage('Aplicar manifiestos') {
-            steps {
-                withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
-                    dir('k8/postgres') {
-                        sh '''
-                        kubectl apply -f 0-pv-postgres.yaml
-                        kubectl apply -f 1-pvc-postgres.yaml -n "$NAMESPACE"
-                        kubectl apply -f 2-secret-postgres.yaml -n "$NAMESPACE"
-                        kubectl apply -f 3-configmap-postgres.yaml -n "$NAMESPACE"
-                        kubectl apply -f 4-deployment-postgres.yaml -n "$NAMESPACE"
-                        kubectl apply -f 5-service-postgres.yaml -n "$NAMESPACE"
-                        '''
-                    }
-                }
-            }
-        }
+      }
     }
+
+    stage('Esperar PVC y rollout del StatefulSet') {
+      steps {
+        // Se espera a que el PVC exista y alcance phase=Bound (los PVC no exponen "condition=Bound")
+        // Luego se espera el rollout del StatefulSet
+        withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
+          sh '''
+            set -eu
+
+            # Se determina el nombre del PVC a partir del StatefulSet:
+            # <volumeClaimTemplates.name>-<statefulsetName>-<ordinal>  (ej.: data-postgres-0)
+            VCT="$(kubectl -n "$NAMESPACE" get sts postgres -o jsonpath='{.spec.volumeClaimTemplates[0].metadata.name}')"
+            STS="$(kubectl -n "$NAMESPACE" get sts postgres -o jsonpath='{.metadata.name}')"
+            PVC_NAME="${VCT}-${STS}-0"
+            echo "PVC esperado: ${PVC_NAME}"
+
+            # Se espera a que el recurso PVC exista en la API
+            echo "Esperando existencia del PVC..."
+            while ! kubectl -n "$NAMESPACE" get pvc "${PVC_NAME}" >/dev/null 2>&1; do
+              sleep 2
+            done
+
+            # Se espera hasta phase=Bound (máximo 10 minutos)
+            echo "Esperando phase=Bound en el PVC..."
+            COUNT=0
+            PHASE=""
+            while [ $COUNT -lt 120 ]; do
+              PHASE="$(kubectl -n "$NAMESPACE" get pvc "${PVC_NAME}" -o jsonpath='{.status.phase}' 2>/dev/null || true)"
+              echo "  PVC phase: ${PHASE:-desconocido}"
+              if [ "${PHASE:-}" = "Bound" ]; then
+                break
+              fi
+              COUNT=$((COUNT+1))
+              sleep 5
+            done
+
+            if [ "${PHASE:-}" != "Bound" ]; then
+              echo "El PVC no llegó a Bound. Últimos eventos del namespace:"
+              kubectl -n "$NAMESPACE" get events --sort-by=.metadata.creationTimestamp | tail -n 50 || true
+              exit 1
+            fi
+
+            # Se espera el rollout del StatefulSet (Pod Ready)
+            kubectl -n "$NAMESPACE" rollout status statefulset/postgres --timeout=300s
+            '''
+        }
+      }
+    }
+
+    stage('Exponer servicio externo') {
+      steps {
+        // Se aplica el Service externo:
+        // - En Minikube (driver docker): puede ser NodePort o LoadBalancer + `minikube tunnel`
+        // - En cloud: normalmente LoadBalancer
+        withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
+          dir(env.MANIFEST_DIR) {
+            sh '''
+            set -eu
+            kubectl apply -f 5-service-postgres-external.yaml -n "$NAMESPACE"
+            kubectl -n "$NAMESPACE" get svc postgres-external-ecommerce -o wide || true
+            '''
+          }
+        }
+      }
+    }
+
+    stage('Resumen') {
+      steps {
+        // Se muestra un resumen final de pods, services y PVCs del namespace
+        withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
+          sh '''
+            set -eu
+            kubectl -n "$NAMESPACE" get pods,svc,pvc
+            '''
+        }
+      }
+    }
+  }
 }
