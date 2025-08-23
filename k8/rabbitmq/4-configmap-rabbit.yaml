@@ -1,28 +1,44 @@
 # ConfigMap para definir la configuración de RabbitMQ
-# Este archivo define las variables de entorno que se usarán en el Deployment
+# - Mantiene vhost y plugins.
+# - Configura clusterización vía plugin k8s SIN hardcodear el namespace (usa descubrimiento por IPs).
+# - No se requiere 'hostname_suffix' si se usa address_type=ip y un Service headless.
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: rabbitmq-config-ecommerce                 # Nombre del ConfigMap
+  name: rabbitmq-config-ecommerce                  # Nombre del ConfigMap
 data:
-  RABBITMQ_DEFAULT_VHOST: "/"           # Vhost por defecto
+  # Vhost por defecto (apto para dev; en prod se puede parametrizar)
+  RABBITMQ_DEFAULT_VHOST: "/"
 
-  # Archivo /etc/rabbitmq/enabled_plugins
-  # Activa el plugin de descubrimiento en Kubernetes (clusterización) y la consola web de gestión.
-  # Lista de plugins habilitados (termina en punto)
+  # Contenido del archivo /etc/rabbitmq/enabled_plugins
+  # - Habilita la consola de administración y el plugin de descubrimiento en Kubernetes.
   enabled_plugins: |
     [rabbitmq_management, rabbitmq_peer_discovery_k8s].
 
-  # Archivo /etc/rabbitmq/rabbitmq.conf (formato sysctl-like)
-  # Contenido principal de configuración de RabbitMQ (multilínea)
-  rabbitmq.conf: |         
+  # Contenido del archivo /etc/rabbitmq/rabbitmq.conf (formato sysctl-like)
+  # - Se opta por 'address_type = ip' para evitar dependencia del namespace en FQDN.
+  # - El Service headless provee Endpoints que el plugin resuelve por IP.
+  rabbitmq.conf: |
+    ## Puertos
     listeners.tcp.default = 5672
-    management.tcp.port = 15672
-    loopback_users.guest = false
-    cluster_formation.peer_discovery_backend = k8s
-    cluster_formation.k8s.address_type = hostname
-    cluster_formation.k8s.service_name = rabbitmq-headless-ecommerce
-    cluster_formation.k8s.hostname_suffix = .rabbitmq-headless-ecommerce.ecommerce-dev.svc.cluster.local
-    cluster_partition_handling = autoheal
-   
+    management.tcp.port   = 15672
 
+    ## Seguridad básica (evita que el usuario 'guest' solo funcione en localhost)
+    loopback_users.guest = false
+
+    ## Descubrimiento y clusterización en Kubernetes
+    cluster_formation.peer_discovery_backend = k8s
+    cluster_formation.k8s.address_type       = ip
+    cluster_formation.k8s.service_name       = rabbitmq-headless-ecommerce
+    # NOTA: No se define 'cluster_formation.k8s.hostname_suffix' para no hardcodear el namespace.
+
+    ## Limpieza de nodos caídos (útil en reinicios/evicciones)
+    cluster_formation.node_cleanup.interval       = 30
+    cluster_formation.node_cleanup.only_log_warning = true
+
+    ## Manejo de particiones
+    cluster_partition_handling = autoheal
+
+    ## Umbrales (ajustables en prod)
+    vm_memory_high_watermark.relative = 0.6
+    disk_free_limit.relative          = 1.5

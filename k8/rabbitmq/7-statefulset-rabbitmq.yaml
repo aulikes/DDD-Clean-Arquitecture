@@ -1,34 +1,40 @@
+# StatefulSet para RabbitMQ
+# - Se usa StatefulSet para asociar un PVC estable por réplica (p. ej., data-rabbitmq-ecommerce-0),
+#   preservando datos entre reinicios y redeploys.
+# - La configuración y plugins se montan desde ConfigMap sobre /etc/rabbitmq.
+# - No se especifica 'namespace' aquí porque se aplicará con: -n ecommerce-dev (o el que corresponda).
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: rabbitmq-ecommerce
+  name: rabbitmq-ecommerce                          # Debe coincidir con lo que usan Services/Script/Jenkins
+  labels:
+    app: rabbitmq
 spec:
+  # Debe coincidir con el Service headless para DNS estable y peer discovery
   serviceName: rabbitmq-headless-ecommerce
-  replicas: 1
+  replicas: 1                                       # Ajustable; para clúster >1, recordar políticas de partición
   selector:
     matchLabels:
-      app: rabbitmq
+      app: rabbitmq                                 # Debe coincidir con labels del Pod para que los Services lo seleccionen
   template:
     metadata:
       labels:
-        app: rabbitmq
+        app: rabbitmq                               # Usado por los Services (headless e interno) para enrutar tráfico
     spec:
+      # Se establece fsGroup para garantizar permisos de escritura del proceso 'rabbitmq' (uid 999) sobre el volumen
       securityContext:
-        runAsUser: 999
-        runAsGroup: 999
         fsGroup: 999
       containers:
         - name: rabbitmq
-          image: rabbitmq:3.13-management
+          image: rabbitmq:3.13-management           # Imagen oficial con Management UI (puerto 15672)
+          imagePullPolicy: IfNotPresent
           ports:
-            - { name: amqp, containerPort: 5672 }
-            - { name: management, containerPort: 15672 }
+            - name: amqp
+              containerPort: 5672                   # AMQP
+            - name: http
+              containerPort: 15672                  # Management UI
           env:
-            # Nombre del pod para NODENAME (Downward API)
-            - name: POD_NAME
-              valueFrom:
-                fieldRef:
-                  fieldPath: metadata.name
+            # Credenciales (se obtienen desde Secret para no exponer en texto plano)
             - name: RABBITMQ_DEFAULT_USER
               valueFrom:
                 secretKeyRef:
@@ -44,42 +50,85 @@ spec:
                 secretKeyRef:
                   name: rabbitmq-secret-ecommerce
                   key: erlang-cookie
+
+            # Variables dinámicas (Downward API) para evitar namespace hardcodeado
+            - name: POD_NAME                         # Se inyecta el nombre del Pod
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: MY_POD_NAMESPACE                 # Se inyecta el namespace actual
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+
+            # Se fuerza uso de FQDN y se define NODENAME portátil con Service headless + namespace dinámico
             - name: RABBITMQ_USE_LONGNAME
               value: "true"
             - name: RABBITMQ_NODENAME
-              value: "rabbit@$(POD_NAME).rabbitmq-headless-ecommerce.ecommerce-dev.svc.cluster.local"
-          readinessProbe:
-            exec: { command: [ "rabbitmq-diagnostics", "-q", "ping" ] }
-            initialDelaySeconds: 10
-            periodSeconds: 10
-          livenessProbe:
-            exec: { command: [ "rabbitmq-diagnostics", "-q", "ping" ] }
-            initialDelaySeconds: 20
-            periodSeconds: 20
+              value: "rabbit@$(POD_NAME).rabbitmq-headless-ecommerce.$(MY_POD_NAMESPACE).svc.cluster.local"
+
           volumeMounts:
+            # Directorio de datos (RabbitMQ guardará mnesia en /var/lib/rabbitmq/mnesia/<nodename>)
             - name: data
               mountPath: /var/lib/rabbitmq
-            - name: config
+
+            # Montaje de configuración desde ConfigMap (dos archivos):
+            # - enabled_plugins → /etc/rabbitmq/enabled_plugins
+            # - rabbitmq.conf   → /etc/rabbitmq/rabbitmq.conf
+            - name: rabbitmq-config
               mountPath: /etc/rabbitmq/enabled_plugins
               subPath: enabled_plugins
-            - name: config
+            - name: rabbitmq-config
               mountPath: /etc/rabbitmq/rabbitmq.conf
               subPath: rabbitmq.conf
+
+          # Sondas básicas:
+          # - readiness: el Pod recibe tráfico cuando responde a 'ping'
+          # - liveness: reinicia el contenedor si no responde repetidamente
+          readinessProbe:
+            exec:
+              command: ["bash", "-ec", "rabbitmq-diagnostics -q ping"]
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 6
+          livenessProbe:
+            exec:
+              command: ["bash", "-ec", "rabbitmq-diagnostics -q ping"]
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 6
+
+          # Recursos: valores razonables para desarrollo; ajustables en producción
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+      # Volumen de configuración desde ConfigMap
       volumes:
-        - name: config
+        - name: rabbitmq-config
           configMap:
-            name: rabbitmq-config-ecommerce
+            name: rabbitmq-config-ecommerce          # Debe coincidir con el ConfigMap definido
+            # Se asegura que existan las claves esperadas
             items:
               - key: enabled_plugins
                 path: enabled_plugins
               - key: rabbitmq.conf
                 path: rabbitmq.conf
+
+  # Plantilla del PVC para cada réplica (provisionamiento dinámico con la StorageClass 'standard')
   volumeClaimTemplates:
     - metadata:
-        name: data
+        name: data                                  # Prefijo del PVC generado: data-rabbitmq-ecommerce-0
       spec:
-        accessModes: ["ReadWriteOnce"]
-        storageClassName: standard
+        accessModes:
+          - ReadWriteOnce                           # Acceso típico de volúmenes locales/discos por nodo
         resources:
           requests:
-            storage: 5Gi
+            storage: 5Gi                            # Tamaño inicial; ampliable si la StorageClass lo permite
+        storageClassName: standard                  # Explícito para evitar ambigüedad (coincide con Minikube)
