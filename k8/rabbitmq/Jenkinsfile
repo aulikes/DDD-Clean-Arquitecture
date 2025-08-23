@@ -1,0 +1,129 @@
+pipeline {
+  agent any
+
+  environment {
+    NAMESPACE     = "ecommerce-dev"
+    MANIFEST_DIR  = "k8/rabbitmq"            // Carpeta donde están: 3,4,5,6,7-*.yaml
+    RABBIT_STS    = "rabbitmq-ecommerce"     // metadata.name del StatefulSet
+    RABBIT_SECRET = "rabbitmq-secret-ecommerce"
+    SHOW_CREDS    = "false"                  // "true" para imprimir usuario/clave en logs (solo dev)
+  }
+
+  stages {
+
+    stage('Verificar conexión a K8s') {
+      steps {
+        withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
+          sh '''
+            set -eu
+            kubectl --kubeconfig="$KUBECONFIG" config current-context
+            kubectl --kubeconfig="$KUBECONFIG" get ns >/dev/null
+            '''
+        }
+      }
+    }
+
+    stage('Crear namespace si no existe') {
+      steps {
+        withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
+          sh '''
+            set -eu
+            kubectl get namespace "$NAMESPACE" >/dev/null 2>&1 || kubectl create namespace "$NAMESPACE"
+            '''
+        }
+      }
+    }
+
+    stage('Aplicar manifiestos (Secret/ConfigMap/Services/StatefulSet)') {
+      steps {
+        withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
+          dir(env.MANIFEST_DIR) {
+            sh '''
+            set -eu
+            kubectl apply -f 3-secret-rabbit.yaml         -n "$NAMESPACE"
+            kubectl apply -f 4-configmap-rabbit.yaml      -n "$NAMESPACE"
+            kubectl apply -f 5-headless-rabbitmq.yaml     -n "$NAMESPACE"
+            kubectl apply -f 6-service-rabbit.yaml        -n "$NAMESPACE"
+            kubectl apply -f 7-statefulset-rabbitmq.yaml  -n "$NAMESPACE"
+            '''
+          }
+        }
+      }
+    }
+
+    stage('Esperar PVC Bound y rollout del StatefulSet') {
+      steps {
+        withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
+          sh '''
+            set -eu
+
+            # Detecta el nombre del template de PVC (ej.: "data"), con espera corta por si aún no está el STS en API
+            VCT=""
+            COUNT=0
+            while [ -z "${VCT}" ] && [ $COUNT -lt 30 ]; do
+              VCT="$(kubectl -n "$NAMESPACE" get sts "$RABBIT_STS" -o jsonpath='{.spec.volumeClaimTemplates[0].metadata.name}' 2>/dev/null || true)"
+              [ -n "${VCT}" ] || { COUNT=$((COUNT+1)); sleep 2; }
+            done
+            [ -n "${VCT}" ] || { echo "No se pudo leer volumeClaimTemplates del StatefulSet"; exit 1; }
+
+            PVC_NAME="${VCT}-${RABBIT_STS}-0"
+            echo "PVC esperado: ${PVC_NAME}"
+
+            # Espera a que exista el PVC
+            while ! kubectl -n "$NAMESPACE" get pvc "${PVC_NAME}" >/dev/null 2>&1; do
+              sleep 2
+            done
+
+            # Espera a que el PVC llegue a phase=Bound (los PVC no exponen condition=Bound)
+            PHASE=""
+            COUNT=0
+            while [ $COUNT -lt 120 ]; do   # 10 minutos
+              PHASE="$(kubectl -n "$NAMESPACE" get pvc "${PVC_NAME}" -o jsonpath='{.status.phase}' 2>/dev/null || true)"
+              echo "  PVC phase: ${PHASE:-desconocido}"
+              [ "${PHASE:-}" = "Bound" ] && break
+              COUNT=$((COUNT+1))
+              sleep 5
+            done
+            if [ "${PHASE:-}" != "Bound" ]; then
+              echo "PVC no llegó a Bound. Últimos eventos:"
+              kubectl -n "$NAMESPACE" get events --sort-by=.metadata.creationTimestamp | tail -n 60 || true
+              exit 1
+            fi
+
+            # Espera al rollout del StatefulSet (pod Ready)
+            kubectl -n "$NAMESPACE" rollout status statefulset/"$RABBIT_STS" --timeout=300s
+            '''
+        }
+      }
+    }
+
+    stage('Mostrar credenciales (solo dev)') {
+      when { expression { return env.SHOW_CREDS == 'true' } }
+      steps {
+        withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
+          sh '''
+            set -eu
+            echo "Decodificando usuario/clave desde Secret (no usar en prod)…"
+            ENC_USER="$(kubectl -n "$NAMESPACE" get secret "$RABBIT_SECRET" -o jsonpath='{.data.rabbitmq-username}')"
+            ENC_PASS="$(kubectl -n "$NAMESPACE" get secret "$RABBIT_SECRET" -o jsonpath='{.data.rabbitmq-password}')"
+            USER="$( (printf "%s" "$ENC_USER" | base64 -d 2>/dev/null) || (printf "%s" "$ENC_USER" | base64 --decode 2>/dev/null) || true )"
+            PASS="$( (printf "%s" "$ENC_PASS" | base64 -d 2>/dev/null) || (printf "%s" "$ENC_PASS" | base64 --decode 2>/dev/null) || true )"
+            echo "Usuario: ${USER:-<no-disponible>}"
+            echo "Contraseña: ${PASS:-<no-disponible>}"
+            '''
+        }
+      }
+    }
+
+    stage('Resumen') {
+      steps {
+        withCredentials([file(credentialsId: 'kubeconfig-jenkins', variable: 'KUBECONFIG')]) {
+          sh '''
+            set -eu
+            kubectl -n "$NAMESPACE" get pods,svc,pvc
+            '''
+        }
+      }
+    }
+  }
+}
